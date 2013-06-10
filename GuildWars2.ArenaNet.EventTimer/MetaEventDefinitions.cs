@@ -47,7 +47,7 @@ namespace GuildWars2.ArenaNet.EventTimer
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("elemental", "Fire Elemental", 1500, 3300)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy the chaotic materials")
                             .AddEvent(new Guid("6B897FF9-4BA8-4EBD-9CEC-7DCFDA5361D8")) // Destroy the chaotic materials created by the reactor meltdown.
@@ -107,7 +107,7 @@ namespace GuildWars2.ArenaNet.EventTimer
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("golem", "Golem Mark II", 2400, 3600)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Recovery, "Harvest kelp")
                             .AddEvent(new Guid("A7E0F553-C4E1-452F-B39F-7BDBEC8B0BB1")) // Harvest kelp from the reef lurker fields so the Lonatl chief can heal his tribe.
@@ -130,7 +130,7 @@ namespace GuildWars2.ArenaNet.EventTimer
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("wurm", "Great Jungle Wurm", 7200, 9000)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Gamarien is jumping with excitement")
                             .AddEvent(new Guid("613A7660-8F3A-4897-8FAC-8747C12E42F8"), EventStateType.Preparation)
@@ -175,13 +175,13 @@ namespace GuildWars2.ArenaNet.EventTimer
                         )
                 );
 
-            
+            /* READY FOR TEST */
             MetaEvents.Add(new MetaEvent("behemoth", "Shadow Behemoth", 7200, 9000)
                     /* TODO: FIGURE OUT HOW BLOCKING EVENTS WILL WORK
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.BLOCKING, "Assistance is needed at the monestary")
-                            .AddEvent(new Guid("9062EBB9-EAD2-43E4-A820-DC6BD28A3040")) // Protect the brew shipment.
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Blocking, "Assistance is needed at the monestary")
+                            .AddEvent(new Guid("9062EBB9-EAD2-43E4-A820-DC6BD28A3040"), EventStateType.Preparation) // Protect the brew shipment.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.BLOCKING, "Defeat the rotting oakheart")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Blocking, "Defeat the rotting oakheart")
                             .AddEvent(new Guid("04084490-0117-4D56-8D67-C4FFFE933C0C")) // Defeat the champion rotting ancient oakheart.
                         ) */
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Portals are outside the swamp")
@@ -193,11 +193,12 @@ namespace GuildWars2.ArenaNet.EventTimer
                             .AddEvent(new Guid("36330140-7A61-4708-99EB-010B10420E39")) // Drive back Underworld creatures by destroying portals in the swamp.
                         )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "The beast has awakened")
-                            .AddEvent(new Guid("31CEBA08-E44D-472F-81B0-7143D73797F5")) // Defeat the shadow behemoth.
+                            // this goes into prep stages before the pres start even if there's a block. maybe display that?
+                            .AddEvent(new Guid("31CEBA08-E44D-472F-81B0-7143D73797F5"), EventStateType.Active) // Defeat the shadow behemoth.
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("shatterer", "The Shatterer", 10800, 11100)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Preparations have begun")
                             .AddEvent(new Guid("8E064416-64B5-4749-B9E2-31971AB41783")) // Escort the Sentinel squad to the Vigil camp in Lowland Burns.
@@ -223,8 +224,11 @@ namespace GuildWars2.ArenaNet.EventTimer
 
             /* READY FOR TEST */
             MetaEvents.Add(new MetaEvent("tequatl", "Tequatl the Sunless", 9000, 10800)
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Somthing's in the water")
+                            .AddEvent(new Guid("568A30CF-8512-462F-9D67-647D69BEFAED"), EventStateType.Preparation)
+                        )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat Tequatl the Sunless")
-                            .AddEvent(new Guid("568A30CF-8512-462F-9D67-647D69BEFAED")) // Defeat Tequatl the Sunless.
+                            .AddEvent(new Guid("568A30CF-8512-462F-9D67-647D69BEFAED"), EventStateType.Active) // Defeat Tequatl the Sunless.
                         )
                 );
 
