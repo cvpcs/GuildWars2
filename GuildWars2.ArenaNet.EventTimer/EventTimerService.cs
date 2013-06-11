@@ -10,7 +10,8 @@ using System.Runtime.Serialization.Json;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
@@ -20,15 +21,14 @@ namespace GuildWars2.ArenaNet.EventTimer
     public partial class EventTimerService : ServiceBase
     {
         private static TimeSpan p_PollRate = new TimeSpan(0, 0, 30);
-
         private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(EventTimerData));
-        
+
+        private Timer m_Timer;
+        private int m_TimerSync;
+
         private FileInfo m_JsonFile = new FileInfo("event_timer.json");
         private EventTimerData m_TimerData = null;
         private IDictionary<string, int> m_StatusListMap = null;
-
-        private Task m_WorkerTask;
-        private bool m_Running = false;
 
         public EventTimerService()
         {
@@ -68,30 +68,36 @@ namespace GuildWars2.ArenaNet.EventTimer
                 ResetTimers(buildId);
             }
 
-            // start the worker thread
-            m_Running = true;
-            m_WorkerTask = new Task(WorkerThread);
-            m_WorkerTask.Start();
+            // start the timer
+            m_TimerSync = 0;
+            m_Timer = new Timer(p_PollRate.TotalMilliseconds);
+            m_Timer.Elapsed += WorkerThread;
+            m_Timer.Start();
+        }
+
+        void m_Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         protected override void OnStop()
         {
-            // wait for the worker thread to stop
-            m_Running = false;
-            m_WorkerTask.Wait();
+            // stop timer
+            m_Timer.Stop();
+
+            // wait for any existing threads to complete
+            SpinWait.SpinUntil(() => Interlocked.CompareExchange(ref m_TimerSync, -1, 0) == 0);
 
             // zero out our maps
             m_StatusListMap = null;
             m_TimerData = null;
         }
 
-        private void WorkerThread()
+        private void WorkerThread(object sender, ElapsedEventArgs e)
         {
-            while (m_Running)
+            // attempt to set the sync
+            if (Interlocked.CompareExchange(ref m_TimerSync, 1, 0) == 0)
             {
-                // get current time
-                DateTime startTime = DateTime.Now;
-
                 // check if build has changed
                 int buildId = new BuildRequest().Execute().BuildId;
                 if (buildId != m_TimerData.Build)
@@ -148,7 +154,7 @@ namespace GuildWars2.ArenaNet.EventTimer
                         stateChanged = true;
                     }
                 }
-                
+
                 if (stateChanged)
                 {
                     // write to database
@@ -167,10 +173,8 @@ namespace GuildWars2.ArenaNet.EventTimer
                     }
                 }
 
-                // sleep until we hit our poll rate
-                TimeSpan calcSpan = DateTime.Now - startTime;
-                if (calcSpan < p_PollRate)
-                    Thread.Sleep(p_PollRate - calcSpan);
+                // reset sync to 0
+                Interlocked.Exchange(ref m_TimerSync, 0);
             }
         }
 
