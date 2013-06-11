@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -55,6 +56,7 @@
     <Compile Include="EventTimerService.Designer.cs">
       <DependentUpon>EventTimerService.cs</DependentUpon>
     </Compile>
+    <Compile Include="HttpJsonServer.cs" />
     <Compile Include="MetaEvent.cs" />
     <Compile Include="MetaEventDefinitions.cs" />
     <Compile Include="MetaEventStage.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
@@ -26,8 +27,11 @@ namespace GuildWars2.ArenaNet.EventTimer
         private Timer m_Timer;
         private int m_TimerSync;
 
-        private FileInfo m_JsonFile = new FileInfo("event_timer.json");
+        private FileInfo m_JsonFile = new FileInfo(ConfigurationManager.AppSettings["json_file"]);
+        private HttpJsonServer m_JsonServer = new HttpJsonServer(uint.Parse(ConfigurationManager.AppSettings["json_server_port"]));
+
         private EventTimerData m_TimerData = null;
+        private SpinLock m_TimerDataLock = new SpinLock();
         private IDictionary<string, int> m_StatusListMap = null;
 
         public EventTimerService()
@@ -38,12 +42,10 @@ namespace GuildWars2.ArenaNet.EventTimer
         protected override void OnStart(string[] args)
         {
             // load up our database
-            if (m_JsonFile.Exists)
+            try
             {
-                FileStream stream = null;
-                try
+                using (FileStream stream = m_JsonFile.Open(FileMode.Open, FileAccess.Read))
                 {
-                    stream = m_JsonFile.Open(FileMode.Open, FileAccess.Read);
                     m_TimerData = p_Serializer.ReadObject(stream) as EventTimerData;
                     m_StatusListMap = new Dictionary<string, int>();
                     for (int i = 0; i < m_TimerData.Events.Count; i++)
@@ -52,14 +54,8 @@ namespace GuildWars2.ArenaNet.EventTimer
                         m_StatusListMap[status.Id] = i;
                     }
                 }
-                catch (Exception)
-                { }
-                finally
-                {
-                    if (stream != null)
-                        stream.Close();
-                }
             }
+            catch { }
 
             int buildId = new BuildRequest().Execute().BuildId;
             if (m_TimerData == null || m_TimerData.Build != buildId)
@@ -67,6 +63,10 @@ namespace GuildWars2.ArenaNet.EventTimer
                 m_TimerData = new EventTimerData();
                 ResetTimers(buildId);
             }
+
+            // start the http json server
+            m_JsonServer.OnRequestReceived += GetJson;
+            m_JsonServer.Start();
 
             // start the timer
             m_TimerSync = 0;
@@ -82,6 +82,9 @@ namespace GuildWars2.ArenaNet.EventTimer
 
         protected override void OnStop()
         {
+            // shut down our json http server
+            m_JsonServer.Stop();
+
             // stop timer
             m_Timer.Stop();
 
@@ -91,6 +94,31 @@ namespace GuildWars2.ArenaNet.EventTimer
             // zero out our maps
             m_StatusListMap = null;
             m_TimerData = null;
+        }
+
+        private string GetJson()
+        {
+            bool lockTaken = false;
+            string data = string.Empty;
+            try
+            {
+                m_TimerDataLock.Enter(ref lockTaken);
+
+                MemoryStream stream = new MemoryStream();
+                p_Serializer.WriteObject(stream, m_TimerData);
+                stream.Flush();
+                stream.Position = 0;
+                StreamReader reader = new StreamReader(stream);
+                data = reader.ReadToEnd();
+                reader.Close();
+            }
+            finally
+            {
+                if (lockTaken)
+                    m_TimerDataLock.Exit();
+            }
+
+            return data;
         }
 
         private void WorkerThread(object sender, ElapsedEventArgs e)
@@ -108,7 +136,8 @@ namespace GuildWars2.ArenaNet.EventTimer
                 IList<EventState> metaEvents = response.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)).ToList();
 
                 m_TimerData.Timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
-                bool stateChanged = false;
+
+                IDictionary<int, MetaEventStatus> changedStatuses = new Dictionary<int, MetaEventStatus>();
 
                 // discover meta-event states
                 foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
@@ -150,28 +179,33 @@ namespace GuildWars2.ArenaNet.EventTimer
                     MetaEventStatus oldStatus = m_TimerData.Events[m_StatusListMap[meta.Id]];
                     if (oldStatus.StageId != status.StageId)
                     {
-                        m_TimerData.Events[m_StatusListMap[meta.Id]] = status;
-                        stateChanged = true;
+                        changedStatuses[m_StatusListMap[meta.Id]] = status;
                     }
                 }
 
-                if (stateChanged)
+                if (changedStatuses.Count > 0)
                 {
-                    // write to database
-                    FileStream stream = null;
+                    bool lockTaken = false;
                     try
                     {
-                        stream = m_JsonFile.Open(FileMode.Create, FileAccess.Write, FileShare.None);
-                        p_Serializer.WriteObject(stream, m_TimerData);
+                        m_TimerDataLock.Enter(ref lockTaken);
+
+                        foreach (KeyValuePair<int, MetaEventStatus> status in changedStatuses)
+                            m_TimerData.Events[status.Key] = status.Value;
+
+                        using (FileStream stream = m_JsonFile.Open(FileMode.Create, FileAccess.Write, FileShare.None))
+                        {
+                            p_Serializer.WriteObject(stream, m_TimerData);
+                        }
                     }
-                    catch (Exception)
-                    { }
+                    catch { }
                     finally
                     {
-                        if (stream != null)
-                            stream.Close();
+                        if (lockTaken)
+                            m_TimerDataLock.Exit();
                     }
                 }
+
 
                 // reset sync to 0
                 Interlocked.Exchange(ref m_TimerSync, 0);
