@@ -167,12 +167,8 @@ namespace GuildWars2.ArenaNet.EventTimer
                     }
                 }
 
-                // spin on our poll state
-                SpinWait.SpinUntil(() =>
-                {
-                    TimeSpan ts = DateTime.Now - startTime;
-                    return (ts.TotalSeconds > p_PollRate);
-                });
+                // sleep until we hit 30 seconds
+                Thread.Sleep((int)(p_PollRate * 1000) - (int)(DateTime.Now - startTime).TotalMilliseconds);
             }
         }
 

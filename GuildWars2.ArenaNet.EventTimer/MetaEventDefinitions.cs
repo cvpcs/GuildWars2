@@ -33,7 +33,7 @@ namespace GuildWars2.ArenaNet.EventTimer
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("commissar", "Dredge Commissar")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the dredge commissar")
                             .AddEvent(new Guid("95CA969B-0CC6-4604-B166-DBCCE125864F")) // Defeat the dredge commissar.
@@ -66,7 +66,7 @@ namespace GuildWars2.ArenaNet.EventTimer
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("shaman", "Fire Shaman", 1500, 3300)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill the Fire Shaman")
                             .AddEvent(new Guid("295E8D3B-8823-4960-A627-23E07575ED96"), EventStateType.Active) // Defeat the fire shaman and his minions.
