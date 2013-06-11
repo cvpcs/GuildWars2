@@ -42,6 +42,9 @@ namespace GuildWars2.ArenaNet.EventTimer
 
             MetaEvents.Add(new MetaEvent("eye", "Eye of Zhaitan")
                     // TODO: other stages?
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Search Zho'qafa Catacombs")
+                            .AddEvent(new Guid("42884028-C274-4DFA-A493-E750B8E1B353")) // Defend the Pact team as they search Zho'qafa Catacombs for artifacts.
+                        )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Destroy the Eye of Zhaitan")
                             .AddEvent(new Guid("A0796EC5-191D-4389-9C09-E48829D1FDB2")) // Destroy the Eye of Zhaitan
                         )
