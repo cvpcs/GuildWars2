@@ -67,7 +67,7 @@ namespace GuildWars2.ArenaNet.EventTimer
                 );
 
             /* READY FOR TEST */
-            MetaEvents.Add(new MetaEvent("shaman", "Fire Shaman")
+            MetaEvents.Add(new MetaEvent("shaman", "Fire Shaman", 1500, 3300)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill the Fire Shaman")
                             .AddEvent(new Guid("295E8D3B-8823-4960-A627-23E07575ED96"), EventStateType.Active) // Defeat the fire shaman and his minions.
                         )
@@ -75,13 +75,13 @@ namespace GuildWars2.ArenaNet.EventTimer
 
             /* READY FOR TEST */
             MetaEvents.Add(new MetaEvent("foulbear", "Foulbear Chieftain")
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault Foulbear Kraal") // TODO: determine the countdown
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault Foulbear Kraal", 600)
                             .AddEvent(new Guid("D9F1CF48-B1CB-49F5-BFAF-4CEC5E68C9CF")) // Assault Foulbear Kraal by killing its leaders before the ogres can rally.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy Foulbear Kraal") // TODO: determine the countdown
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy Foulbear Kraal", 600)
                             .AddEvent(new Guid("4B478454-8CD2-4B44-808C-A35918FA86AA")) // Destroy Foulbear Kraal before the ogres can rally.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill the Foulbear Chieftain") // TODO: determine the countdown
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill the Foulbear Chieftain", 600)
                             .AddEvent(new Guid("B4E6588F-232C-4F68-9D58-8803D67E564D")) // Kill the Foulbear Chieftain and her elite guards before the ogres can rally.
                         )
                 );
