@@ -11,6 +11,8 @@ namespace GuildWars2.Trader.API
     public abstract class Request<T>
         where T : class, new()
     {
+        public static int Timeout = 10000;
+
         private static string URL = "http://www.guildwarstrade.com/";
 
         protected abstract string GetAPIPath();
@@ -23,6 +25,7 @@ namespace GuildWars2.Trader.API
         {
             RestClient client = new RestClient();
             client.BaseUrl = URL;
+            client.Timeout = Timeout;
             client.AddHandler("text/html", new RestSharp.Deserializers.JsonDeserializer());
 
             RestRequest request = new RestRequest();

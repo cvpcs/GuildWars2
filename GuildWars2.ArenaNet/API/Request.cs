@@ -8,6 +8,8 @@ namespace GuildWars2.ArenaNet.API
     public abstract class Request<T>
         where T : class, new()
     {
+        public static int Timeout = 10000;
+
         private static string URL = "https://api.guildwars2.com";
         protected static string VERSION = "v1";
 
@@ -27,6 +29,7 @@ namespace GuildWars2.ArenaNet.API
         {
             RestClient client = new RestClient();
             client.BaseUrl = URL;
+            client.Timeout = Timeout;
 
             RestRequest request = new RestRequest();
             request.Method = APIMethod;

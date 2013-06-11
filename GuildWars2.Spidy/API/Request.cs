@@ -11,6 +11,8 @@ namespace GuildWars2.Spidy.API
     public abstract class Request<T>
         where T : class, new()
     {
+        public static int Timeout = 10000;
+
         private static string URL = "http://www.gw2spidy.com/";
         protected static string VERSION = "v0.9";
         protected static string FORMAT = "json";
@@ -25,6 +27,7 @@ namespace GuildWars2.Spidy.API
         {
             RestClient client = new RestClient();
             client.BaseUrl = URL;
+            client.Timeout = Timeout;
 
             RestRequest request = new RestRequest();
             request.Method = Method.GET;
