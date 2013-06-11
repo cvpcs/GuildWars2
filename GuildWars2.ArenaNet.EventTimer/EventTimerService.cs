@@ -19,7 +19,7 @@ namespace GuildWars2.ArenaNet.EventTimer
 {
     public partial class EventTimerService : ServiceBase
     {
-        private const uint p_PollRate = 30;
+        private static TimeSpan p_PollRate = new TimeSpan(0, 0, 30);
 
         private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(EventTimerData));
         
@@ -167,8 +167,10 @@ namespace GuildWars2.ArenaNet.EventTimer
                     }
                 }
 
-                // sleep until we hit 30 seconds
-                Thread.Sleep((int)(p_PollRate * 1000) - (int)(DateTime.Now - startTime).TotalMilliseconds);
+                // sleep until we hit our poll rate
+                TimeSpan calcSpan = DateTime.Now - startTime;
+                if (calcSpan < p_PollRate)
+                    Thread.Sleep(p_PollRate - calcSpan);
             }
         }
 
