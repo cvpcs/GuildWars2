@@ -1,27 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 
 using GuildWars2.ArenaNet.Model;
 
 namespace GuildWars2.ArenaNet.EventTimer
 {
-    [DataContract]
     public class MetaEvent
     {
-        [DataMember(Name = "id")]
         public string Id { get; private set; }
-        [DataMember(Name = "name")]
         public string Name { get; private set; }
 
-        [DataMember(Name = "min_spawn")]
         public uint MinSpawn { get; private set; }
-        [DataMember(Name = "max_spawn")]
         public uint MaxSpawn { get; private set; }
 
-        [DataMember(Name = "stages")]
-        public List<MetaEventStage> Stages { get; private set; }
+        public IList<MetaEventStage> Stages { get; private set; }
 
         public MetaEvent(string id, string name)
         {
