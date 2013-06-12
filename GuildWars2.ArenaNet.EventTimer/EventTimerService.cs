@@ -295,8 +295,9 @@ namespace GuildWars2.ArenaNet.EventTimer
 
         private void LogLine(string message = null, params object[] args)
         {
-            // only log to an existing file
-            if (!m_LogFile.Exists) return;
+            // only log to an existing file, otherwise fast fail
+            if (!File.Exists(m_LogFile.FullName))
+                return;
 
             try
             {
