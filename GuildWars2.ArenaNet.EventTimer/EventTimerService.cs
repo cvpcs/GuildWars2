@@ -12,6 +12,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading;
 using System.Timers;
+using TimeoutException = System.TimeoutException;
 using Timer = System.Timers.Timer;
 
 using GuildWars2.ArenaNet.API;
@@ -65,7 +66,8 @@ namespace GuildWars2.ArenaNet.EventTimer
             }
             catch { }
 
-            int buildId = new BuildRequest().Execute().BuildId;
+            BuildResponse build = new BuildRequest().Execute();
+            int buildId = (build != null ? build.BuildId : -1);
             if (m_TimerData == null || m_TimerData.Build != buildId)
             {
                 m_TimerData = new EventTimerData();
@@ -133,21 +135,28 @@ namespace GuildWars2.ArenaNet.EventTimer
 
         private void WorkerThread(object sender, ElapsedEventArgs e)
         {
-            // attempt to set the sync
-            if (Interlocked.CompareExchange(ref m_TimerSync, 1, 0) == 0)
+            // attempt to set the sync, if another of us is running, just exit
+            if (Interlocked.CompareExchange(ref m_TimerSync, 1, 0) != 0)
+                return;
+
+            // wrap in a try-catch so we can release our interlock if something fails
+            try
             {
                 LogLine("Worker thread executing...");
 
-                // check if build has changed
-                int buildId = new BuildRequest().Execute().BuildId;
-                if (buildId != m_TimerData.Build)
-                    ResetTimers(buildId);
+                // check if build has changed, reset timers if it has
+                BuildResponse build = new BuildRequest().Execute();
+                if (build != null && build.BuildId != m_TimerData.Build)
+                    ResetTimers(build.BuildId);
 
                 // get data
                 EventsResponse response = new EventsRequest(1007).Execute();
-                IList<EventState> metaEvents = response.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)).ToList();
+                if (response == null)
+                    throw new TimeoutException("Request timed out when attempting to retrieve event data.");
 
-                m_TimerData.Timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+                long timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+
+                IList<EventState> metaEvents = response.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)).ToList();
 
                 IDictionary<int, MetaEventStatus> changedStatuses = new Dictionary<int, MetaEventStatus>();
 
@@ -205,6 +214,8 @@ namespace GuildWars2.ArenaNet.EventTimer
                         m_TimerDataLock.Enter(ref lockTaken);
                         LogLine("Lock acquired, updating and exporting...");
 
+                        m_TimerData.Timestamp = timestamp;
+
                         foreach (KeyValuePair<int, MetaEventStatus> status in changedStatuses)
                             m_TimerData.Events[status.Key] = status.Value;
 
@@ -225,42 +236,58 @@ namespace GuildWars2.ArenaNet.EventTimer
                         }
                     }
                 }
-
-
-                // reset sync to 0
-                Interlocked.Exchange(ref m_TimerSync, 0);
-
-                LogLine("Worker thread complete");
             }
+            catch (Exception ex)
+            {
+                // log an exception so it can be fixed
+                LogLine("Exception thrown in worker thread: {0}", ex.Message);
+            }
+
+            // reset sync to 0
+            Interlocked.Exchange(ref m_TimerSync, 0);
+
+            LogLine("Worker thread complete");
         }
 
         private void ResetTimers(int buildId)
         {
-            LogLine("Resetting Timers for build {0}", buildId);
+            LogLine("Resetting Timers for build {0}, acquiring lock...", buildId);
 
-            m_TimerData.Build = buildId;
-            m_TimerData.Timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
-            m_TimerData.Events = new List<MetaEventStatus>();
-
-            foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
+            bool lockTaken = false;
+            try
             {
-                m_TimerData.Events.Add(new MetaEventStatus()
+                m_TimerDataLock.Enter(ref lockTaken);
+
+                m_TimerData.Build = buildId;
+                m_TimerData.Timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+                m_TimerData.Events = new List<MetaEventStatus>();
+
+                foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
                 {
-                    Id = meta.Id,
-                    Name = meta.Name,
-                    Countdown = 0,
-                    StageId = -1,
-                    StageTypeEnum = MetaEventStage.StageType.Reset,
-                    StageName = null,
-                    Timestamp = m_TimerData.Timestamp
-                });
-            }
+                    m_TimerData.Events.Add(new MetaEventStatus()
+                    {
+                        Id = meta.Id,
+                        Name = meta.Name,
+                        Countdown = 0,
+                        StageId = -1,
+                        StageTypeEnum = MetaEventStage.StageType.Reset,
+                        StageName = null,
+                        Timestamp = m_TimerData.Timestamp
+                    });
+                }
 
-            m_StatusListMap = new Dictionary<string, int>();
-            for (int i = 0; i < m_TimerData.Events.Count; i++)
+                m_StatusListMap = new Dictionary<string, int>();
+                for (int i = 0; i < m_TimerData.Events.Count; i++)
+                {
+                    MetaEventStatus status = m_TimerData.Events[i];
+                    m_StatusListMap[status.Id] = i;
+                }
+            }
+            catch { }
+            finally
             {
-                MetaEventStatus status = m_TimerData.Events[i];
-                m_StatusListMap[status.Id] = i;
+                if (lockTaken)
+                    m_TimerDataLock.Exit();
             }
 
             LogLine("Timer reset for build {0} complete", buildId);
