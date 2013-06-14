@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.EventTi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp", "RestSharp\RestSharp.csproj", "{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.EventTimer.Test", "GuildWars2.ArenaNet.EventTimer.Test\GuildWars2.ArenaNet.EventTimer.Test.csproj", "{80726AA3-0790-412D-B5D1-8D1373AD668A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -251,6 +253,18 @@ Global
 		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Release|Mono.ActiveCfg = Release|Any CPU
 		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Release|Win32.ActiveCfg = Release|Any CPU
+		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Debug|Mono.ActiveCfg = Debug|Any CPU
+		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Release|Mono.ActiveCfg = Release|Any CPU
+		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
