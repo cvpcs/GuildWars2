@@ -163,7 +163,7 @@ namespace GuildWars2.ArenaNet.EventTimer
                 // discover meta-event states
                 foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
                 {
-                    MetaEvent.MetaEventState state = meta.GetState(metaEvents);
+                    int stageId = meta.GetStageId(metaEvents);
 
                     // stock state
                     MetaEventStatus status = new MetaEventStatus()
@@ -172,16 +172,16 @@ namespace GuildWars2.ArenaNet.EventTimer
                         Name = meta.Name,
                         MinCountdown = meta.MinSpawn,
                         MaxCountdown = meta.MaxSpawn,
-                        StageId = state.StageId,
+                        StageId = stageId,
                         StageType = null,
                         StageName = null,
                         Timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds
                     };
 
                     // we're in a stage
-                    if (state.StageId >= 0)
+                    if (stageId >= 0)
                     {
-                        MetaEventStage stage = meta.Stages[state.StageId];
+                        MetaEventStage stage = meta.Stages[stageId];
 
                         if (stage.Countdown > 0 && stage.Countdown != uint.MaxValue)
                         {

@@ -40,13 +40,9 @@ namespace GuildWars2.ArenaNet.EventTimer
             return this;
         }
 
-        public MetaEventState GetState(IList<EventState> eventStates)
+        public int GetStageId(IList<EventState> eventStates)
         {
-            MetaEventState state = new MetaEventState()
-                {
-                    StageId = -1,
-                    EventState = EventStateType.Invalid
-                };
+            int stageId = -1;
 
             for (int i = 0; i < Stages.Count; i++)
             {
@@ -56,14 +52,12 @@ namespace GuildWars2.ArenaNet.EventTimer
 
                 if (stageEvents.Where(es => es.StateEnum == EventStateType.Active).Count() > 0)
                 {
-                    state.StageId = i;
-                    state.EventState = EventStateType.Active;
+                    stageId = i;
                     break;
                 }
                 else if (stageEvents.Where(es => es.StateEnum == EventStateType.Preparation).Count() > 0)
                 {
-                    state.StageId = i;
-                    state.EventState = EventStateType.Preparation;
+                    stageId = i;
                     break;
                 }
                 else if (stageEvents.Where(es => es.StateEnum == EventStateType.Warmup).Count() > 0)
@@ -72,20 +66,13 @@ namespace GuildWars2.ArenaNet.EventTimer
                             (i > 1 && Stages[i - 1].Type == MetaEventStage.StageType.Recovery
                                     && eventStates.Where(es => es.StateEnum == EventStateType.Success && Stages[i - 1].EventStates.Select(ses => ses.Event).Contains(es.EventId)).Count() > 0))
                     {
-                        state.StageId = i;
-                        state.EventState = EventStateType.Warmup;
+                        stageId = i;
                         break;
                     }
                 }
             }
 
-            return state;
-        }
-
-        public struct MetaEventState
-        {
-            public int StageId;
-            public EventStateType EventState;
+            return stageId;
         }
     }
 }
