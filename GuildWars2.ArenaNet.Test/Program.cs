@@ -130,6 +130,16 @@ namespace GuildWars2.ArenaNet.Test
                     return (ts.TotalSeconds > 30);
                 });
             }*/
+
+            int i;
+            ContinentsResponse cr = new ContinentsRequest().Execute();
+            MapsResponse mr = new MapsRequest().Execute();
+            MapFloorResponse mfr = new MapFloorRequest(int.Parse(cr.Continents.First().Key), cr.Continents.First().Value.Floors.First()).Execute();
+
+            i = cr.Continents.Count;
+            i = mr.Maps.Count;
+            i = mfr.Regions.Count;
+
         }
     }
 }
