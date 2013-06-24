@@ -1,0 +1,11 @@
+﻿<Window x:Class="GuildWars2.ArenaNet.Mapper.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:a="http://schemas.awesomium.com/winfx"  
+        Title="MainWindow" Height="600" Width="800">
+    <Canvas Name="Canvas">
+        <a:WebControl Name="Awesomium"
+                Width="{Binding ActualWidth, ElementName=Canvas}"
+                Height="{Binding ActualHeight, ElementName=Canvas}"/>
+    </Canvas>
+</Window>
