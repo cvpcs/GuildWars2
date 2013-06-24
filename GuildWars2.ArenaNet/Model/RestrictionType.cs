@@ -2,9 +2,11 @@
 
 namespace GuildWars2.ArenaNet.Model
 {
+    [Flags]
     public enum RestrictionType
     {
-        Invalid, // Unknown type
+        None,
+        Invalid,
         Asura,
         Charr,
         Human,

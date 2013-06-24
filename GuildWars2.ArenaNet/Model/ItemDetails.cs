@@ -38,62 +38,62 @@ namespace GuildWars2.ArenaNet.Model
         }
 
         public List<string> GameTypes { get; set; }
-        public List<GameType> GameTypesEnum
+        public GameType GameTypesEnum
         {
             get
             {
-                List<GameType> types = new List<GameType>();
+                GameType typeAll = GameType.None;
 
                 foreach(string item in GameTypes)
                 {
                     GameType type;
                     if (Enum.TryParse<GameType>(item, true, out type))
-                        types.Add(type);
+                        typeAll |= type;
                     else
-                        types.Add(GameType.Invalid);
+                        typeAll |= GameType.Invalid;
                 }
 
-                return types;
+                return typeAll;
             }
         }
  
         public List<string> Flags { get; set; }
-        public List<FlagType> FlagsEnum
+        public FlagType FlagsEnum
         {
             get
             {
-                List<FlagType> types = new List<FlagType>();
+                FlagType typeAll = FlagType.None;
 
                 foreach(string item in Flags)
                 {
                     FlagType type;
                     if (Enum.TryParse<FlagType>(item, true, out type))
-                        types.Add(type);
+                        typeAll |= type;
                     else
-                        types.Add(FlagType.Invalid);
+                        typeAll |= FlagType.Invalid;
                 }
 
-                return types;
+                return typeAll;
             }
         }
 
         public List<string> Restrictions { get; set; }
-        public List<RestrictionType> RestrictionsEnum
+        public RestrictionType RestrictionsEnum
         {
             get
             {
-                List<RestrictionType> types = new List<RestrictionType>();
+                RestrictionType typeAll = RestrictionType.None;
 
-                foreach(string item in Restrictions)
+                foreach (string item in Flags)
                 {
                     RestrictionType type;
                     if (Enum.TryParse<RestrictionType>(item, true, out type))
-                        types.Add(type);
+                        typeAll |= type;
                     else
-                        types.Add(RestrictionType.Invalid);
+                        typeAll |= RestrictionType.Invalid;
                 }
 
-                return types;
+                return typeAll;
             }
         }
 
