@@ -49,6 +49,8 @@
     <Compile Include="API\ColorsResponse.cs" />
     <Compile Include="API\ContinentsRequest.cs" />
     <Compile Include="API\ContinentsResponse.cs" />
+    <Compile Include="API\EventDetailsRequest.cs" />
+    <Compile Include="API\EventDetailsResponse.cs" />
     <Compile Include="API\MapFloorRequest.cs" />
     <Compile Include="API\MapFloorResponse.cs" />
     <Compile Include="API\MapsRequest.cs" />
@@ -81,6 +83,10 @@
     <Compile Include="API\Wvw\ObjectiveNamesResponse.cs" />
     <Compile Include="Model\Color.cs" />
     <Compile Include="Model\Continent.cs" />
+    <Compile Include="Model\EventFlagType.cs" />
+    <Compile Include="Model\LocationType.cs" />
+    <Compile Include="Model\EventDetails.cs" />
+    <Compile Include="Model\Location.cs" />
     <Compile Include="Model\MappedModel.cs" />
     <Compile Include="Model\Task.cs" />
     <Compile Include="Model\Sector.cs" />
