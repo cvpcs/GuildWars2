@@ -7,7 +7,7 @@ namespace GuildWars2.ArenaNet.Model
     {
         public string Name { get; set; }
 
-        public List<int> LabelCoord { get; set; }
+        public List<double> LabelCoord { get; set; }
 
         public Dictionary<string, FloorMapDetails> Maps { get; set; }
     }
