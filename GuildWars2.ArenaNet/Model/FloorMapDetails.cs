@@ -16,13 +16,13 @@ namespace GuildWars2.ArenaNet.Model
         public List<List<int>> MapRect { get; set; }
 
         public List<List<int>> ContinentRect { get; set; }
+        
+        //public List<PointOfInterest> PointsOfInterest { get; set; }
 
-        public List<PointOfInterest> PointsOfInterest { get; set; }
+        //public List<Task> Tasks { get; set; }
 
-        public List<Task> Tasks { get; set; }
+        //public List<MappedModel> SkillChallenges { get; set; }
 
-        public List<MappedModel> SkillChallenges { get; set; }
-
-        public List<Sector> Sectors { get; set; }
+        //public List<Sector> Sectors { get; set; }
     }
 }
