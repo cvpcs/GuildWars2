@@ -6,13 +6,30 @@ namespace GuildWars2.ArenaNet.Mapper
 {
     public class MumbleLink : IDisposable
     {
+        private uint m_LastTick = 0;
         private bool m_Disposed = false;
+
         private IntPtr m_Handle;
         private IntPtr m_LinkedMem;
 
         private LinkedMem Link
         { get { return (LinkedMem)Marshal.PtrToStructure(m_LinkedMem, typeof(LinkedMem)); } }
 
+        public bool DataAvailable
+        {
+            get
+            {
+                uint uiTick = Link.uiTick;
+
+                if (uiTick > m_LastTick)
+                {
+                    m_LastTick = uiTick;
+                    return true;
+                }
+
+                return false;
+            }
+        }
 
         public string GameName
         { get { return Link.name; } }
