@@ -3,11 +3,56 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ControlTemplate x:Key="PlayerPushPin">
+        <ControlTemplate x:Key="PlayerPushpin">
             <Grid>
                 <Rectangle Width="32" Height="32">
                     <Rectangle.Fill>
                         <ImageBrush ImageSource="/GuildWars2.ArenaNet.Mapper;component/Resources/player_position.png" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="WaypointPushpin">
+            <Grid>
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="/GuildWars2.ArenaNet.Mapper;component/Resources/waypoint.png" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="PointOfInterestPushpin">
+            <Grid>
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="/GuildWars2.ArenaNet.Mapper;component/Resources/poi.png" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="VistaPushpin">
+            <Grid>
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="/GuildWars2.ArenaNet.Mapper;component/Resources/vista.png" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="RenownHeartPushpin">
+            <Grid>
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="/GuildWars2.ArenaNet.Mapper;component/Resources/renown_heart.png" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="SkillPointPushpin">
+            <Grid>
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="/GuildWars2.ArenaNet.Mapper;component/Resources/skill_point.png" />
                     </Rectangle.Fill>
                 </Rectangle>
             </Grid>

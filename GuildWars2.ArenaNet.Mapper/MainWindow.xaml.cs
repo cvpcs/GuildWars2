@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -34,6 +33,11 @@ namespace GuildWars2.ArenaNet.Mapper
 
         private Pushpin m_Player;
         private MapLayer m_Waypoints;
+        private MapLayer m_PointsOfInterest;
+        private MapLayer m_Vistas;
+        private MapLayer m_RenownHearts;
+        private MapLayer m_SkillPoints;
+        private IDictionary<int, IList<UIElement>> m_MapElements;
 
         public MainWindow()
         {
@@ -43,19 +47,122 @@ namespace GuildWars2.ArenaNet.Mapper
             m_MapData = new Dictionary<int, FloorMapDetails>();
 
             m_Player = new Pushpin();
+            m_Player.Template = (ControlTemplate)Application.Current.Resources["PlayerPushpin"];
             m_Player.PositionOrigin = PositionOrigin.Center;
-            m_Player.Template = (ControlTemplate)Application.Current.Resources["PlayerPushPin"];
+            m_Player.Visibility = Visibility.Hidden;
             m_Map.Children.Add(m_Player);
-            m_Waypoints = new MapLayer();
-            m_Map.Children.Add(m_Waypoints);
 
-            foreach(FloorRegion region in new MapFloorRequest(1, 1).Execute().Regions.Values)
+            m_Waypoints = new MapLayer();
+            m_PointsOfInterest = new MapLayer();
+            m_Vistas = new MapLayer();
+            m_RenownHearts = new MapLayer();
+            m_SkillPoints = new MapLayer();
+
+            m_Map.Children.Add(m_Waypoints);
+            m_Map.Children.Add(m_PointsOfInterest);
+            m_Map.Children.Add(m_Vistas);
+            m_Map.Children.Add(m_RenownHearts);
+            m_Map.Children.Add(m_SkillPoints);
+
+            m_MapElements = new Dictionary<int, IList<UIElement>>();
+
+            ControlTemplate waypointPushpin = (ControlTemplate)Application.Current.Resources["WaypointPushpin"];
+            ControlTemplate pointOfInterestPushpin = (ControlTemplate)Application.Current.Resources["PointOfInterestPushpin"];
+            ControlTemplate vistaPushpin = (ControlTemplate)Application.Current.Resources["VistaPushpin"];
+            ControlTemplate renownHeartPushpin = (ControlTemplate)Application.Current.Resources["RenownHeartPushpin"];
+            ControlTemplate skillPointPushpin = (ControlTemplate)Application.Current.Resources["SkillPointPushpin"];
+
+            MapFloorResponse response = new MapFloorRequest(1, 1).Execute();
+            if (response != null)
             {
-                foreach (string mapId in region.Maps.Keys)
+                foreach (FloorRegion region in response.Regions.Values)
                 {
-                    m_MapData.Add(int.Parse(mapId), region.Maps[mapId]);
+                    foreach (string mapId in region.Maps.Keys)
+                    {
+                        int mid = int.Parse(mapId);
+                        FloorMapDetails map = region.Maps[mapId];
+
+                        m_MapData.Add(mid, map);
+                        m_MapElements.Add(mid, new List<UIElement>());
+
+                        foreach (PointOfInterest poi in map.PointsOfInterest)
+                        {
+                            Pushpin poiPin = new Pushpin();
+                            poiPin.PositionOrigin = PositionOrigin.Center;
+                            poiPin.Location = m_Map.Unproject(new Point(poi.Coord[0], poi.Coord[1]), m_Map.MaxZoomLevel);
+                            poiPin.Visibility = Visibility.Hidden;
+
+                            if (!string.IsNullOrWhiteSpace(poi.Name))
+                                poiPin.ToolTip = poi.Name;
+
+                            switch (poi.TypeEnum)
+                            {
+                                case PointOfInterestType.Waypoint:
+                                    poiPin.Template = waypointPushpin;
+                                    m_Waypoints.Children.Add(poiPin);
+                                    break;
+                                case PointOfInterestType.Landmark:
+                                    poiPin.Template = pointOfInterestPushpin;
+                                    m_PointsOfInterest.Children.Add(poiPin);
+                                    break;
+                                case PointOfInterestType.Vista:
+                                    poiPin.Template = vistaPushpin;
+                                    m_Vistas.Children.Add(poiPin);
+                                    break;
+                                default:
+                                    continue;
+                            }
+
+                            m_MapElements[mid].Add(poiPin);
+                        }
+
+                        foreach (Task rh in map.Tasks)
+                        {
+                            Pushpin rhPin = new Pushpin();
+                            rhPin.PositionOrigin = PositionOrigin.Center;
+                            rhPin.Location = m_Map.Unproject(new Point(rh.Coord[0], rh.Coord[1]), m_Map.MaxZoomLevel);
+                            rhPin.Visibility = Visibility.Hidden;
+                            rhPin.Template = renownHeartPushpin;
+
+                            if (!string.IsNullOrWhiteSpace(rh.Objective))
+                                rhPin.ToolTip = string.Format("{0} ({1})", rh.Objective, rh.Level);
+
+                            m_RenownHearts.Children.Add(rhPin);
+                            m_MapElements[mid].Add(rhPin);
+                        }
+
+                        foreach (MappedModel sp in map.SkillChallenges)
+                        {
+                            Pushpin spPin = new Pushpin();
+                            spPin.PositionOrigin = PositionOrigin.Center;
+                            spPin.Location = m_Map.Unproject(new Point(sp.Coord[0], sp.Coord[1]), m_Map.MaxZoomLevel);
+                            spPin.Visibility = Visibility.Hidden;
+                            spPin.Template = skillPointPushpin;
+                            m_SkillPoints.Children.Add(spPin);
+                            m_MapElements[mid].Add(spPin);
+                        }
+                    }
                 }
             }
+
+            m_Map.ViewChangeEnd += (s, e) =>
+                {
+                    foreach (IList<UIElement> elements in m_MapElements.Values)
+                    {
+                        foreach (UIElement element in elements)
+                            element.Visibility = Visibility.Hidden;
+                    }
+
+                    if (m_Map.ZoomLevel >= 3)
+                    {
+                        int mid = GetMapByCenter(m_Map.Project(m_Map.Center, m_Map.MaxZoomLevel));
+                        if (m_MapElements.ContainsKey(mid))
+                        {
+                            foreach (UIElement element in m_MapElements[mid])
+                                element.Visibility = Visibility.Visible;
+                        }
+                    }
+                };
 
             m_WorkerRunning = true;
             m_WorkerThread = new Thread(WorkerThread);
@@ -70,28 +177,46 @@ namespace GuildWars2.ArenaNet.Mapper
             base.OnClosed(e);
         }
 
+        private int GetMapByCenter(Point center)
+        {
+            foreach (KeyValuePair<int, FloorMapDetails> entry in m_MapData)
+            {
+                if (center.X > entry.Value.ContinentRect[0][0] &&
+                        center.X < entry.Value.ContinentRect[1][0] &&
+                        center.Y > entry.Value.ContinentRect[0][1] &&
+                        center.Y < entry.Value.ContinentRect[1][1])
+                    return entry.Key;
+            }
+
+            return -1;
+        }
+
         private void WorkerThread()
         {
             while (m_WorkerRunning)
             {
                 try
                 {
-                    FloorMapDetails map = m_MapData[m_Link.Map];
+                    if (m_Link.DataAvailable && m_MapData.ContainsKey(m_Link.Map))
+                    {
+                        FloorMapDetails map = m_MapData[m_Link.Map];
 
-                    // convert back to inches
-                    double posX = m_Link.PositionX * 39.3700787;
-                    double posZ = m_Link.PositionZ * 39.3700787;
-                    double rot = m_Link.RotationPlayer;
+                        // convert back to inches
+                        double posX = m_Link.PositionX * 39.3700787;
+                        double posZ = m_Link.PositionZ * 39.3700787;
+                        double rot = m_Link.RotationPlayer;
 
-                    posX = (double)(posX - map.MapRect[0][0]) / (double)(map.MapRect[1][0] - map.MapRect[0][0]) * (map.ContinentRect[1][0] - map.ContinentRect[0][0]) + map.ContinentRect[0][0];
-                    posZ = (double)(-posZ - map.MapRect[0][1]) / (double)(map.MapRect[1][1] - map.MapRect[0][1]) * (map.ContinentRect[1][1] - map.ContinentRect[0][1]) + map.ContinentRect[0][1];
+                        posX = (double)(posX - map.MapRect[0][0]) / (double)(map.MapRect[1][0] - map.MapRect[0][0]) * (map.ContinentRect[1][0] - map.ContinentRect[0][0]) + map.ContinentRect[0][0];
+                        posZ = (double)(-posZ - map.MapRect[0][1]) / (double)(map.MapRect[1][1] - map.MapRect[0][1]) * (map.ContinentRect[1][1] - map.ContinentRect[0][1]) + map.ContinentRect[0][1];
 
-                    // move the player icon
-                    Dispatcher.Invoke(() =>
-                        {
-                            m_Player.Location = m_Map.Unproject(new Point(posX, posZ), m_Map.MaxZoomLevel);
-                            m_Player.Heading = rot;
-                        }, DispatcherPriority.Render, new CancellationToken(), new TimeSpan(0, 0, 1));
+                        // move the player icon
+                        Dispatcher.Invoke(() =>
+                            {
+                                m_Player.Location = m_Map.Unproject(new Point(posX, posZ), m_Map.MaxZoomLevel);
+                                m_Player.Heading = rot;
+                                m_Player.Visibility = Visibility.Visible;
+                            }, DispatcherPriority.Render, new CancellationToken(), new TimeSpan(0, 0, 1));
+                    }
                 }
                 catch
                 { }
