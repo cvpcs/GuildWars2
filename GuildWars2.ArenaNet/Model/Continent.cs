@@ -7,7 +7,7 @@ namespace GuildWars2.ArenaNet.Model
     {
         public string Name { get; set; }
 
-        public List<int> ContinentDims { get; set; }
+        public List<double> ContinentDims { get; set; }
 
         public int MinZoom { get; set; }
 

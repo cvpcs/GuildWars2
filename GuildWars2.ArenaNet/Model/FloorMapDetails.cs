@@ -13,9 +13,9 @@ namespace GuildWars2.ArenaNet.Model
 
         public int DefaultFloor { get; set; }
 
-        public List<List<int>> MapRect { get; set; }
+        public List<List<double>> MapRect { get; set; }
 
-        public List<List<int>> ContinentRect { get; set; }
+        public List<List<double>> ContinentRect { get; set; }
         
         public List<PointOfInterest> PointsOfInterest { get; set; }
 

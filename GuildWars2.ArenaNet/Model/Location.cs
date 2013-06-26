@@ -27,7 +27,7 @@ namespace GuildWars2.ArenaNet.Model
         #endregion
 
         #region Poly
-        public List<int> ZRange { get; set; }
+        public List<double> ZRange { get; set; }
 
         public List<List<double>> Points { get; set; }
         #endregion
