@@ -61,25 +61,112 @@ namespace GuildWars2.ArenaNet.Mapper.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
-        ///&lt;html&gt;
-        ///    &lt;head&gt;
-        ///        &lt;title&gt;ArenaNet Mapper&lt;/title&gt;
-        ///        &lt;meta charset=&quot;utf-8&quot; /&gt;
-        ///        &lt;script src=&quot;http://code.jquery.com/jquery.min.js&quot;&gt;&lt;/script&gt;
-        ///        &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.5.1/leaflet.js&quot;&gt;&lt;/script&gt;
-        ///        &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.5.1/leaflet.css&quot; /&gt;
-        ///        &lt;style type=&quot;text/css&quot;&gt;
-        ///    		body {
-        ///				text-align: center;
-        ///				min-width: 500px;
-        ///			}
-        ///
-        ///			.leaflet-container {        /// [rest of string was truncated]&quot;;.
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static string map_html {
+        internal static System.Drawing.Bitmap event_boss {
             get {
-                return ResourceManager.GetString("map_html", resourceCulture);
+                object obj = ResourceManager.GetObject("event_boss", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap event_boss_grey {
+            get {
+                object obj = ResourceManager.GetObject("event_boss_grey", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap event_star {
+            get {
+                object obj = ResourceManager.GetObject("event_star", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap event_star_grey {
+            get {
+                object obj = ResourceManager.GetObject("event_star_grey", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap player_position {
+            get {
+                object obj = ResourceManager.GetObject("player_position", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap poi {
+            get {
+                object obj = ResourceManager.GetObject("poi", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap renown_heart {
+            get {
+                object obj = ResourceManager.GetObject("renown_heart", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap skill_point {
+            get {
+                object obj = ResourceManager.GetObject("skill_point", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap skill_point_grey {
+            get {
+                object obj = ResourceManager.GetObject("skill_point_grey", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap vista {
+            get {
+                object obj = ResourceManager.GetObject("vista", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap waypoint {
+            get {
+                object obj = ResourceManager.GetObject("waypoint", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

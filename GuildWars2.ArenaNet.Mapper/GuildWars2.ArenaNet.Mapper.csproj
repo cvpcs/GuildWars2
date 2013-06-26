@@ -50,13 +50,12 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Awesomium.Core, Version=1.7.0.5, Culture=neutral, PublicKeyToken=e1a0d7c8071a5214, processorArchitecture=x86" />
-    <Reference Include="awesomium.windows.controls, Version=1.7.0.5, Culture=neutral, PublicKeyToken=7a34e179b8b61c39, processorArchitecture=x86" />
     <Reference Include="Microsoft.Maps.MapControl.WPF">
       <HintPath>D:\Program Files (x86)\Bing Maps WPF Control\V1\Libraries\Microsoft.Maps.MapControl.WPF.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -80,6 +79,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArenaNetMap.cs" />
+    <Compile Include="ArenaNetTileLayer.cs" />
+    <Compile Include="ArenaNetTileLayerSource.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -116,7 +118,6 @@
       <Name>GuildWars2.ArenaNet</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
@@ -141,7 +142,19 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\map.html" />
+    <Resource Include="Resources\player_position.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\event_boss.png" />
+    <Resource Include="Resources\event_boss_grey.png" />
+    <Resource Include="Resources\event_star.png" />
+    <Resource Include="Resources\event_star_grey.png" />
+    <Resource Include="Resources\poi.png" />
+    <Resource Include="Resources\renown_heart.png" />
+    <Resource Include="Resources\skill_point.png" />
+    <Resource Include="Resources\skill_point_grey.png" />
+    <Resource Include="Resources\vista.png" />
+    <Resource Include="Resources\waypoint.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

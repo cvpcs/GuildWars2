@@ -12,9 +12,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
-using Awesomium.Core;
-using Awesomium.Windows.Controls;
+using Microsoft.Maps.MapControl.WPF;
 
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
@@ -28,8 +28,12 @@ namespace GuildWars2.ArenaNet.Mapper
     {
         private MumbleLink m_Link;
         private IDictionary<int, FloorMapDetails> m_MapData;
-        private int m_TimerSync;
-        private System.Timers.Timer m_Timer;
+
+        private bool m_WorkerRunning;
+        private Thread m_WorkerThread;
+
+        private Pushpin m_Player;
+        private MapLayer m_Waypoints;
 
         public MainWindow()
         {
@@ -37,6 +41,13 @@ namespace GuildWars2.ArenaNet.Mapper
 
             m_Link = new MumbleLink();
             m_MapData = new Dictionary<int, FloorMapDetails>();
+
+            m_Player = new Pushpin();
+            m_Player.PositionOrigin = PositionOrigin.Center;
+            m_Player.Template = (ControlTemplate)Application.Current.Resources["PlayerPushPin"];
+            m_Map.Children.Add(m_Player);
+            m_Waypoints = new MapLayer();
+            m_Map.Children.Add(m_Waypoints);
 
             foreach(FloorRegion region in new MapFloorRequest(1, 1).Execute().Regions.Values)
             {
@@ -46,64 +57,47 @@ namespace GuildWars2.ArenaNet.Mapper
                 }
             }
 
-            m_TimerSync = 0;
-            m_Timer = new System.Timers.Timer(100);
-            m_Timer.Elapsed += TimerElapsed;
-
-            // load the html once the native view is ready
-            Awesomium.NativeViewInitialized += (o, e) =>
-                {
-                    Awesomium.LoadHTML(Properties.Resources.map_html);
-                    m_Timer.Start();
-                };
+            m_WorkerRunning = true;
+            m_WorkerThread = new Thread(WorkerThread);
+            m_WorkerThread.Start();
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            m_Timer.Stop();
-
-            // wait for any existing threads to complete
-            SpinWait.SpinUntil(() => Interlocked.CompareExchange(ref m_TimerSync, -1, 0) == 0);
+            m_WorkerRunning = false;
+            m_WorkerThread.Join();
 
             base.OnClosed(e);
-
-            // shutdown awesomium
-            Awesomium.Dispose();
-            WebCore.Shutdown();
         }
 
-        private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void WorkerThread()
         {
-            // attempt to set the sync, if another of us is running, just exit
-            if (Interlocked.CompareExchange(ref m_TimerSync, 1, 0) != 0)
-                return;
-
-            try
+            while (m_WorkerRunning)
             {
-                FloorMapDetails map = m_MapData[m_Link.Map];
+                try
+                {
+                    FloorMapDetails map = m_MapData[m_Link.Map];
 
-                // convert back to inches
-                double posX = m_Link.PositionX * 39.3700787;
-                double posZ = m_Link.PositionZ * 39.3700787;
+                    // convert back to inches
+                    double posX = m_Link.PositionX * 39.3700787;
+                    double posZ = m_Link.PositionZ * 39.3700787;
+                    double rot = m_Link.RotationPlayer;
 
-                posX = (double)(posX - map.MapRect[0][0]) / (double)(map.MapRect[1][0] - map.MapRect[0][0]) * (map.ContinentRect[1][0] - map.ContinentRect[0][0]) + map.ContinentRect[0][0];
-                posZ = (double)(-posZ - map.MapRect[0][1]) / (double)(map.MapRect[1][1] - map.MapRect[0][1]) * (map.ContinentRect[1][1] - map.ContinentRect[0][1]) + map.ContinentRect[0][1];
+                    posX = (double)(posX - map.MapRect[0][0]) / (double)(map.MapRect[1][0] - map.MapRect[0][0]) * (map.ContinentRect[1][0] - map.ContinentRect[0][0]) + map.ContinentRect[0][0];
+                    posZ = (double)(-posZ - map.MapRect[0][1]) / (double)(map.MapRect[1][1] - map.MapRect[0][1]) * (map.ContinentRect[1][1] - map.ContinentRect[0][1]) + map.ContinentRect[0][1];
 
-                Dispatcher.Invoke(() =>
-                    {
-                        try
+                    // move the player icon
+                    Dispatcher.Invoke(() =>
                         {
-                            Awesomium.ExecuteJavascript(string.Format("updatePlayer('{0}', {1}, {2}, {3});", m_Link.PlayerName, posX, posZ, m_Link.RotationPlayer));
-                        }
-                        catch
-                        { }
-                    });
-            }
-            catch
-            { }
+                            m_Player.Location = m_Map.Unproject(new Point(posX, posZ), m_Map.MaxZoomLevel);
+                            m_Player.Heading = rot;
+                        }, DispatcherPriority.Render, new CancellationToken(), new TimeSpan(0, 0, 1));
+                }
+                catch
+                { }
 
-            // reset sync to 0
-            Interlocked.Exchange(ref m_TimerSync, 0);
+                Thread.Sleep(100);
+            }
         }
     }
 }
