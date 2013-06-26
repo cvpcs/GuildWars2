@@ -191,6 +191,16 @@ namespace GuildWars2.ArenaNet.Mapper
             return -1;
         }
 
+        private double TranslateX(double x, List<List<double>> mapRect, List<List<double>> continentRect)
+        {
+            return (x - mapRect[0][0]) / (mapRect[1][0] - mapRect[0][0]) * (continentRect[1][0] - continentRect[0][0]) + continentRect[0][0];
+        }
+
+        private double TranslateZ(double z, List<List<double>> mapRect, List<List<double>> continentRect)
+        {
+            return (-z - mapRect[0][1]) / (mapRect[1][1] - mapRect[0][1]) * (continentRect[1][1] - continentRect[0][1]) + continentRect[0][1];
+        }
+
         private void WorkerThread()
         {
             while (m_WorkerRunning)
@@ -206,8 +216,8 @@ namespace GuildWars2.ArenaNet.Mapper
                         double posZ = m_Link.PositionZ * 39.3700787;
                         double rot = m_Link.RotationPlayer;
 
-                        posX = (double)(posX - map.MapRect[0][0]) / (double)(map.MapRect[1][0] - map.MapRect[0][0]) * (map.ContinentRect[1][0] - map.ContinentRect[0][0]) + map.ContinentRect[0][0];
-                        posZ = (double)(-posZ - map.MapRect[0][1]) / (double)(map.MapRect[1][1] - map.MapRect[0][1]) * (map.ContinentRect[1][1] - map.ContinentRect[0][1]) + map.ContinentRect[0][1];
+                        posX = TranslateX(posX, map.MapRect, map.ContinentRect);
+                        posZ = TranslateZ(posZ, map.MapRect, map.ContinentRect);
 
                         // move the player icon
                         Dispatcher.Invoke(() =>
