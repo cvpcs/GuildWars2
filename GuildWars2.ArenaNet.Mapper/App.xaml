@@ -6,12 +6,12 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ControlTemplate x:Key="ImagePushpinTemplate" TargetType="l:ImagePushpin">
-                <Rectangle Width="{Binding Path=Width, RelativeSource={RelativeSource FindAncestor,AncestorType=m:Pushpin}}"
-                                       Height="{Binding Path=Height, RelativeSource={RelativeSource FindAncestor,AncestorType=m:Pushpin}}">
-                    <Rectangle.Fill>
-                        <ImageBrush ImageSource="{Binding Path=Image, RelativeSource={RelativeSource FindAncestor,AncestorType=l:ImagePushpin}}" />
-                    </Rectangle.Fill>
-                </Rectangle>
+            <Rectangle Width="{Binding Path=Width, RelativeSource={RelativeSource FindAncestor,AncestorType=m:Pushpin}}"
+                                    Height="{Binding Path=Height, RelativeSource={RelativeSource FindAncestor,AncestorType=m:Pushpin}}">
+                <Rectangle.Fill>
+                    <ImageBrush ImageSource="{Binding Path=Image, RelativeSource={RelativeSource FindAncestor,AncestorType=l:ImagePushpin}}" />
+                </Rectangle.Fill>
+            </Rectangle>
         </ControlTemplate>
         
         <Style TargetType="l:PointOfInterestPushpin">
