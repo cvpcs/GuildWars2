@@ -28,8 +28,10 @@ namespace GuildWars2.ArenaNet.Mapper
         private MumbleLink m_Link;
         private IDictionary<int, FloorMapDetails> m_MapData;
 
-        private bool m_WorkerRunning;
-        private Thread m_WorkerThread;
+        private bool m_Running;
+        private ManualResetEvent m_Canceled;
+        private Thread m_PlayerWorkerThread;
+        private Thread m_EventWorkerThread;
 
         private Pushpin m_Player;
 
@@ -40,6 +42,9 @@ namespace GuildWars2.ArenaNet.Mapper
         private IDictionary<int, MapLayer> m_MapVistas;
         private IDictionary<int, MapLayer> m_MapRenownHearts;
         private IDictionary<int, MapLayer> m_MapSkillPoints;
+        private IDictionary<int, MapLayer> m_MapEvents;
+
+        private IDictionary<Guid, EventMapLayer> m_EventElements;
 
         public MainWindow()
         {
@@ -60,11 +65,14 @@ namespace GuildWars2.ArenaNet.Mapper
             m_MapVistas = new Dictionary<int, MapLayer>();
             m_MapRenownHearts = new Dictionary<int, MapLayer>();
             m_MapSkillPoints = new Dictionary<int, MapLayer>();
+            m_MapEvents = new Dictionary<int, MapLayer>();
 
-            MapFloorResponse response = new MapFloorRequest(1, 2).Execute();
-            if (response != null)
+            m_EventElements = new Dictionary<Guid, EventMapLayer>();
+
+            MapFloorResponse floor = new MapFloorRequest(1, 2).Execute();
+            if (floor != null)
             {
-                foreach (FloorRegion region in response.Regions.Values)
+                foreach (FloorRegion region in floor.Regions.Values)
                 {
                     foreach (string mapId in region.Maps.Keys)
                     {
@@ -132,6 +140,61 @@ namespace GuildWars2.ArenaNet.Mapper
                 }
             }
 
+            EventDetailsResponse events = new EventDetailsRequest().Execute();
+            if (events != null)
+            {
+                foreach (KeyValuePair<string, EventDetails> entry in events.Events)
+                {
+                    Guid eid = new Guid(entry.Key);
+                    EventDetails ev = entry.Value;
+
+                    if (!ev.Name.StartsWith("skill challenge: ", StringComparison.InvariantCultureIgnoreCase) && m_MapData.ContainsKey(ev.MapId))
+                    {
+                        if (!m_MapEvents.ContainsKey(ev.MapId))
+                        {
+                            m_MapEvents.Add(ev.MapId, new MapLayer());
+
+                            // we insert instead of add so events always show up under other pushpins
+                            m_MapLayers[ev.MapId].Children.Insert(0, m_MapEvents[ev.MapId]);
+                        }
+
+                        FloorMapDetails map = m_MapData[ev.MapId];
+
+                        EventMapLayer evLayer;
+
+                        if (ev.Location.TypeEnum == LocationType.Poly)
+                        {
+                            EventPolyMapLayer evPolyLayer = new EventPolyMapLayer(ev);
+
+                            foreach (List<double> pt in ev.Location.Points)
+                            {
+                                evPolyLayer.PolyLocations.Add(
+                                        m_Map.Unproject(
+                                                new Point(
+                                                        TranslateX(pt[0], map.MapRect, map.ContinentRect),
+                                                        TranslateZ(pt[1], map.MapRect, map.ContinentRect)),
+                                                m_Map.MaxZoomLevel));
+                            }
+
+                            evLayer = evPolyLayer;
+                        }
+                        else
+                        {
+                            evLayer = new EventMapLayer(ev);
+                        }
+
+                        evLayer.Center = m_Map.Unproject(
+                                new Point(
+                                        TranslateX(ev.Location.Center[0], map.MapRect, map.ContinentRect),
+                                        TranslateZ(ev.Location.Center[1], map.MapRect, map.ContinentRect)),
+                                m_Map.MaxZoomLevel);
+
+                        m_MapEvents[ev.MapId].Children.Add(evLayer);
+                        m_EventElements[eid] = evLayer;
+                    }
+                }
+            }
+
             m_Map.ViewChangeEnd += (s, e) =>
                 {
                     foreach (MapLayer mapLayer in m_MapLayers.Values)
@@ -147,15 +210,20 @@ namespace GuildWars2.ArenaNet.Mapper
                     }
                 };
 
-            m_WorkerRunning = true;
-            m_WorkerThread = new Thread(WorkerThread);
-            m_WorkerThread.Start();
+            m_Running = true;
+            m_Canceled = new ManualResetEvent(false);
+            m_PlayerWorkerThread = new Thread(PlayerWorkerThread);
+            m_PlayerWorkerThread.Start();
+            m_EventWorkerThread = new Thread(EventWorkerThread);
+            m_EventWorkerThread.Start();
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            m_WorkerRunning = false;
-            m_WorkerThread.Join();
+            m_Running = false;
+            m_Canceled.Set();
+            m_PlayerWorkerThread.Join();
+            m_EventWorkerThread.Join();
 
             base.OnClosed(e);
         }
@@ -184,9 +252,9 @@ namespace GuildWars2.ArenaNet.Mapper
             return (-z - mapRect[0][1]) / (mapRect[1][1] - mapRect[0][1]) * (continentRect[1][1] - continentRect[0][1]) + continentRect[0][1];
         }
 
-        private void WorkerThread()
+        private void PlayerWorkerThread()
         {
-            while (m_WorkerRunning)
+            while (m_Running)
             {
                 try
                 {
@@ -214,7 +282,33 @@ namespace GuildWars2.ArenaNet.Mapper
                 catch
                 { }
 
-                Thread.Sleep(100);
+                m_Canceled.WaitOne(100);
+            }
+        }
+
+        private void EventWorkerThread()
+        {
+            while (m_Running)
+            {
+                try
+                {
+                    EventsResponse events = new EventsRequest(1007).Execute();
+
+                    Dispatcher.Invoke(() =>
+                        {
+                            foreach (EventState ev in events.Events)
+                            {
+                                if (m_EventElements.ContainsKey(ev.EventId))
+                                {
+                                    m_EventElements[ev.EventId].SetEventState(ev.StateEnum);
+                                }
+                            }
+                        }, DispatcherPriority.Render, new CancellationToken(), new TimeSpan(0, 0, 25));
+                }
+                catch
+                { }
+
+                m_Canceled.WaitOne(30000);
             }
         }
     }
