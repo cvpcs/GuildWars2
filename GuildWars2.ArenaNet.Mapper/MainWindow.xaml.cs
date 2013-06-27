@@ -32,12 +32,14 @@ namespace GuildWars2.ArenaNet.Mapper
         private Thread m_WorkerThread;
 
         private Pushpin m_Player;
-        private MapLayer m_Waypoints;
-        private MapLayer m_PointsOfInterest;
-        private MapLayer m_Vistas;
-        private MapLayer m_RenownHearts;
-        private MapLayer m_SkillPoints;
-        private IDictionary<int, IList<UIElement>> m_MapElements;
+
+        // map layers
+        private IDictionary<int, MapLayer> m_MapLayers;
+        private IDictionary<int, MapLayer> m_MapWaypoints;
+        private IDictionary<int, MapLayer> m_MapPointsOfInterest;
+        private IDictionary<int, MapLayer> m_MapVistas;
+        private IDictionary<int, MapLayer> m_MapRenownHearts;
+        private IDictionary<int, MapLayer> m_MapSkillPoints;
 
         public MainWindow()
         {
@@ -52,19 +54,12 @@ namespace GuildWars2.ArenaNet.Mapper
             m_Player.Visibility = Visibility.Hidden;
             m_Map.Children.Add(m_Player);
 
-            m_Waypoints = new MapLayer();
-            m_PointsOfInterest = new MapLayer();
-            m_Vistas = new MapLayer();
-            m_RenownHearts = new MapLayer();
-            m_SkillPoints = new MapLayer();
-
-            m_Map.Children.Add(m_Waypoints);
-            m_Map.Children.Add(m_PointsOfInterest);
-            m_Map.Children.Add(m_Vistas);
-            m_Map.Children.Add(m_RenownHearts);
-            m_Map.Children.Add(m_SkillPoints);
-
-            m_MapElements = new Dictionary<int, IList<UIElement>>();
+            m_MapLayers = new Dictionary<int, MapLayer>();
+            m_MapWaypoints = new Dictionary<int, MapLayer>();
+            m_MapPointsOfInterest = new Dictionary<int, MapLayer>();
+            m_MapVistas = new Dictionary<int, MapLayer>();
+            m_MapRenownHearts = new Dictionary<int, MapLayer>();
+            m_MapSkillPoints = new Dictionary<int, MapLayer>();
 
             MapFloorResponse response = new MapFloorRequest(1, 2).Execute();
             if (response != null)
@@ -77,31 +72,43 @@ namespace GuildWars2.ArenaNet.Mapper
                         FloorMapDetails map = region.Maps[mapId];
 
                         m_MapData.Add(mid, map);
-                        m_MapElements.Add(mid, new List<UIElement>());
+
+                        m_MapLayers.Add(mid, new MapLayer());
+                        m_MapLayers[mid].Visibility = Visibility.Hidden;
+                        m_Map.Children.Add(m_MapLayers[mid]);
+
+                        m_MapWaypoints.Add(mid, new MapLayer());
+                        m_MapPointsOfInterest.Add(mid, new MapLayer());
+                        m_MapVistas.Add(mid, new MapLayer());
+                        m_MapRenownHearts.Add(mid, new MapLayer());
+                        m_MapSkillPoints.Add(mid, new MapLayer());
+
+                        m_MapLayers[mid].Children.Add(m_MapWaypoints[mid]);
+                        m_MapLayers[mid].Children.Add(m_MapPointsOfInterest[mid]);
+                        m_MapLayers[mid].Children.Add(m_MapVistas[mid]);
+                        m_MapLayers[mid].Children.Add(m_MapRenownHearts[mid]);
+                        m_MapLayers[mid].Children.Add(m_MapSkillPoints[mid]);
 
                         foreach (PointOfInterest poi in map.PointsOfInterest)
                         {
                             Pushpin poiPin = new PointOfInterestPushpin(poi);
 
+                            poiPin.Location = m_Map.Unproject(new Point(poi.Coord[0], poi.Coord[1]), m_Map.MaxZoomLevel);
+
                             switch (poi.TypeEnum)
                             {
                                 case PointOfInterestType.Waypoint:
-                                    m_Waypoints.Children.Add(poiPin);
+                                    m_MapWaypoints[mid].Children.Add(poiPin);
                                     break;
                                 case PointOfInterestType.Landmark:
-                                    m_PointsOfInterest.Children.Add(poiPin);
+                                    m_MapPointsOfInterest[mid].Children.Add(poiPin);
                                     break;
                                 case PointOfInterestType.Vista:
-                                    m_Vistas.Children.Add(poiPin);
+                                    m_MapVistas[mid].Children.Add(poiPin);
                                     break;
                                 default:
                                     continue;
                             }
-
-                            poiPin.Location = m_Map.Unproject(new Point(poi.Coord[0], poi.Coord[1]), m_Map.MaxZoomLevel);
-                            poiPin.Visibility = Visibility.Hidden;
-
-                            m_MapElements[mid].Add(poiPin);
                         }
 
                         foreach (Task rh in map.Tasks)
@@ -109,10 +116,8 @@ namespace GuildWars2.ArenaNet.Mapper
                             Pushpin rhPin = new TaskPushpin(rh);
 
                             rhPin.Location = m_Map.Unproject(new Point(rh.Coord[0], rh.Coord[1]), m_Map.MaxZoomLevel);
-                            rhPin.Visibility = Visibility.Hidden;
 
-                            m_RenownHearts.Children.Add(rhPin);
-                            m_MapElements[mid].Add(rhPin);
+                            m_MapRenownHearts[mid].Children.Add(rhPin);
                         }
 
                         foreach (MappedModel sp in map.SkillChallenges)
@@ -120,10 +125,8 @@ namespace GuildWars2.ArenaNet.Mapper
                             Pushpin spPin = new SkillChallengePushpin(sp);
 
                             spPin.Location = m_Map.Unproject(new Point(sp.Coord[0], sp.Coord[1]), m_Map.MaxZoomLevel);
-                            spPin.Visibility = Visibility.Hidden;
 
-                            m_SkillPoints.Children.Add(spPin);
-                            m_MapElements[mid].Add(spPin);
+                            m_MapSkillPoints[mid].Children.Add(spPin);
                         }
                     }
                 }
@@ -131,19 +134,15 @@ namespace GuildWars2.ArenaNet.Mapper
 
             m_Map.ViewChangeEnd += (s, e) =>
                 {
-                    foreach (IList<UIElement> elements in m_MapElements.Values)
-                    {
-                        foreach (UIElement element in elements)
-                            element.Visibility = Visibility.Hidden;
-                    }
+                    foreach (MapLayer mapLayer in m_MapLayers.Values)
+                        mapLayer.Visibility = Visibility.Hidden;
 
                     if (m_Map.ZoomLevel >= 3)
                     {
                         int mid = GetMapByCenter(m_Map.Project(m_Map.Center, m_Map.MaxZoomLevel));
-                        if (m_MapElements.ContainsKey(mid))
+                        if (m_MapLayers.ContainsKey(mid))
                         {
-                            foreach (UIElement element in m_MapElements[mid])
-                                element.Visibility = Visibility.Visible;
+                            m_MapLayers[mid].Visibility = Visibility.Visible;
                         }
                     }
                 };
