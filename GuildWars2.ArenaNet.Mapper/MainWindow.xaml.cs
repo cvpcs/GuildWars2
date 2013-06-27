@@ -66,7 +66,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
             m_MapElements = new Dictionary<int, IList<UIElement>>();
 
-            MapFloorResponse response = new MapFloorRequest(1, 1).Execute();
+            MapFloorResponse response = new MapFloorRequest(1, 2).Execute();
             if (response != null)
             {
                 foreach (FloorRegion region in response.Regions.Values)
