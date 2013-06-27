@@ -82,10 +82,13 @@
     <Compile Include="ArenaNetMap.cs" />
     <Compile Include="ArenaNetTileLayer.cs" />
     <Compile Include="ArenaNetTileLayerSource.cs" />
+    <Compile Include="SkillChallengePushpin.cs" />
+    <Compile Include="TaskPushpin.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MumbleLink.cs" />
+    <Compile Include="PointOfInterestPushpin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

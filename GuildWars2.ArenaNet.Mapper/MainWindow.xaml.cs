@@ -66,12 +66,6 @@ namespace GuildWars2.ArenaNet.Mapper
 
             m_MapElements = new Dictionary<int, IList<UIElement>>();
 
-            ControlTemplate waypointPushpin = (ControlTemplate)Application.Current.Resources["WaypointPushpin"];
-            ControlTemplate pointOfInterestPushpin = (ControlTemplate)Application.Current.Resources["PointOfInterestPushpin"];
-            ControlTemplate vistaPushpin = (ControlTemplate)Application.Current.Resources["VistaPushpin"];
-            ControlTemplate renownHeartPushpin = (ControlTemplate)Application.Current.Resources["RenownHeartPushpin"];
-            ControlTemplate skillPointPushpin = (ControlTemplate)Application.Current.Resources["SkillPointPushpin"];
-
             MapFloorResponse response = new MapFloorRequest(1, 1).Execute();
             if (response != null)
             {
@@ -87,45 +81,35 @@ namespace GuildWars2.ArenaNet.Mapper
 
                         foreach (PointOfInterest poi in map.PointsOfInterest)
                         {
-                            Pushpin poiPin = new Pushpin();
-                            poiPin.PositionOrigin = PositionOrigin.Center;
-                            poiPin.Location = m_Map.Unproject(new Point(poi.Coord[0], poi.Coord[1]), m_Map.MaxZoomLevel);
-                            poiPin.Visibility = Visibility.Hidden;
-
-                            if (!string.IsNullOrWhiteSpace(poi.Name))
-                                poiPin.ToolTip = poi.Name;
+                            Pushpin poiPin = new PointOfInterestPushpin(poi);
 
                             switch (poi.TypeEnum)
                             {
                                 case PointOfInterestType.Waypoint:
-                                    poiPin.Template = waypointPushpin;
                                     m_Waypoints.Children.Add(poiPin);
                                     break;
                                 case PointOfInterestType.Landmark:
-                                    poiPin.Template = pointOfInterestPushpin;
                                     m_PointsOfInterest.Children.Add(poiPin);
                                     break;
                                 case PointOfInterestType.Vista:
-                                    poiPin.Template = vistaPushpin;
                                     m_Vistas.Children.Add(poiPin);
                                     break;
                                 default:
                                     continue;
                             }
 
+                            poiPin.Location = m_Map.Unproject(new Point(poi.Coord[0], poi.Coord[1]), m_Map.MaxZoomLevel);
+                            poiPin.Visibility = Visibility.Hidden;
+
                             m_MapElements[mid].Add(poiPin);
                         }
 
                         foreach (Task rh in map.Tasks)
                         {
-                            Pushpin rhPin = new Pushpin();
-                            rhPin.PositionOrigin = PositionOrigin.Center;
+                            Pushpin rhPin = new TaskPushpin(rh);
+
                             rhPin.Location = m_Map.Unproject(new Point(rh.Coord[0], rh.Coord[1]), m_Map.MaxZoomLevel);
                             rhPin.Visibility = Visibility.Hidden;
-                            rhPin.Template = renownHeartPushpin;
-
-                            if (!string.IsNullOrWhiteSpace(rh.Objective))
-                                rhPin.ToolTip = string.Format("{0} ({1})", rh.Objective, rh.Level);
 
                             m_RenownHearts.Children.Add(rhPin);
                             m_MapElements[mid].Add(rhPin);
@@ -133,11 +117,11 @@ namespace GuildWars2.ArenaNet.Mapper
 
                         foreach (MappedModel sp in map.SkillChallenges)
                         {
-                            Pushpin spPin = new Pushpin();
-                            spPin.PositionOrigin = PositionOrigin.Center;
+                            Pushpin spPin = new SkillChallengePushpin(sp);
+
                             spPin.Location = m_Map.Unproject(new Point(sp.Coord[0], sp.Coord[1]), m_Map.MaxZoomLevel);
                             spPin.Visibility = Visibility.Hidden;
-                            spPin.Template = skillPointPushpin;
+
                             m_SkillPoints.Children.Add(spPin);
                             m_MapElements[mid].Add(spPin);
                         }
