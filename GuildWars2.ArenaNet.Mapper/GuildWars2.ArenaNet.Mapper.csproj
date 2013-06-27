@@ -145,13 +145,13 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\event_boss.png" />
-    <Resource Include="Resources\event_boss_grey.png" />
+    <Resource Include="Resources\event_boss_gray.png" />
     <Resource Include="Resources\event_star.png" />
-    <Resource Include="Resources\event_star_grey.png" />
+    <Resource Include="Resources\event_star_gray.png" />
     <Resource Include="Resources\poi.png" />
     <Resource Include="Resources\renown_heart.png" />
     <Resource Include="Resources\skill_point.png" />
-    <Resource Include="Resources\skill_point_grey.png" />
+    <Resource Include="Resources\skill_point_gray.png" />
     <Resource Include="Resources\vista.png" />
     <Resource Include="Resources\waypoint.png" />
   </ItemGroup>

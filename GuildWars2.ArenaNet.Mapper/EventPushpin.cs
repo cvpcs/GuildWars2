@@ -20,7 +20,7 @@ namespace GuildWars2.ArenaNet.Mapper
             IMAGES.Add(EventFlagType.None, new List<BitmapImage>());
             BitmapImage img = new BitmapImage();
             img.BeginInit();
-            img.StreamSource = Application.GetResourceStream(new Uri("/Resources/event_star_grey.png", UriKind.Relative)).Stream;
+            img.StreamSource = Application.GetResourceStream(new Uri("/Resources/event_star_gray.png", UriKind.Relative)).Stream;
             img.EndInit();
             IMAGES[EventFlagType.None].Add(img);
             img = new BitmapImage();
@@ -32,7 +32,7 @@ namespace GuildWars2.ArenaNet.Mapper
             IMAGES.Add(EventFlagType.GroupEvent, new List<BitmapImage>());
             img = new BitmapImage();
             img.BeginInit();
-            img.StreamSource = Application.GetResourceStream(new Uri("/Resources/event_boss_grey.png", UriKind.Relative)).Stream;
+            img.StreamSource = Application.GetResourceStream(new Uri("/Resources/event_boss_gray.png", UriKind.Relative)).Stream;
             img.EndInit();
             IMAGES[EventFlagType.GroupEvent].Add(img);
             img = new BitmapImage();
