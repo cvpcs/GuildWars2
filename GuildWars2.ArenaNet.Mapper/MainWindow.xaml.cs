@@ -28,11 +28,12 @@ namespace GuildWars2.ArenaNet.Mapper
         private MumbleLink m_Link;
         private IDictionary<int, FloorMapDetails> m_MapData;
 
-        private bool m_Running;
+        private volatile bool m_Running;
         private ManualResetEvent m_Canceled;
         private Thread m_PlayerWorkerThread;
         private Thread m_EventWorkerThread;
 
+        private volatile bool m_FollowPlayer;
         private Pushpin m_Player;
 
         // map layers
@@ -53,6 +54,7 @@ namespace GuildWars2.ArenaNet.Mapper
             m_Link = new MumbleLink();
             m_MapData = new Dictionary<int, FloorMapDetails>();
 
+            m_FollowPlayer = false;
             m_Player = new Pushpin();
             m_Player.Template = (ControlTemplate)Application.Current.Resources["PlayerPushpin"];
             m_Player.PositionOrigin = PositionOrigin.Center;
@@ -197,8 +199,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
             m_Map.ViewChangeEnd += (s, e) =>
                 {
-                    foreach (MapLayer mapLayer in m_MapLayers.Values)
-                        mapLayer.Visibility = Visibility.Hidden;
+                    SetMapLayerVisibility(m_MapLayers, Visibility.Hidden);
 
                     if (m_Map.ZoomLevel >= 3)
                     {
@@ -242,6 +243,15 @@ namespace GuildWars2.ArenaNet.Mapper
             return -1;
         }
 
+        private void SetMapLayerVisibility(IDictionary<int, MapLayer> layerDict, Visibility visibility)
+        {
+            if (layerDict == null)
+                return;
+
+            foreach (MapLayer layer in layerDict.Values)
+                layer.Visibility = visibility;
+        }
+
         private double TranslateX(double x, List<List<double>> mapRect, List<List<double>> continentRect)
         {
             return (x - mapRect[0][0]) / (mapRect[1][0] - mapRect[0][0]) * (continentRect[1][0] - continentRect[0][0]) + continentRect[0][0];
@@ -276,6 +286,9 @@ namespace GuildWars2.ArenaNet.Mapper
                                 m_Player.Location = m_Map.Unproject(new Point(posX, posZ), m_Map.MaxZoomLevel);
                                 m_Player.Heading = rot;
                                 m_Player.Visibility = Visibility.Visible;
+
+                                if (m_FollowPlayer)
+                                    m_Map.SetView(m_Player.Location, m_Map.ZoomLevel);
                             }, DispatcherPriority.Render, new CancellationToken(), new TimeSpan(0, 0, 1));
                     }
                 }
@@ -311,5 +324,28 @@ namespace GuildWars2.ArenaNet.Mapper
                 m_Canceled.WaitOne(30000);
             }
         }
+
+        #region Legend Checkbox Handlers
+        private void Legend_WaypointsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapWaypoints, Visibility.Visible); }
+        private void Legend_WaypointsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapWaypoints, Visibility.Hidden); }
+
+        private void Legend_PointsOfInterestChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapPointsOfInterest, Visibility.Visible); }
+        private void Legend_PointsOfInterestUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapPointsOfInterest, Visibility.Hidden); }
+
+        private void Legend_VistasChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapVistas, Visibility.Visible); }
+        private void Legend_VistasUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapVistas, Visibility.Hidden); }
+
+        private void Legend_RenownHeartsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapRenownHearts, Visibility.Visible); }
+        private void Legend_RenownHeartsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapRenownHearts, Visibility.Hidden); }
+
+        private void Legend_SkillPointsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapSkillPoints, Visibility.Visible); }
+        private void Legend_SkillPointsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapSkillPoints, Visibility.Hidden); }
+
+        private void Legend_EventsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapEvents, Visibility.Visible); }
+        private void Legend_EventsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapEvents, Visibility.Hidden); }
+
+        private void Legend_FollowPlayerChecked(object sender, RoutedEventArgs e) { m_FollowPlayer = true; }
+        private void Legend_FollowPlayerUnchecked(object sender, RoutedEventArgs e) { m_FollowPlayer = false; }
+        #endregion
     }
 }
