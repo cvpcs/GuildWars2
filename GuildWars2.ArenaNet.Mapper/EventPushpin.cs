@@ -54,7 +54,7 @@ namespace GuildWars2.ArenaNet.Mapper
             PositionOrigin = PositionOrigin.Center;
 
             if (!string.IsNullOrWhiteSpace(ev.Name))
-                ToolTip = ev.Name;
+                ToolTip = string.Format("{0} ({1})", ev.Name, ev.Level);
 
             if (ev.FlagsEnum == EventFlagType.None)
             {
@@ -67,7 +67,7 @@ namespace GuildWars2.ArenaNet.Mapper
                 m_ActiveImage = IMAGES[EventFlagType.GroupEvent][1];
 
                 if (!string.IsNullOrWhiteSpace(ev.Name))
-                    ToolTip = "[Group Event] " + ev.Name;
+                    ToolTip = string.Format("[Group Event] {0} ({1})", ev.Name, ev.Level);
             }
 
             SetEventState(EventStateType.Invalid);
