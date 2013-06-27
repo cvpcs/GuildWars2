@@ -82,6 +82,7 @@
     <Compile Include="ArenaNetMap.cs" />
     <Compile Include="ArenaNetTileLayer.cs" />
     <Compile Include="ArenaNetTileLayerSource.cs" />
+    <Compile Include="ImagePushpin.cs" />
     <Compile Include="SkillChallengePushpin.cs" />
     <Compile Include="TaskPushpin.cs" />
     <Compile Include="MainWindow.xaml.cs">

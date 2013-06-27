@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 using Microsoft.Maps.MapControl.WPF;
 
@@ -12,7 +8,7 @@ using GuildWars2.ArenaNet.Model;
 
 namespace GuildWars2.ArenaNet.Mapper
 {
-    public class TaskPushpin : Pushpin
+    public class TaskPushpin : ImagePushpin
     {
         private static BitmapImage IMAGE;
 
@@ -23,8 +19,6 @@ namespace GuildWars2.ArenaNet.Mapper
             IMAGE.StreamSource = Application.GetResourceStream(new Uri("/Resources/renown_heart.png", UriKind.Relative)).Stream;
             IMAGE.EndInit();
         }
-
-        public BitmapImage Image { get; private set; }
 
         public TaskPushpin(Task task)
             : base()

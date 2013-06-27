@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 using Microsoft.Maps.MapControl.WPF;
 
@@ -12,7 +9,7 @@ using GuildWars2.ArenaNet.Model;
 
 namespace GuildWars2.ArenaNet.Mapper
 {
-    public class PointOfInterestPushpin : Pushpin
+    public class PointOfInterestPushpin : ImagePushpin
     {
         private static IDictionary<PointOfInterestType, BitmapImage> IMAGES;
 
@@ -38,8 +35,6 @@ namespace GuildWars2.ArenaNet.Mapper
             img.EndInit();
             IMAGES.Add(PointOfInterestType.Waypoint, img);
         }
-
-        public BitmapImage Image { get; private set; }
 
         public PointOfInterestPushpin(PointOfInterest poi)
             : base()
