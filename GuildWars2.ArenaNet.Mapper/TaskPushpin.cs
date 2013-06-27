@@ -12,7 +12,7 @@ namespace GuildWars2.ArenaNet.Mapper
     {
         private static BitmapImage IMAGE;
 
-        TaskPushpin()
+        static TaskPushpin()
         {
             IMAGE = new BitmapImage();
             IMAGE.BeginInit();
