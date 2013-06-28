@@ -4,63 +4,145 @@
         xmlns:l="clr-namespace:GuildWars2.ArenaNet.Mapper"
         Title="MainWindow" Height="600" Width="800">
     <Grid>
-        <l:ArenaNetMap x:Name="m_Map" CredentialsProvider="AhTEAKIQU-ZIgRRohOT9wwe3V8s6nGrhPX1PEmnPtvJwB9mvCd5Nqp-WUb47dfp5" />
+        <l:ArenaNetMap x:Name="m_Map" CredentialsProvider="AhTEAKIQU-ZIgRRohOT9wwe3V8s6nGrhPX1PEmnPtvJwB9mvCd5Nqp-WUb47dfp5"
+                       ViewChangeOnFrame="Map_ViewChangeOnFrame" ViewChangeEnd="Map_ViewChangeEnd" />
 
-        <Border Background="White" BorderBrush="White" BorderThickness="1,1,1,1" CornerRadius="5"
-                Margin="0,5,5,0" Padding="5,5,5,5" VerticalAlignment="Top" HorizontalAlignment="Right">
-            <Border.Effect>
+        <StackPanel Margin="5,5,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <StackPanel.Resources>
+                <Style x:Key="ButtonBorderStyle" TargetType="Border">
+                    <Setter Property="Background" Value="LightGray" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Margin" Value="0" />
+                </Style>
+                <Style x:Key="ButtonTextBlockStyle" TargetType="TextBlock">
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="FontFamily" Value="Arial" />
+                    <Setter Property="FontSize" Value="18px" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                </Style>
+                <ControlTemplate x:Key="PlusButtonTemplate" TargetType="Button">
+                    <Border x:Name="ButtonBorder" Style="{StaticResource ButtonBorderStyle}"
+                            CornerRadius="5,5,0,0" Padding="5,5,5,2">
+                        <TextBlock x:Name="ButtonTextBlock" Style="{StaticResource ButtonTextBlockStyle}"
+                                   Text="+" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonBorder" Property="Background" Value="White" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ButtonTextBlock" Property="Foreground" Value="Gray" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+                <ControlTemplate x:Key="MinusButtonTemplate" TargetType="Button">
+                    <Border x:Name="ButtonBorder" Style="{StaticResource ButtonBorderStyle}"
+                            CornerRadius="0,0,5,5" Padding="5,2,5,5">
+                        <TextBlock x:Name="ButtonTextBlock" Style="{StaticResource ButtonTextBlockStyle}"
+                                   Text="-" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonBorder" Property="Background" Value="White" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ButtonTextBlock" Property="Foreground" Value="Gray" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </StackPanel.Resources>
+            <StackPanel.Effect>
                 <DropShadowEffect Opacity="0.5" />
-            </Border.Effect>
-            <Grid x:Name="m_Legend">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <CheckBox  Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="True"
-                           Checked="Legend_WaypointsChecked" Unchecked="Legend_WaypointsUnchecked" />
-                <Image     Grid.Column="1" Grid.Row="0" Margin="5,0,5,0" Source="/Resources/waypoint.png" Width="20" Height="20" />
-                <TextBlock Grid.Column="2" Grid.Row="0" VerticalAlignment="Center">Waypoints</TextBlock>
+            </StackPanel.Effect>
+            <Button x:Name="m_ZoomInButton" Template="{StaticResource PlusButtonTemplate}" Click="Zoom_InClicked" />
+            <Button x:Name="m_ZoomOutButton" Template="{StaticResource MinusButtonTemplate}" Click="Zoom_OutClicked" IsEnabled="False" />
+        </StackPanel>
 
-                <CheckBox  Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="True"
-                           Checked="Legend_PointsOfInterestChecked" Unchecked="Legend_PointsOfInterestUnchecked" />
-                <Image     Grid.Column="1" Grid.Row="1" Margin="5,0,5,0" Source="/Resources/poi.png" Width="20" Height="20" />
-                <TextBlock Grid.Column="2" Grid.Row="1" VerticalAlignment="Center">Points of Interest</TextBlock>
+        <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0">
+            <Grid.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="BorderBrush" Value="White" />
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="CornerRadius" Value="5" />
+                    <Setter Property="Padding" Value="5" />
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Opacity="0.5" />
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Grid.Resources>
+            <Border x:Name="m_LegendIcon"
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                MouseEnter="LegendIcon_MouseEnter">
+                <Image Source="/Resources/layers.png" Width="26" Height="26" />
+            </Border>
+            <Border x:Name="m_Legend"
+                Visibility="Hidden"
+                MouseLeave="Legend_MouseLeave">
+                <Grid>
+                    <Grid.Resources>
+                        <Style TargetType="CheckBox">
+                            <Setter Property="Grid.Column" Value="0" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="IsChecked" Value="True" />
+                        </Style>
+                        <Style TargetType="Image">
+                            <Setter Property="Grid.Column" Value="1" />
+                            <Setter Property="Margin" Value="5,0,5,0" />
+                            <Setter Property="Width" Value="20" />
+                            <Setter Property="Height" Value="20" />
+                        </Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Grid.Column" Value="2" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition  />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <CheckBox  Grid.Row="0" Checked="Legend_WaypointsChecked" Unchecked="Legend_WaypointsUnchecked" />
+                    <Image     Grid.Row="0" Source="/Resources/waypoint.png" />
+                    <TextBlock Grid.Row="0">Waypoints</TextBlock>
 
-                <CheckBox  Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="True"
-                           Checked="Legend_VistasChecked" Unchecked="Legend_VistasUnchecked" />
-                <Image     Grid.Column="1" Grid.Row="2" Margin="5,0,5,0" Source="/Resources/vista.png" Width="20" Height="20" />
-                <TextBlock Grid.Column="2" Grid.Row="2" VerticalAlignment="Center">Vistas</TextBlock>
+                    <CheckBox  Grid.Row="1" Checked="Legend_PointsOfInterestChecked" Unchecked="Legend_PointsOfInterestUnchecked" />
+                    <Image     Grid.Row="1" Source="/Resources/poi.png" />
+                    <TextBlock Grid.Row="1">Points of Interest</TextBlock>
 
-                <CheckBox  Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="True"
-                           Checked="Legend_RenownHeartsChecked" Unchecked="Legend_RenownHeartsUnchecked" />
-                <Image     Grid.Column="1" Grid.Row="3" Margin="5,0,5,0" Source="/Resources/renown_heart.png" Width="20" Height="20" />
-                <TextBlock Grid.Column="2" Grid.Row="3" VerticalAlignment="Center">Renown Hearts</TextBlock>
+                    <CheckBox  Grid.Row="2" Checked="Legend_VistasChecked" Unchecked="Legend_VistasUnchecked" />
+                    <Image     Grid.Row="2" Source="/Resources/vista.png" />
+                    <TextBlock Grid.Row="2">Vistas</TextBlock>
 
-                <CheckBox  Grid.Column="0" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="True"
-                           Checked="Legend_SkillPointsChecked" Unchecked="Legend_SkillPointsUnchecked" />
-                <Image     Grid.Column="1" Grid.Row="4" Margin="5,0,5,0" Source="/Resources/skill_point.png" Width="20" Height="20" />
-                <TextBlock Grid.Column="2" Grid.Row="4" VerticalAlignment="Center">Skill Points</TextBlock>
+                    <CheckBox  Grid.Row="3" Checked="Legend_RenownHeartsChecked" Unchecked="Legend_RenownHeartsUnchecked" />
+                    <Image     Grid.Row="3" Source="/Resources/renown_heart.png" />
+                    <TextBlock Grid.Row="3">Renown Hearts</TextBlock>
 
-                <CheckBox  Grid.Column="0" Grid.Row="5" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="True"
-                           Checked="Legend_EventsChecked" Unchecked="Legend_EventsUnchecked" />
-                <Image     Grid.Column="1" Grid.Row="5" Margin="5,0,5,0" Source="/Resources/event_star.png" Width="20" Height="20" />
-                <TextBlock Grid.Column="2" Grid.Row="5" VerticalAlignment="Center">Events</TextBlock>
+                    <CheckBox  Grid.Row="4" Checked="Legend_SkillPointsChecked" Unchecked="Legend_SkillPointsUnchecked" />
+                    <Image     Grid.Row="4" Source="/Resources/skill_point.png" Width="20" Height="20" />
+                    <TextBlock Grid.Row="4">Skill Points</TextBlock>
 
-                <CheckBox  Grid.Column="0" Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="False"
-                           Checked="Legend_FollowPlayerChecked" Unchecked="Legend_FollowPlayerUnchecked" />
-                <Image     Grid.Column="1" Grid.Row="6" Margin="5,0,5,0" Source="/Resources/player_position.png" Width="20" Height="20" />
-                <TextBlock Grid.Column="2" Grid.Row="6" VerticalAlignment="Center">Follow Player</TextBlock>
-            </Grid>
-        </Border>
+                    <CheckBox  Grid.Row="5" Checked="Legend_EventsChecked" Unchecked="Legend_EventsUnchecked" />
+                    <Image     Grid.Row="5" Source="/Resources/event_star.png" />
+                    <TextBlock Grid.Row="5">Events</TextBlock>
+
+                    <CheckBox  Grid.Row="6" Checked="Legend_FollowPlayerChecked" Unchecked="Legend_FollowPlayerUnchecked" IsChecked="False" />
+                    <Image     Grid.Row="6" Source="/Resources/player_position.png" />
+                    <TextBlock Grid.Row="6">Follow Player</TextBlock>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

@@ -197,20 +197,6 @@ namespace GuildWars2.ArenaNet.Mapper
                 }
             }
 
-            m_Map.ViewChangeEnd += (s, e) =>
-                {
-                    SetMapLayerVisibility(m_MapLayers, Visibility.Hidden);
-
-                    if (m_Map.ZoomLevel >= 3)
-                    {
-                        int mid = GetMapByCenter(m_Map.Project(m_Map.Center, m_Map.MaxZoomLevel));
-                        if (m_MapLayers.ContainsKey(mid))
-                        {
-                            m_MapLayers[mid].Visibility = Visibility.Visible;
-                        }
-                    }
-                };
-
             m_Running = true;
             m_Canceled = new ManualResetEvent(false);
             m_PlayerWorkerThread = new Thread(PlayerWorkerThread);
@@ -325,7 +311,48 @@ namespace GuildWars2.ArenaNet.Mapper
             }
         }
 
+        #region Map Handlers
+        private void Map_UpdateView(double zoomLevel)
+        {
+            SetMapLayerVisibility(m_MapLayers, Visibility.Hidden);
+
+            if (zoomLevel >= 3)
+            {
+                int mid = GetMapByCenter(m_Map.Project(m_Map.Center, m_Map.MaxZoomLevel));
+                if (m_MapLayers.ContainsKey(mid))
+                {
+                    m_MapLayers[mid].Visibility = Visibility.Visible;
+                }
+            }
+
+            m_ZoomInButton.IsEnabled = (zoomLevel < m_Map.MaxZoomLevel);
+            m_ZoomOutButton.IsEnabled = (zoomLevel > m_Map.MinZoomLevel);
+        }
+
+        private void Map_ViewChangeOnFrame(object sender, MapEventArgs e)
+        {
+            Map_UpdateView(m_Map.TargetZoomLevel);
+        }
+
+        private void Map_ViewChangeEnd(object sender, MapEventArgs e)
+        {
+            Map_UpdateView(m_Map.ZoomLevel);
+        }
+        #endregion
+
         #region Legend Checkbox Handlers
+        private void LegendIcon_MouseEnter(object sender, MouseEventArgs e)
+        {
+            m_LegendIcon.Visibility = Visibility.Hidden;
+            m_Legend.Visibility = Visibility.Visible;
+        }
+
+        private void Legend_MouseLeave(object sender, MouseEventArgs e)
+        {
+            m_Legend.Visibility = Visibility.Hidden;
+            m_LegendIcon.Visibility = Visibility.Visible;
+        }
+
         private void Legend_WaypointsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapWaypoints, Visibility.Visible); }
         private void Legend_WaypointsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapWaypoints, Visibility.Hidden); }
 
@@ -346,6 +373,24 @@ namespace GuildWars2.ArenaNet.Mapper
 
         private void Legend_FollowPlayerChecked(object sender, RoutedEventArgs e) { m_FollowPlayer = true; }
         private void Legend_FollowPlayerUnchecked(object sender, RoutedEventArgs e) { m_FollowPlayer = false; }
+        #endregion
+
+        #region Zoom Handlers
+        private void Zoom_InClicked(object sender, RoutedEventArgs e)
+        {
+            double newZoomLevel = Math.Min(m_Map.ZoomLevel + 1.0, m_Map.MaxZoomLevel);
+
+            if (newZoomLevel != m_Map.ZoomLevel)
+                m_Map.SetView(newZoomLevel, m_Map.Heading);
+        }
+
+        private void Zoom_OutClicked(object sender, RoutedEventArgs e)
+        {
+            double newZoomLevel = Math.Max(m_Map.ZoomLevel - 1.0, m_Map.MinZoomLevel);
+
+            if (newZoomLevel != m_Map.ZoomLevel)
+                m_Map.SetView(newZoomLevel, m_Map.Heading);
+        }
         #endregion
     }
 }
