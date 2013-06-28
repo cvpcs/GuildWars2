@@ -56,7 +56,8 @@
                 <Image     Grid.Column="1" Grid.Row="5" Margin="5,0,5,0" Source="/Resources/event_star.png" Width="20" Height="20" />
                 <TextBlock Grid.Column="2" Grid.Row="5" VerticalAlignment="Center">Events</TextBlock>
 
-                <CheckBox  Grid.Column="0" Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="False" />
+                <CheckBox  Grid.Column="0" Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="False"
+                           Checked="Legend_FollowPlayerChecked" Unchecked="Legend_FollowPlayerUnchecked" />
                 <Image     Grid.Column="1" Grid.Row="6" Margin="5,0,5,0" Source="/Resources/player_position.png" Width="20" Height="20" />
                 <TextBlock Grid.Column="2" Grid.Row="6" VerticalAlignment="Center">Follow Player</TextBlock>
             </Grid>
