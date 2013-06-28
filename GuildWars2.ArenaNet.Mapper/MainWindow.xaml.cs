@@ -46,7 +46,8 @@ namespace GuildWars2.ArenaNet.Mapper
         private IDictionary<int, MapLayer> m_MapSkillPoints;
         private IDictionary<int, MapLayer> m_MapEvents;
 
-        private IDictionary<Guid, EventMapLayer> m_EventElements;
+        private IDictionary<Guid, EventPushpin> m_EventPushpins;
+        private IDictionary<Guid, EventMapPolygon> m_EventMapPolygons;
 
         public MainWindow()
         {
@@ -73,7 +74,8 @@ namespace GuildWars2.ArenaNet.Mapper
             m_MapSkillPoints = new Dictionary<int, MapLayer>();
             m_MapEvents = new Dictionary<int, MapLayer>();
 
-            m_EventElements = new Dictionary<Guid, EventMapLayer>();
+            m_EventPushpins = new Dictionary<Guid, EventPushpin>();
+            m_EventMapPolygons = new Dictionary<Guid, EventMapPolygon>();
 
             MapFloorResponse floor = new MapFloorRequest(1, 2).Execute();
             if (floor != null)
@@ -163,16 +165,17 @@ namespace GuildWars2.ArenaNet.Mapper
 
                         FloorMapDetails map = m_MapData[ev.MapId];
 
-                        EventMapLayer evLayer;
+                        Point center = new Point(TranslateX(ev.Location.Center[0], map.MapRect, map.ContinentRect),
+                                    TranslateZ(ev.Location.Center[1], map.MapRect, map.ContinentRect));
 
                         switch(ev.Location.TypeEnum)
                         {
                             case LocationType.Poly:
-                                EventPolyMapLayer evPolyLayer = new EventPolyMapLayer(ev);
+                                EventMapPolygon evPoly = new EventMapPolygon(ev);
 
                                 foreach (List<double> pt in ev.Location.Points)
                                 {
-                                    evPolyLayer.PolyLocations.Add(
+                                    evPoly.Locations.Add(
                                             m_Map.Unproject(
                                                     new Point(
                                                             TranslateX(pt[0], map.MapRect, map.ContinentRect),
@@ -180,20 +183,19 @@ namespace GuildWars2.ArenaNet.Mapper
                                                     m_Map.MaxZoomLevel));
                                 }
 
-                                evLayer = evPolyLayer;
+                                m_EventMapPolygons[eid] = evPoly;
+                                m_MapEvents[ev.MapId].Children.Add(evPoly);
                                 break;
 
                             case LocationType.Sphere:
                             case LocationType.Cylinder:
-                                EventPolyMapLayer evCircleLayer = new EventPolyMapLayer(ev);
+                                EventMapPolygon evCircle = new EventMapPolygon(ev);
 
-                                Point center = new Point(TranslateX(ev.Location.Center[0], map.MapRect, map.ContinentRect),
-                                            TranslateZ(ev.Location.Center[1], map.MapRect, map.ContinentRect));
                                 double radius = TranslateX(ev.Location.Center[0] + ev.Location.Radius, map.MapRect, map.ContinentRect) - center.X;
 
                                 for (int i = 0; i < 360; i+=10)
                                 {
-                                    evCircleLayer.PolyLocations.Add(
+                                    evCircle.Locations.Add(
                                             m_Map.Unproject(
                                                     new Point(
                                                             center.X + radius * Math.Cos(i * (Math.PI / 180)),
@@ -201,23 +203,28 @@ namespace GuildWars2.ArenaNet.Mapper
                                                     m_Map.MaxZoomLevel));
                                 }
 
-                                evLayer = evCircleLayer;
+                                m_EventMapPolygons[eid] = evCircle;
+                                m_MapEvents[ev.MapId].Children.Add(evCircle);
                                 break;
 
                             default:
-                                evLayer = new EventMapLayer(ev);
                                 break;
                         }
 
-                        evLayer.Center = m_Map.Unproject(
-                                new Point(
-                                        TranslateX(ev.Location.Center[0], map.MapRect, map.ContinentRect),
-                                        TranslateZ(ev.Location.Center[1], map.MapRect, map.ContinentRect)),
-                                m_Map.MaxZoomLevel);
-
-                        m_MapEvents[ev.MapId].Children.Add(evLayer);
-                        m_EventElements[eid] = evLayer;
+                        EventPushpin evPin = new EventPushpin(ev);
+                        evPin.Location = m_Map.Unproject(center, m_Map.MaxZoomLevel);
+                        m_EventPushpins[eid] = evPin;
                     }
+                }
+
+                // insert pushpins after-the fact so they end up on top of all polys
+                foreach (KeyValuePair<string, EventDetails> entry in events.Events)
+                {
+                    Guid eid = new Guid(entry.Key);
+                    EventDetails ev = entry.Value;
+
+                    if (m_EventPushpins.ContainsKey(eid))
+                        m_MapEvents[ev.MapId].Children.Add(m_EventPushpins[eid]);
                 }
             }
 
@@ -321,10 +328,11 @@ namespace GuildWars2.ArenaNet.Mapper
                         {
                             foreach (EventState ev in events.Events)
                             {
-                                if (m_EventElements.ContainsKey(ev.EventId))
-                                {
-                                    m_EventElements[ev.EventId].SetEventState(ev.StateEnum);
-                                }
+                                if (m_EventPushpins.ContainsKey(ev.EventId))
+                                    m_EventPushpins[ev.EventId].SetEventState(ev.StateEnum);
+
+                                if (m_EventMapPolygons.ContainsKey(ev.EventId))
+                                    m_EventMapPolygons[ev.EventId].SetEventState(ev.StateEnum);
                             }
                         }, DispatcherPriority.Background, new CancellationToken(), new TimeSpan(0, 0, 25));
                 }
