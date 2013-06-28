@@ -289,7 +289,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
                                 if (m_FollowPlayer)
                                     m_Map.SetView(m_Player.Location, m_Map.ZoomLevel);
-                            }, DispatcherPriority.Render, new CancellationToken(), new TimeSpan(0, 0, 1));
+                            }, DispatcherPriority.Background, new CancellationToken(), new TimeSpan(0, 0, 1));
                     }
                 }
                 catch
@@ -316,7 +316,7 @@ namespace GuildWars2.ArenaNet.Mapper
                                     m_EventElements[ev.EventId].SetEventState(ev.StateEnum);
                                 }
                             }
-                        }, DispatcherPriority.Render, new CancellationToken(), new TimeSpan(0, 0, 25));
+                        }, DispatcherPriority.Background, new CancellationToken(), new TimeSpan(0, 0, 25));
                 }
                 catch
                 { }
