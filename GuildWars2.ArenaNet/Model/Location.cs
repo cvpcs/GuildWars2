@@ -20,10 +20,14 @@ namespace GuildWars2.ArenaNet.Model
 
         public List<double> Center { get; set; }
 
-        #region Sphere
+        #region Sphere / Cylinder
         public double Radius { get; set; }
 
         public double Rotation { get; set; }
+
+        #region Cylinder
+        public double Height { get; set; }
+        #endregion
         #endregion
 
         #region Poly
