@@ -37,6 +37,7 @@ namespace GuildWars2.ArenaNet.Mapper
         private Pushpin m_Player;
 
         // map layers
+        private MapLayer m_MapLayerContainer;
         private IDictionary<int, MapLayer> m_MapLayers;
         private IDictionary<int, MapLayer> m_MapWaypoints;
         private IDictionary<int, MapLayer> m_MapPointsOfInterest;
@@ -61,6 +62,9 @@ namespace GuildWars2.ArenaNet.Mapper
             m_Player.Visibility = Visibility.Hidden;
             m_Map.Children.Add(m_Player);
 
+            m_MapLayerContainer = new MapLayer();
+            m_Map.Children.Add(m_MapLayerContainer);
+
             m_MapLayers = new Dictionary<int, MapLayer>();
             m_MapWaypoints = new Dictionary<int, MapLayer>();
             m_MapPointsOfInterest = new Dictionary<int, MapLayer>();
@@ -84,9 +88,6 @@ namespace GuildWars2.ArenaNet.Mapper
                         m_MapData.Add(mid, map);
 
                         m_MapLayers.Add(mid, new MapLayer());
-                        m_MapLayers[mid].Visibility = Visibility.Hidden;
-                        m_Map.Children.Add(m_MapLayers[mid]);
-
                         m_MapWaypoints.Add(mid, new MapLayer());
                         m_MapPointsOfInterest.Add(mid, new MapLayer());
                         m_MapVistas.Add(mid, new MapLayer());
@@ -164,25 +165,48 @@ namespace GuildWars2.ArenaNet.Mapper
 
                         EventMapLayer evLayer;
 
-                        if (ev.Location.TypeEnum == LocationType.Poly)
+                        switch(ev.Location.TypeEnum)
                         {
-                            EventPolyMapLayer evPolyLayer = new EventPolyMapLayer(ev);
+                            case LocationType.Poly:
+                                EventPolyMapLayer evPolyLayer = new EventPolyMapLayer(ev);
 
-                            foreach (List<double> pt in ev.Location.Points)
-                            {
-                                evPolyLayer.PolyLocations.Add(
-                                        m_Map.Unproject(
-                                                new Point(
-                                                        TranslateX(pt[0], map.MapRect, map.ContinentRect),
-                                                        TranslateZ(pt[1], map.MapRect, map.ContinentRect)),
-                                                m_Map.MaxZoomLevel));
-                            }
+                                foreach (List<double> pt in ev.Location.Points)
+                                {
+                                    evPolyLayer.PolyLocations.Add(
+                                            m_Map.Unproject(
+                                                    new Point(
+                                                            TranslateX(pt[0], map.MapRect, map.ContinentRect),
+                                                            TranslateZ(pt[1], map.MapRect, map.ContinentRect)),
+                                                    m_Map.MaxZoomLevel));
+                                }
 
-                            evLayer = evPolyLayer;
-                        }
-                        else
-                        {
-                            evLayer = new EventMapLayer(ev);
+                                evLayer = evPolyLayer;
+                                break;
+
+                            case LocationType.Sphere:
+                            case LocationType.Cylinder:
+                                EventPolyMapLayer evCircleLayer = new EventPolyMapLayer(ev);
+
+                                Point center = new Point(TranslateX(ev.Location.Center[0], map.MapRect, map.ContinentRect),
+                                            TranslateZ(ev.Location.Center[1], map.MapRect, map.ContinentRect));
+                                double radius = TranslateX(ev.Location.Center[0] + ev.Location.Radius, map.MapRect, map.ContinentRect) - center.X;
+
+                                for (int i = 0; i < 360; i+=10)
+                                {
+                                    evCircleLayer.PolyLocations.Add(
+                                            m_Map.Unproject(
+                                                    new Point(
+                                                            center.X + radius * Math.Cos(i * (Math.PI / 180)),
+                                                            center.Y + radius * Math.Sin(i * (Math.PI / 180))),
+                                                    m_Map.MaxZoomLevel));
+                                }
+
+                                evLayer = evCircleLayer;
+                                break;
+
+                            default:
+                                evLayer = new EventMapLayer(ev);
+                                break;
                         }
 
                         evLayer.Center = m_Map.Unproject(
@@ -314,14 +338,14 @@ namespace GuildWars2.ArenaNet.Mapper
         #region Map Handlers
         private void Map_UpdateView(double zoomLevel)
         {
-            SetMapLayerVisibility(m_MapLayers, Visibility.Hidden);
+            m_MapLayerContainer.Children.Clear();
 
             if (zoomLevel >= 3)
             {
                 int mid = GetMapByCenter(m_Map.Project(m_Map.Center, m_Map.MaxZoomLevel));
                 if (m_MapLayers.ContainsKey(mid))
                 {
-                    m_MapLayers[mid].Visibility = Visibility.Visible;
+                    m_MapLayerContainer.Children.Add(m_MapLayers[mid]);
                 }
             }
 
