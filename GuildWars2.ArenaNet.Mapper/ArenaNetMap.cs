@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Input;
 
 using Microsoft.Maps.MapControl.WPF;
 
@@ -13,16 +14,13 @@ namespace GuildWars2.ArenaNet.Mapper
 
         public ArenaNetMap()
         {
-            AnimationLevel = Microsoft.Maps.MapControl.WPF.AnimationLevel.Full;
-            ScaleVisibility = System.Windows.Visibility.Hidden;
+            AnimationLevel = AnimationLevel.Full;
+            ScaleVisibility = Visibility.Hidden;
 
-            ViewChangeEnd += (s, e) =>
-                {
-                    if (ZoomLevel > MaxZoomLevel)
-                        SetView(MaxZoomLevel, Heading);
-                    else if (ZoomLevel < MinZoomLevel)
-                        SetView(MinZoomLevel, Heading);
-                };
+            MouseWheel += MouseWheelHandler;
+            MouseDoubleClick += MouseDoubleClickHandler;
+
+            ViewChangeEnd += ViewChangeEndHandler;
 
             Mode = new MercatorMode();
             Children.Add(new ArenaNetTileLayer());
@@ -65,5 +63,54 @@ namespace GuildWars2.ArenaNet.Mapper
         {
             return (uint)256 << levelOfDetail;
         }
+
+        private void ZoomAboutPoint(Point point, double zoomLevelIncrement)
+        {
+            double newZoomLevel = ClipBounds(TargetZoomLevel + zoomLevelIncrement, MinZoomLevel, MaxZoomLevel);
+            double newZoomLevelIncrement = newZoomLevel - TargetZoomLevel;
+
+            if (newZoomLevelIncrement != 0)
+            {
+                Point center = LocationToViewportPoint(Center);
+
+                Location zoomTo;
+                if (zoomLevelIncrement > 0)
+                {
+                    zoomTo = ViewportPointToLocation(new Point(
+                            (point.X + center.X)/2,
+                            (point.Y + center.Y)/2));
+                }
+                else
+                {
+                    zoomTo = ViewportPointToLocation(new Point(
+                            2 * newZoomLevelIncrement * (point.X - center.X) + center.X,
+                            2 * newZoomLevelIncrement * (point.Y - center.Y) + center.Y
+                        ));
+                }
+
+                SetView(zoomTo, newZoomLevel);
+            }
+        }
+
+        #region Event Handling
+        private void MouseWheelHandler(object sender, MouseWheelEventArgs e)
+        {
+            ZoomAboutPoint(e.GetPosition(this), ((double)e.Delta / 100.0));
+            e.Handled = true;
+        }
+
+        private void MouseDoubleClickHandler(object sender, MouseButtonEventArgs e)
+        {
+            ZoomAboutPoint(e.GetPosition(this), 1.0);
+            e.Handled = true;
+        }
+
+        private void ViewChangeEndHandler(object sender, MapEventArgs e)
+        {
+            double newZoomLevel = ClipBounds(ZoomLevel, MinZoomLevel, MaxZoomLevel);
+            if (newZoomLevel != ZoomLevel)
+                SetView(newZoomLevel, Heading);
+        }
+        #endregion
     }
 }
