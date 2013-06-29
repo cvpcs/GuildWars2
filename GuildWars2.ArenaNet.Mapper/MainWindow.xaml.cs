@@ -44,8 +44,10 @@ namespace GuildWars2.ArenaNet.Mapper
         private IDictionary<int, MapLayer> m_MapVistas;
         private IDictionary<int, MapLayer> m_MapRenownHearts;
         private IDictionary<int, MapLayer> m_MapSkillPoints;
-        private IDictionary<int, MapLayer> m_MapEvents;
 
+        private IDictionary<int, MapLayer> m_MapBounties;
+
+        private IDictionary<int, MapLayer> m_MapEvents;
         private IDictionary<Guid, EventPushpin> m_EventPushpins;
         private IDictionary<Guid, EventMapPolygon> m_EventMapPolygons;
 
@@ -72,8 +74,10 @@ namespace GuildWars2.ArenaNet.Mapper
             m_MapVistas = new Dictionary<int, MapLayer>();
             m_MapRenownHearts = new Dictionary<int, MapLayer>();
             m_MapSkillPoints = new Dictionary<int, MapLayer>();
-            m_MapEvents = new Dictionary<int, MapLayer>();
 
+            m_MapBounties = new Dictionary<int, MapLayer>();
+
+            m_MapEvents = new Dictionary<int, MapLayer>();
             m_EventPushpins = new Dictionary<Guid, EventPushpin>();
             m_EventMapPolygons = new Dictionary<Guid, EventMapPolygon>();
 
@@ -143,6 +147,45 @@ namespace GuildWars2.ArenaNet.Mapper
                         }
                     }
                 }
+            }
+
+            IList<SolidColorBrush> bounty_path_brushes = new List<SolidColorBrush> { Brushes.Blue, Brushes.White, Brushes.Yellow, Brushes.LimeGreen };
+            foreach (GuildBounty bounty in GuildBountyDefinitions.BOUNTIES)
+            {
+                BountyMapLayer b = new BountyMapLayer(bounty.Name);
+
+                if (!m_MapBounties.ContainsKey(bounty.MapId))
+                {
+                    m_MapBounties.Add(bounty.MapId, new MapLayer());
+
+                    // map bounties default to hidden
+                    m_MapBounties[bounty.MapId].Visibility = Visibility.Hidden;
+
+                    // we insert instead of add so events always show up under other pushpins
+                    m_MapLayers[bounty.MapId].Children.Insert(0, m_MapBounties[bounty.MapId]);
+                }
+
+                if (bounty.Spawns != null)
+                {
+                    foreach (List<double> p in bounty.Spawns)
+                        b.AddSpawningPoint(m_Map.Unproject(new Point(p[0], p[1]), m_Map.MaxZoomLevel));
+                }
+
+
+                if (bounty.Paths != null)
+                {
+                    int i = 0;
+                    foreach (GuildBountyPath path in bounty.Paths)
+                    {
+                        LocationCollection locs = new LocationCollection();
+                        foreach (List<double> p in path.Points)
+                            locs.Add(m_Map.Unproject(new Point(p[0], p[1]), m_Map.MaxZoomLevel));
+                        b.AddPath(locs, bounty_path_brushes[i], path.Direction);
+                        i = (i + 1) % bounty_path_brushes.Count;
+                    }
+                }
+
+                m_MapBounties[bounty.MapId].Children.Add(b);
             }
 
             EventDetailsResponse events = new EventDetailsRequest().Execute();
@@ -392,6 +435,9 @@ namespace GuildWars2.ArenaNet.Mapper
 
         private void Legend_SkillPointsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapSkillPoints, Visibility.Visible); }
         private void Legend_SkillPointsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapSkillPoints, Visibility.Hidden); }
+
+        private void Legend_BountiesChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapBounties, Visibility.Visible); }
+        private void Legend_BountiesUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapBounties, Visibility.Hidden); }
 
         private void Legend_EventsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapEvents, Visibility.Visible); }
         private void Legend_EventsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapEvents, Visibility.Hidden); }
