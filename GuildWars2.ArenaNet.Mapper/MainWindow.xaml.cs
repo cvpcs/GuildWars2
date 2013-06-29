@@ -312,7 +312,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
         private double TranslateZ(double z, List<List<double>> mapRect, List<List<double>> continentRect)
         {
-            return (-z - mapRect[0][1]) / (mapRect[1][1] - mapRect[0][1]) * (continentRect[1][1] - continentRect[0][1]) + continentRect[0][1];
+            return (1 - ((z - mapRect[0][1]) / (mapRect[1][1] - mapRect[0][1]))) * (continentRect[1][1] - continentRect[0][1]) + continentRect[0][1];
         }
 
         private void PlayerWorkerThread()
