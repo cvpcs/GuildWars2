@@ -265,6 +265,10 @@ namespace GuildWars2.ArenaNet.Mapper
                 }
             }
 
+            MouseDown += DrawPolyMouseDownHandler;
+            KeyDown += DrawPolyKeyDownHandler;
+            KeyUp += DrawPolyKeyUpHandler;
+
             m_Running = true;
             m_Canceled = new ManualResetEvent(false);
             m_PlayerWorkerThread = new Thread(PlayerWorkerThread);
@@ -347,7 +351,7 @@ namespace GuildWars2.ArenaNet.Mapper
                                     m_Map.SetView(loc, m_Map.ZoomLevel);
 
                                 m_Player.Location = loc;
-                            }, DispatcherPriority.Background, new CancellationToken(), new TimeSpan(0, 0, 1));
+                            }, DispatcherPriority.Background, CancellationToken.None, new TimeSpan(0, 0, 1));
                     }
                 }
                 catch
@@ -375,7 +379,7 @@ namespace GuildWars2.ArenaNet.Mapper
                                 if (m_EventMapPolygons.ContainsKey(ev.EventId))
                                     m_EventMapPolygons[ev.EventId].SetEventState(ev.StateEnum);
                             }
-                        }, DispatcherPriority.Background, new CancellationToken(), new TimeSpan(0, 0, 25));
+                        }, DispatcherPriority.Background, CancellationToken.None, new TimeSpan(0, 0, 25));
                 }
                 catch
                 { }
@@ -466,6 +470,88 @@ namespace GuildWars2.ArenaNet.Mapper
 
             if (newZoomLevel != m_Map.ZoomLevel)
                 m_Map.SetView(newZoomLevel, m_Map.Heading);
+        }
+        #endregion
+
+        #region DrawPolyHandlers
+        private bool m_DrawingPolygon = false;
+        private MapPolygon m_DrawingPolygonItem = null;
+        private MapPolyline m_DrawingPolylineItem = null;
+        private void DrawPolyKeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.LeftCtrl && !e.IsRepeat && !m_DrawingPolygon)
+            {
+                m_DrawingPolygon = true;
+
+                if (m_DrawingPolygonItem != null)
+                    m_Map.Children.Remove(m_DrawingPolygonItem);
+
+                m_DrawingPolygonItem = null;
+                
+                m_DrawingPolylineItem = new MapPolyline();
+                m_DrawingPolylineItem.Locations = new LocationCollection();
+                m_DrawingPolylineItem.Opacity = 0.7;
+                m_DrawingPolylineItem.Stroke = System.Windows.Media.Brushes.Blue;
+                m_DrawingPolylineItem.StrokeThickness = 3;
+
+                m_Map.Children.Add(m_DrawingPolylineItem);
+
+                e.Handled = true;
+            }
+
+            if (e.Key == Key.RightCtrl && !e.IsRepeat && m_DrawingPolygonItem != null)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("double[,] points = new double[,] {");
+
+                for (int i = 0, n= m_DrawingPolygonItem.Locations.Count; i < n; i++)
+                {
+                    Point p = m_Map.Project(m_DrawingPolygonItem.Locations[i], m_Map.MaxZoomLevel);
+                    sb.AppendFormat("{0}{{{1}, {2}}}", (i == 0 ? string.Empty : ", "), p.X, p.Y);
+                }
+
+                sb.Append("};");
+
+                Window textBoxWindow = new Window();
+                textBoxWindow.Width = 320;
+                textBoxWindow.Height = 240;
+
+                TextBox textBox = new TextBox();
+                textBox.Text = sb.ToString();
+                textBox.TextWrapping = TextWrapping.WrapWithOverflow;
+                textBoxWindow.Content = textBox;
+
+                textBoxWindow.Show();
+            }
+        }
+        private void DrawPolyKeyUpHandler(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.LeftCtrl && m_DrawingPolygon)
+            {
+                m_DrawingPolygon = false;
+
+                m_DrawingPolygonItem = new MapPolygon();
+                m_DrawingPolygonItem.Locations = m_DrawingPolylineItem.Locations;
+                m_DrawingPolygonItem.Opacity = m_DrawingPolylineItem.Opacity;
+                m_DrawingPolygonItem.Stroke = m_DrawingPolylineItem.Stroke;
+                m_DrawingPolygonItem.StrokeThickness = m_DrawingPolylineItem.StrokeThickness;
+
+                m_Map.Children.Add(m_DrawingPolygonItem);
+
+                m_Map.Children.Remove(m_DrawingPolylineItem);
+                m_DrawingPolylineItem = null;
+
+                e.Handled = true;
+            }
+        }
+        private void DrawPolyMouseDownHandler(object sender, MouseEventArgs e)
+        {
+            if (e.RightButton == MouseButtonState.Pressed && m_DrawingPolygon && m_DrawingPolylineItem != null)
+            {
+                m_DrawingPolylineItem.Locations.Add(m_Map.ViewportPointToLocation(e.GetPosition(m_Map)));
+
+                e.Handled = true;
+            }
         }
         #endregion
     }
