@@ -15,6 +15,10 @@
             </Rectangle>
         </ControlTemplate>
         
+        <Style TargetType="l:ImagePushpin">
+            <Setter Property="Template" Value="{StaticResource ImagePushpinTemplate}" />
+        </Style>
+
         <Style TargetType="l:PointOfInterestPushpin">
             <Setter Property="Template" Value="{StaticResource ImagePushpinTemplate}" />
         </Style>
