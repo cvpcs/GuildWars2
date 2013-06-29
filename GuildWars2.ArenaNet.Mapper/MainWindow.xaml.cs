@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 
 using Microsoft.Maps.MapControl.WPF;
+using Location = Microsoft.Maps.MapControl.WPF.Location;
 
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
@@ -333,15 +334,19 @@ namespace GuildWars2.ArenaNet.Mapper
                         posX = TranslateX(posX, map.MapRect, map.ContinentRect);
                         posZ = TranslateZ(posZ, map.MapRect, map.ContinentRect);
 
+                        Location loc = m_Map.Unproject(new Point(posX, posZ), m_Map.MaxZoomLevel);
+
                         // move the player icon
                         Dispatcher.Invoke(() =>
                             {
-                                m_Player.Location = m_Map.Unproject(new Point(posX, posZ), m_Map.MaxZoomLevel);
                                 m_Player.Heading = rot;
                                 m_Player.Visibility = Visibility.Visible;
 
-                                if (m_FollowPlayer)
-                                    m_Map.SetView(m_Player.Location, m_Map.ZoomLevel);
+                                // only follow player if they've asked to and the location has changed
+                                if (m_FollowPlayer && m_Player.Location != loc)
+                                    m_Map.SetView(loc, m_Map.ZoomLevel);
+
+                                m_Player.Location = loc;
                             }, DispatcherPriority.Background, new CancellationToken(), new TimeSpan(0, 0, 1));
                     }
                 }
