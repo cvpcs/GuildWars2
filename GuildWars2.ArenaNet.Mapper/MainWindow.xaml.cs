@@ -184,7 +184,8 @@ namespace GuildWars2.ArenaNet.Mapper
                                 }
 
                                 m_EventMapPolygons[eid] = evPoly;
-                                m_MapEvents[ev.MapId].Children.Add(evPoly);
+                                // insert so polys are below all pushpins
+                                m_MapEvents[ev.MapId].Children.Insert(0, evPoly);
                                 break;
 
                             case LocationType.Sphere:
@@ -204,7 +205,8 @@ namespace GuildWars2.ArenaNet.Mapper
                                 }
 
                                 m_EventMapPolygons[eid] = evCircle;
-                                m_MapEvents[ev.MapId].Children.Add(evCircle);
+                                // insert so polys are below all pushpins
+                                m_MapEvents[ev.MapId].Children.Insert(0, evCircle);
                                 break;
 
                             default:
@@ -214,17 +216,8 @@ namespace GuildWars2.ArenaNet.Mapper
                         EventPushpin evPin = new EventPushpin(ev);
                         evPin.Location = m_Map.Unproject(center, m_Map.MaxZoomLevel);
                         m_EventPushpins[eid] = evPin;
+                        m_MapEvents[ev.MapId].Children.Add(evPin);
                     }
-                }
-
-                // insert pushpins after-the fact so they end up on top of all polys
-                foreach (KeyValuePair<string, EventDetails> entry in events.Events)
-                {
-                    Guid eid = new Guid(entry.Key);
-                    EventDetails ev = entry.Value;
-
-                    if (m_EventPushpins.ContainsKey(eid))
-                        m_MapEvents[ev.MapId].Children.Add(m_EventPushpins[eid]);
                 }
             }
 
