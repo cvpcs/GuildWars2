@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.EventTi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.Mapper", "GuildWars2.ArenaNet.Mapper\GuildWars2.ArenaNet.Mapper.csproj", "{35746C2E-DEFB-480B-96BF-FB504F51A2E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.SyntaxError", "GuildWars2.SyntaxError\GuildWars2.SyntaxError.csproj", "{FDA6740A-4370-4B57-990C-285C3C77E97D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -279,6 +281,18 @@ Global
 		{35746C2E-DEFB-480B-96BF-FB504F51A2E5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{35746C2E-DEFB-480B-96BF-FB504F51A2E5}.Release|Mono.ActiveCfg = Release|Any CPU
 		{35746C2E-DEFB-480B-96BF-FB504F51A2E5}.Release|Win32.ActiveCfg = Release|Any CPU
+		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Debug|Mono.ActiveCfg = Debug|Any CPU
+		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Release|Mono.ActiveCfg = Release|Any CPU
+		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

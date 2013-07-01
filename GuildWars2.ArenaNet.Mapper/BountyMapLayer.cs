@@ -8,6 +8,7 @@ using Microsoft.Maps.MapControl.WPF;
 using Location = Microsoft.Maps.MapControl.WPF.Location;
 
 using GuildWars2.ArenaNet.Model;
+using GuildWars2.SyntaxError.Model;
 
 namespace GuildWars2.ArenaNet.Mapper
 {

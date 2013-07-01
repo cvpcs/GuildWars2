@@ -17,6 +17,7 @@ using Timer = System.Timers.Timer;
 
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
+using GuildWars2.SyntaxError.Model;
 
 namespace GuildWars2.ArenaNet.EventTimer
 {
@@ -315,68 +316,6 @@ namespace GuildWars2.ArenaNet.EventTimer
                 }
             }
             catch { }
-        }
-
-        [DataContract]
-        private class EventTimerData
-        {
-            [DataMember(Name = "build")]
-            public int Build;
-
-            [DataMember(Name = "timestamp")]
-            public long Timestamp;
-
-            [DataMember(Name = "events")]
-            public List<MetaEventStatus> Events;
-        }
-
-        [DataContract]
-        private class MetaEventStatus
-        {
-            [DataMember(Name = "id")]
-            public string Id { get; set; }
-
-            [DataMember(Name = "name")]
-            public string Name { get; set; }
-
-            [DataMember(Name = "minCountdown")]
-            public uint MinCountdown { get; set; }
-
-            [DataMember(Name = "maxCountdown")]
-            public uint MaxCountdown { get; set; }
-
-            public uint Countdown
-            {
-                set
-                {
-                    MinCountdown = value;
-                    MaxCountdown = value;
-                }
-            }
-
-            [DataMember(Name = "stageId")]
-            public int StageId { get; set; }
-
-            [DataMember(Name = "stageName")]
-            public string StageName { get; set; }
-
-            [DataMember(Name = "stageType")]
-            public string StageType { get; set; }
-
-            public MetaEventStage.StageType StageTypeEnum
-            {
-                get
-                {
-                    return (MetaEventStage.StageType)Enum.Parse(typeof(MetaEventStage.StageType), StageType, true);
-                }
-                set
-                {
-                    StageType = Enum.GetName(typeof(MetaEventStage.StageType), value).ToLower();
-                }
-            }
-
-            [DataMember(Name = "timestamp")]
-            public long Timestamp { get; set; }
         }
     }
 }

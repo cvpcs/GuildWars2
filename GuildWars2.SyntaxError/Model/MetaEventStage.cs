@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using GuildWars2.ArenaNet.Model;
 
-namespace GuildWars2.ArenaNet.EventTimer
+namespace GuildWars2.SyntaxError.Model
 {
     public class MetaEventStage
     {

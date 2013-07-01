@@ -8,6 +8,7 @@ using System.Threading;
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
 using GuildWars2.ArenaNet.EventTimer;
+using GuildWars2.SyntaxError.Model;
 
 namespace GuildWars2.ArenaNet.EventTimer.Test
 {

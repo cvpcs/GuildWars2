@@ -57,9 +57,6 @@
       <DependentUpon>EventTimerService.cs</DependentUpon>
     </Compile>
     <Compile Include="HttpJsonServer.cs" />
-    <Compile Include="MetaEvent.cs" />
-    <Compile Include="MetaEventDefinitions.cs" />
-    <Compile Include="MetaEventStage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
@@ -78,6 +75,10 @@
     <ProjectReference Include="..\GuildWars2.ArenaNet\GuildWars2.ArenaNet.csproj">
       <Project>{65382ece-3e80-47e3-9864-0c6995907c2b}</Project>
       <Name>GuildWars2.ArenaNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GuildWars2.SyntaxError\GuildWars2.SyntaxError.csproj">
+      <Project>{fda6740a-4370-4b57-990c-285c3c77e97d}</Project>
+      <Name>GuildWars2.SyntaxError</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

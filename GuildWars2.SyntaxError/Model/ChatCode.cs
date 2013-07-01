@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GuildWars2.ArenaNet.Model
+namespace GuildWars2.SyntaxError.Model
 {
     public class ChatCode
     {

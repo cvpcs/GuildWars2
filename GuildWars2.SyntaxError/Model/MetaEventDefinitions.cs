@@ -4,7 +4,7 @@ using System.Linq;
 
 using GuildWars2.ArenaNet.Model;
 
-namespace GuildWars2.ArenaNet.EventTimer
+namespace GuildWars2.SyntaxError.Model
 {
     public static class MetaEventDefinitions
     {

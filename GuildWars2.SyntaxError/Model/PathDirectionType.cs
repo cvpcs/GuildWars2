@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GuildWars2.ArenaNet.Model
+namespace GuildWars2.SyntaxError.Model
 {
     public enum PathDirectionType
     {
