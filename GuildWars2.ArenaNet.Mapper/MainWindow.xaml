@@ -75,12 +75,11 @@
                 </Style>
             </Grid.Resources>
             <Border x:Name="m_LegendIcon"
-                HorizontalAlignment="Right" VerticalAlignment="Top"
                 MouseEnter="LegendIcon_MouseEnter">
                 <Image Source="/Resources/layers.png" Width="26" Height="26" />
             </Border>
             <Border x:Name="m_Legend"
-                Visibility="Hidden"
+                Visibility="Collapsed"
                 MouseLeave="Legend_MouseLeave">
                 <Grid>
                     <Grid.Resources>

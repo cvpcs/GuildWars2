@@ -320,6 +320,7 @@ namespace GuildWars2.ArenaNet.Mapper
             return (1 - ((z - mapRect[0][1]) / (mapRect[1][1] - mapRect[0][1]))) * (continentRect[1][1] - continentRect[0][1]) + continentRect[0][1];
         }
 
+        #region Worker Threads
         private void PlayerWorkerThread()
         {
             while (m_Running)
@@ -387,6 +388,7 @@ namespace GuildWars2.ArenaNet.Mapper
                 m_Canceled.WaitOne(30000);
             }
         }
+        #endregion
 
         #region Map Handlers
         private void Map_UpdateView(double zoomLevel)
@@ -420,13 +422,13 @@ namespace GuildWars2.ArenaNet.Mapper
         #region Legend Checkbox Handlers
         private void LegendIcon_MouseEnter(object sender, MouseEventArgs e)
         {
-            m_LegendIcon.Visibility = Visibility.Hidden;
+            m_LegendIcon.Visibility = Visibility.Collapsed;
             m_Legend.Visibility = Visibility.Visible;
         }
 
         private void Legend_MouseLeave(object sender, MouseEventArgs e)
         {
-            m_Legend.Visibility = Visibility.Hidden;
+            m_Legend.Visibility = Visibility.Collapsed;
             m_LegendIcon.Visibility = Visibility.Visible;
         }
 
