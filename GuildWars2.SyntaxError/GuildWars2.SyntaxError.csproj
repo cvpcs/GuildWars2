@@ -7,8 +7,8 @@
     <ProjectGuid>{FDA6740A-4370-4B57-990C-285C3C77E97D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GuildWars2.SE</RootNamespace>
-    <AssemblyName>GuildWars2.SE</AssemblyName>
+    <RootNamespace>GuildWars2.SyntaxError</RootNamespace>
+    <AssemblyName>GuildWars2.SyntaxError</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
