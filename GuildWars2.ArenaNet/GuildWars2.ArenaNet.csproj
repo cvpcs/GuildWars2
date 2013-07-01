@@ -81,6 +81,8 @@
     <Compile Include="API\Wvw\MatchesResponse.cs" />
     <Compile Include="API\Wvw\ObjectiveNamesRequest.cs" />
     <Compile Include="API\Wvw\ObjectiveNamesResponse.cs" />
+    <Compile Include="Model\ChatCode.cs" />
+    <Compile Include="Model\ChatCodeType.cs" />
     <Compile Include="Model\Color.cs" />
     <Compile Include="Model\Continent.cs" />
     <Compile Include="Model\EventFlagType.cs" />
