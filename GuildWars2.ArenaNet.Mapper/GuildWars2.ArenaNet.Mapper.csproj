@@ -85,6 +85,9 @@
     <Compile Include="BountyMapLayer.cs" />
     <Compile Include="EventMapPolygon.cs" />
     <Compile Include="EventPushpin.cs" />
+    <Compile Include="EventTimerBox.xaml.cs">
+      <DependentUpon>EventTimerBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImagePushpin.cs" />
     <Compile Include="SkillChallengePushpin.cs" />
     <Compile Include="TaskPushpin.cs" />
@@ -122,6 +125,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="EventTimerBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

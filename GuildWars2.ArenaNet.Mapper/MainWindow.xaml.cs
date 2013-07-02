@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Timers;
+using Timer = System.Timers.Timer;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -18,6 +20,7 @@ using Location = Microsoft.Maps.MapControl.WPF.Location;
 
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
+using GuildWars2.SyntaxError.API;
 using GuildWars2.SyntaxError.Model;
 
 namespace GuildWars2.ArenaNet.Mapper
@@ -34,11 +37,12 @@ namespace GuildWars2.ArenaNet.Mapper
         private ManualResetEvent m_Canceled;
         private Thread m_PlayerWorkerThread;
         private Thread m_EventWorkerThread;
+        private Thread m_EventTimerWorkerThread;
 
+        // map stuff
         private volatile bool m_FollowPlayer;
         private Pushpin m_Player;
 
-        // map layers
         private MapLayer m_MapLayerContainer;
         private IDictionary<int, MapLayer> m_MapLayers;
         private IDictionary<int, MapLayer> m_MapWaypoints;
@@ -52,6 +56,9 @@ namespace GuildWars2.ArenaNet.Mapper
         private IDictionary<int, MapLayer> m_MapEvents;
         private IDictionary<Guid, EventPushpin> m_EventPushpins;
         private IDictionary<Guid, EventMapPolygon> m_EventMapPolygons;
+
+        // event timer stuff
+        private IDictionary<string, EventTimerBox> m_EventTimerBoxes;
 
         public MainWindow()
         {
@@ -266,6 +273,19 @@ namespace GuildWars2.ArenaNet.Mapper
                 }
             }
 
+            m_EventTimerBoxes = new Dictionary<string, EventTimerBox>();
+            EventTimerDataResponse timerData = new EventTimerDataRequest().Execute();
+            if (timerData != null)
+            {
+                foreach (MetaEventStatus e in timerData.Events)
+                {
+                    EventTimerBox box = new EventTimerBox();
+                    box.SetData(e);
+                    m_EventTimerBoxes.Add(e.Id, box);
+                    EventTimerItems.Children.Add(box);
+                }
+            }
+
             MouseDown += DrawPolyMouseDownHandler;
             KeyDown += DrawPolyKeyDownHandler;
             KeyUp += DrawPolyKeyUpHandler;
@@ -276,6 +296,8 @@ namespace GuildWars2.ArenaNet.Mapper
             m_PlayerWorkerThread.Start();
             m_EventWorkerThread = new Thread(EventWorkerThread);
             m_EventWorkerThread.Start();
+            m_EventTimerWorkerThread = new Thread(EventTimerWorkerThread);
+            m_EventTimerWorkerThread.Start();
         }
 
         protected override void OnClosed(EventArgs e)
@@ -284,6 +306,7 @@ namespace GuildWars2.ArenaNet.Mapper
             m_Canceled.Set();
             m_PlayerWorkerThread.Join();
             m_EventWorkerThread.Join();
+            m_EventTimerWorkerThread.Join();
 
             base.OnClosed(e);
         }
@@ -389,6 +412,49 @@ namespace GuildWars2.ArenaNet.Mapper
                 m_Canceled.WaitOne(30000);
             }
         }
+
+        private void EventTimerWorkerThread()
+        {
+
+            Timer ticker = new Timer();
+            ticker.Interval = 1000;
+            ticker.Elapsed += (s, e) =>
+                {
+                    try
+                    {
+                        Dispatcher.Invoke(() =>
+                            {
+                                foreach (EventTimerBox b in m_EventTimerBoxes.Values)
+                                    b.Tick();
+                            }, DispatcherPriority.Background, CancellationToken.None, new TimeSpan(0, 0, 1));
+                    }
+                    catch
+                    { }
+                };
+            ticker.Start();
+
+            while (m_Running)
+            {
+                try
+                {
+                    EventTimerDataResponse timerData = new EventTimerDataRequest().Execute();
+                    if (timerData != null)
+                    {
+                        Dispatcher.Invoke(() =>
+                            {
+                                foreach (MetaEventStatus e in timerData.Events)
+                                    m_EventTimerBoxes[e.Id].SetData(e);
+                            }, DispatcherPriority.Background, CancellationToken.None, new TimeSpan(0, 0, 25));
+                    }
+                }
+                catch
+                { }
+
+                m_Canceled.WaitOne(30000);
+            }
+
+            ticker.Stop();
+        }
         #endregion
 
         #region Map Handlers
@@ -476,7 +542,7 @@ namespace GuildWars2.ArenaNet.Mapper
         }
         #endregion
 
-        #region Event Timer UI Handlers
+        #region Event Timer Handlers
         private void EventTimerIcon_MouseDown(object sender, MouseEventArgs e)
         {
             EventTimerItems.Visibility = (EventTimerItems.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible);
