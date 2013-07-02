@@ -65,10 +65,10 @@ namespace GuildWars2.ArenaNet.Mapper
             m_Player.Template = (ControlTemplate)Application.Current.Resources["PlayerPushpin"];
             m_Player.PositionOrigin = PositionOrigin.Center;
             m_Player.Visibility = Visibility.Hidden;
-            m_Map.Children.Add(m_Player);
+            Map.Children.Add(m_Player);
 
             m_MapLayerContainer = new MapLayer();
-            m_Map.Children.Add(m_MapLayerContainer);
+            Map.Children.Add(m_MapLayerContainer);
 
             m_MapLayers = new Dictionary<int, MapLayer>();
             m_MapWaypoints = new Dictionary<int, MapLayer>();
@@ -112,7 +112,7 @@ namespace GuildWars2.ArenaNet.Mapper
                         {
                             Pushpin poiPin = new PointOfInterestPushpin(poi);
 
-                            poiPin.Location = m_Map.Unproject(new Point(poi.Coord[0], poi.Coord[1]), m_Map.MaxZoomLevel);
+                            poiPin.Location = Map.Unproject(new Point(poi.Coord[0], poi.Coord[1]), Map.MaxZoomLevel);
 
                             switch (poi.TypeEnum)
                             {
@@ -134,7 +134,7 @@ namespace GuildWars2.ArenaNet.Mapper
                         {
                             Pushpin rhPin = new TaskPushpin(rh);
 
-                            rhPin.Location = m_Map.Unproject(new Point(rh.Coord[0], rh.Coord[1]), m_Map.MaxZoomLevel);
+                            rhPin.Location = Map.Unproject(new Point(rh.Coord[0], rh.Coord[1]), Map.MaxZoomLevel);
 
                             m_MapRenownHearts[mid].Children.Add(rhPin);
                         }
@@ -143,7 +143,7 @@ namespace GuildWars2.ArenaNet.Mapper
                         {
                             Pushpin spPin = new SkillChallengePushpin(sp);
 
-                            spPin.Location = m_Map.Unproject(new Point(sp.Coord[0], sp.Coord[1]), m_Map.MaxZoomLevel);
+                            spPin.Location = Map.Unproject(new Point(sp.Coord[0], sp.Coord[1]), Map.MaxZoomLevel);
 
                             m_MapSkillPoints[mid].Children.Add(spPin);
                         }
@@ -170,7 +170,7 @@ namespace GuildWars2.ArenaNet.Mapper
                 if (bounty.Spawns != null)
                 {
                     foreach (List<double> p in bounty.Spawns)
-                        b.AddSpawningPoint(m_Map.Unproject(new Point(p[0], p[1]), m_Map.MaxZoomLevel));
+                        b.AddSpawningPoint(Map.Unproject(new Point(p[0], p[1]), Map.MaxZoomLevel));
                 }
 
 
@@ -181,7 +181,7 @@ namespace GuildWars2.ArenaNet.Mapper
                     {
                         LocationCollection locs = new LocationCollection();
                         foreach (List<double> p in path.Points)
-                            locs.Add(m_Map.Unproject(new Point(p[0], p[1]), m_Map.MaxZoomLevel));
+                            locs.Add(Map.Unproject(new Point(p[0], p[1]), Map.MaxZoomLevel));
                         b.AddPath(locs, bounty_path_brushes[i], path.Direction);
                         i = (i + 1) % bounty_path_brushes.Count;
                     }
@@ -221,11 +221,11 @@ namespace GuildWars2.ArenaNet.Mapper
                                 foreach (List<double> pt in ev.Location.Points)
                                 {
                                     evPoly.Locations.Add(
-                                            m_Map.Unproject(
+                                            Map.Unproject(
                                                     new Point(
                                                             TranslateX(pt[0], map.MapRect, map.ContinentRect),
                                                             TranslateZ(pt[1], map.MapRect, map.ContinentRect)),
-                                                    m_Map.MaxZoomLevel));
+                                                    Map.MaxZoomLevel));
                                 }
 
                                 m_EventMapPolygons[eid] = evPoly;
@@ -242,11 +242,11 @@ namespace GuildWars2.ArenaNet.Mapper
                                 for (int i = 0; i < 360; i+=10)
                                 {
                                     evCircle.Locations.Add(
-                                            m_Map.Unproject(
+                                            Map.Unproject(
                                                     new Point(
                                                             center.X + radius * Math.Cos(i * (Math.PI / 180)),
                                                             center.Y + radius * Math.Sin(i * (Math.PI / 180))),
-                                                    m_Map.MaxZoomLevel));
+                                                    Map.MaxZoomLevel));
                                 }
 
                                 m_EventMapPolygons[eid] = evCircle;
@@ -259,7 +259,7 @@ namespace GuildWars2.ArenaNet.Mapper
                         }
 
                         EventPushpin evPin = new EventPushpin(ev);
-                        evPin.Location = m_Map.Unproject(center, m_Map.MaxZoomLevel);
+                        evPin.Location = Map.Unproject(center, Map.MaxZoomLevel);
                         m_EventPushpins[eid] = evPin;
                         m_MapEvents[ev.MapId].Children.Add(evPin);
                     }
@@ -340,7 +340,7 @@ namespace GuildWars2.ArenaNet.Mapper
                         posX = TranslateX(posX, map.MapRect, map.ContinentRect);
                         posZ = TranslateZ(posZ, map.MapRect, map.ContinentRect);
 
-                        Location loc = m_Map.Unproject(new Point(posX, posZ), m_Map.MaxZoomLevel);
+                        Location loc = Map.Unproject(new Point(posX, posZ), Map.MaxZoomLevel);
 
                         // move the player icon
                         Dispatcher.Invoke(() =>
@@ -350,7 +350,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
                                 // only follow player if they've asked to and the location has changed
                                 if (m_FollowPlayer && m_Player.Location != loc)
-                                    m_Map.SetView(loc, m_Map.ZoomLevel);
+                                    Map.SetView(loc, Map.ZoomLevel);
 
                                 m_Player.Location = loc;
                             }, DispatcherPriority.Background, CancellationToken.None, new TimeSpan(0, 0, 1));
@@ -398,39 +398,39 @@ namespace GuildWars2.ArenaNet.Mapper
 
             if (zoomLevel >= 3)
             {
-                int mid = GetMapByCenter(m_Map.Project(m_Map.Center, m_Map.MaxZoomLevel));
+                int mid = GetMapByCenter(Map.Project(Map.Center, Map.MaxZoomLevel));
                 if (m_MapLayers.ContainsKey(mid))
                 {
                     m_MapLayerContainer.Children.Add(m_MapLayers[mid]);
                 }
             }
 
-            m_ZoomInButton.IsEnabled = (zoomLevel < m_Map.MaxZoomLevel);
-            m_ZoomOutButton.IsEnabled = (zoomLevel > m_Map.MinZoomLevel);
+            ZoomInButton.IsEnabled = (zoomLevel < Map.MaxZoomLevel);
+            ZoomOutButton.IsEnabled = (zoomLevel > Map.MinZoomLevel);
         }
 
         private void Map_ViewChangeOnFrame(object sender, MapEventArgs e)
         {
-            Map_UpdateView(m_Map.TargetZoomLevel);
+            Map_UpdateView(Map.TargetZoomLevel);
         }
 
         private void Map_ViewChangeEnd(object sender, MapEventArgs e)
         {
-            Map_UpdateView(m_Map.ZoomLevel);
+            Map_UpdateView(Map.ZoomLevel);
         }
         #endregion
 
         #region Legend Checkbox Handlers
         private void LegendIcon_MouseEnter(object sender, MouseEventArgs e)
         {
-            m_LegendIcon.Visibility = Visibility.Collapsed;
-            m_Legend.Visibility = Visibility.Visible;
+            LegendIcon.Visibility = Visibility.Collapsed;
+            Legend.Visibility = Visibility.Visible;
         }
 
         private void Legend_MouseLeave(object sender, MouseEventArgs e)
         {
-            m_Legend.Visibility = Visibility.Collapsed;
-            m_LegendIcon.Visibility = Visibility.Visible;
+            Legend.Visibility = Visibility.Collapsed;
+            LegendIcon.Visibility = Visibility.Visible;
         }
 
         private void Legend_WaypointsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapWaypoints, Visibility.Visible); }
@@ -459,20 +459,20 @@ namespace GuildWars2.ArenaNet.Mapper
         #endregion
 
         #region Zoom Handlers
-        private void Zoom_InClicked(object sender, RoutedEventArgs e)
+        private void ZoomInButton_Clicked(object sender, RoutedEventArgs e)
         {
-            double newZoomLevel = Math.Min(m_Map.ZoomLevel + 1.0, m_Map.MaxZoomLevel);
+            double newZoomLevel = Math.Min(Map.ZoomLevel + 1.0, Map.MaxZoomLevel);
 
-            if (newZoomLevel != m_Map.ZoomLevel)
-                m_Map.SetView(newZoomLevel, m_Map.Heading);
+            if (newZoomLevel != Map.ZoomLevel)
+                Map.SetView(newZoomLevel, Map.Heading);
         }
 
-        private void Zoom_OutClicked(object sender, RoutedEventArgs e)
+        private void ZoomOutButton_Clicked(object sender, RoutedEventArgs e)
         {
-            double newZoomLevel = Math.Max(m_Map.ZoomLevel - 1.0, m_Map.MinZoomLevel);
+            double newZoomLevel = Math.Max(Map.ZoomLevel - 1.0, Map.MinZoomLevel);
 
-            if (newZoomLevel != m_Map.ZoomLevel)
-                m_Map.SetView(newZoomLevel, m_Map.Heading);
+            if (newZoomLevel != Map.ZoomLevel)
+                Map.SetView(newZoomLevel, Map.Heading);
         }
         #endregion
 
@@ -487,7 +487,7 @@ namespace GuildWars2.ArenaNet.Mapper
                 m_DrawingPolygon = true;
 
                 if (m_DrawingPolygonItem != null)
-                    m_Map.Children.Remove(m_DrawingPolygonItem);
+                    Map.Children.Remove(m_DrawingPolygonItem);
 
                 m_DrawingPolygonItem = null;
                 
@@ -497,7 +497,7 @@ namespace GuildWars2.ArenaNet.Mapper
                 m_DrawingPolylineItem.Stroke = System.Windows.Media.Brushes.Blue;
                 m_DrawingPolylineItem.StrokeThickness = 3;
 
-                m_Map.Children.Add(m_DrawingPolylineItem);
+                Map.Children.Add(m_DrawingPolylineItem);
 
                 e.Handled = true;
             }
@@ -509,7 +509,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
                 for (int i = 0, n= m_DrawingPolygonItem.Locations.Count; i < n; i++)
                 {
-                    Point p = m_Map.Project(m_DrawingPolygonItem.Locations[i], m_Map.MaxZoomLevel);
+                    Point p = Map.Project(m_DrawingPolygonItem.Locations[i], Map.MaxZoomLevel);
                     sb.AppendFormat("{0}{{{1}, {2}}}", (i == 0 ? string.Empty : ", "), p.X, p.Y);
                 }
 
@@ -539,9 +539,9 @@ namespace GuildWars2.ArenaNet.Mapper
                 m_DrawingPolygonItem.Stroke = m_DrawingPolylineItem.Stroke;
                 m_DrawingPolygonItem.StrokeThickness = m_DrawingPolylineItem.StrokeThickness;
 
-                m_Map.Children.Add(m_DrawingPolygonItem);
+                Map.Children.Add(m_DrawingPolygonItem);
 
-                m_Map.Children.Remove(m_DrawingPolylineItem);
+                Map.Children.Remove(m_DrawingPolylineItem);
                 m_DrawingPolylineItem = null;
 
                 e.Handled = true;
@@ -551,7 +551,7 @@ namespace GuildWars2.ArenaNet.Mapper
         {
             if (e.RightButton == MouseButtonState.Pressed && m_DrawingPolygon && m_DrawingPolylineItem != null)
             {
-                m_DrawingPolylineItem.Locations.Add(m_Map.ViewportPointToLocation(e.GetPosition(m_Map)));
+                m_DrawingPolylineItem.Locations.Add(Map.ViewportPointToLocation(e.GetPosition(Map)));
 
                 e.Handled = true;
             }

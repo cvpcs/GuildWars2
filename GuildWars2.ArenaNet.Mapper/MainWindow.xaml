@@ -4,7 +4,7 @@
         xmlns:l="clr-namespace:GuildWars2.ArenaNet.Mapper"
         Title="MainWindow" Height="600" Width="800">
     <Grid>
-        <l:ArenaNetMap x:Name="m_Map" CredentialsProvider="AhTEAKIQU-ZIgRRohOT9wwe3V8s6nGrhPX1PEmnPtvJwB9mvCd5Nqp-WUb47dfp5"
+        <l:ArenaNetMap x:Name="Map" CredentialsProvider="AhTEAKIQU-ZIgRRohOT9wwe3V8s6nGrhPX1PEmnPtvJwB9mvCd5Nqp-WUb47dfp5"
                        ViewChangeOnFrame="Map_ViewChangeOnFrame" ViewChangeEnd="Map_ViewChangeEnd" />
 
         <StackPanel Margin="5,5,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
@@ -55,16 +55,14 @@
             <StackPanel.Effect>
                 <DropShadowEffect Opacity="0.5" />
             </StackPanel.Effect>
-            <Button x:Name="m_ZoomInButton" Template="{StaticResource PlusButtonTemplate}" Click="Zoom_InClicked" />
-            <Button x:Name="m_ZoomOutButton" Template="{StaticResource MinusButtonTemplate}" Click="Zoom_OutClicked" IsEnabled="False" />
+            <Button x:Name="ZoomInButton" Template="{StaticResource PlusButtonTemplate}" Click="ZoomInButton_Clicked" />
+            <Button x:Name="ZoomOutButton" Template="{StaticResource MinusButtonTemplate}" Click="ZoomOutButton_Clicked" IsEnabled="False" />
         </StackPanel>
 
         <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0">
             <Grid.Resources>
                 <Style TargetType="Border">
-                    <Setter Property="Background" Value="White" />
-                    <Setter Property="BorderBrush" Value="White" />
-                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="Background" Value="LightGray" />
                     <Setter Property="CornerRadius" Value="5" />
                     <Setter Property="Padding" Value="5" />
                     <Setter Property="Effect">
@@ -74,11 +72,11 @@
                     </Setter>
                 </Style>
             </Grid.Resources>
-            <Border x:Name="m_LegendIcon"
-                MouseEnter="LegendIcon_MouseEnter">
+            <Border x:Name="LegendIcon"
+                    MouseEnter="LegendIcon_MouseEnter">
                 <Image Source="/Resources/layers.png" Width="26" Height="26" />
             </Border>
-            <Border x:Name="m_Legend"
+            <Border x:Name="Legend"
                 Visibility="Collapsed"
                 MouseLeave="Legend_MouseLeave">
                 <Grid>
@@ -105,7 +103,7 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition  />
+                        <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
