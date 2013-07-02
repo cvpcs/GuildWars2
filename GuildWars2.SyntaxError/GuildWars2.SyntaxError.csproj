@@ -41,6 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\EventTimerDataRequest.cs" />
+    <Compile Include="API\EventTimerDataResponse.cs" />
+    <Compile Include="API\Request.cs" />
     <Compile Include="Model\ChatCode.cs" />
     <Compile Include="Model\ChatCodeType.cs" />
     <Compile Include="Model\EventTimerData.cs" />
@@ -53,11 +56,16 @@
     <Compile Include="Model\MetaEventStatus.cs" />
     <Compile Include="Model\PathDirectionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RestSharpDataContractJsonDeserializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GuildWars2.ArenaNet\GuildWars2.ArenaNet.csproj">
       <Project>{65382ece-3e80-47e3-9864-0c6995907c2b}</Project>
       <Name>GuildWars2.ArenaNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RestSharp\RestSharp.csproj">
+      <Project>{2ececfbf-5f3e-40ee-a963-72336dc7abe2}</Project>
+      <Name>RestSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
