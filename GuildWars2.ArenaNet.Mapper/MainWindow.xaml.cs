@@ -476,6 +476,13 @@ namespace GuildWars2.ArenaNet.Mapper
         }
         #endregion
 
+        #region Event Timer UI Handlers
+        private void EventTimerIcon_MouseDown(object sender, MouseEventArgs e)
+        {
+            EventTimerItems.Visibility = (EventTimerItems.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible);
+        }
+        #endregion
+
         #region DrawPolyHandlers
         private bool m_DrawingPolygon = false;
         private MapPolygon m_DrawingPolygonItem = null;

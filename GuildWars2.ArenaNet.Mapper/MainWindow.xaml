@@ -77,6 +77,7 @@
                 <Image Source="/Resources/layers.png" Width="26" Height="26" />
             </Border>
             <Border x:Name="Legend"
+                Background="White"
                 Visibility="Collapsed"
                 MouseLeave="Legend_MouseLeave">
                 <Grid>
@@ -146,5 +147,38 @@
                 </Grid>
             </Border>
         </Grid>
+
+        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,5,5">
+            <StackPanel.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="LightGray" />
+                    <Setter Property="CornerRadius" Value="5" />
+                    <Setter Property="Padding" Value="5" />
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Opacity="0.5" />
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="White" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding Path=Visibility,ElementName=EventTimerItems}" Value="Visible">
+                            <Setter Property="Background" Value="White" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Resources>
+            <Border x:Name="EventTimer">
+                <StackPanel>
+                    <ScrollViewer MaxHeight="400" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        <StackPanel x:Name="EventTimerItems" Visibility="Collapsed" />
+                    </ScrollViewer>
+                    <Image HorizontalAlignment="Right"
+                           Source="/Resources/event_boss_gray.png" Width="26" Height="26"
+                           MouseDown="EventTimerIcon_MouseDown" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
     </Grid>
 </Window>
