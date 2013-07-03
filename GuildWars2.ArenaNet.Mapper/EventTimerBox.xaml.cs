@@ -25,13 +25,17 @@ namespace GuildWars2.ArenaNet.Mapper
         private static LinearGradientBrush BOSS_GRADIENT = new LinearGradientBrush(
                 new GradientStopCollection() {
                         new GradientStop(Color.FromArgb(  0,   0,   0,   0), 0.0),
-                        new GradientStop(Color.FromArgb(128, 220,   0,   0), 0.5),
+                        new GradientStop(Color.FromArgb(128, 220,   0,   0), 0.1),
+                        new GradientStop(Color.FromArgb(192, 220,   0,   0), 0.5),
+                        new GradientStop(Color.FromArgb(128, 220,   0,   0), 0.9),
                         new GradientStop(Color.FromArgb(  0,   0,   0,   0), 1.0)
                     }, 0.0);
         private static LinearGradientBrush PRE_GRADIENT = new LinearGradientBrush(
                 new GradientStopCollection() {
                         new GradientStop(Color.FromArgb(  0,   0,   0,   0), 0.0),
-                        new GradientStop(Color.FromArgb(128, 220, 220,   0), 0.5),
+                        new GradientStop(Color.FromArgb(128, 220, 220,   0), 0.1),
+                        new GradientStop(Color.FromArgb(192, 220, 220,   0), 0.5),
+                        new GradientStop(Color.FromArgb(128, 220, 220,   0), 0.9),
                         new GradientStop(Color.FromArgb(  0,   0,   0,   0), 1.0)
                     }, 0.0);
 
@@ -48,7 +52,6 @@ namespace GuildWars2.ArenaNet.Mapper
 
         public void SetData(MetaEventStatus e)
         {
-            Width = 200;
             EventName.Text = e.Name;
 
             DateTime then = new DateTime(1970, 1, 1).AddMilliseconds(e.Timestamp);

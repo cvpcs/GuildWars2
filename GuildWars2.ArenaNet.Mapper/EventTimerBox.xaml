@@ -3,18 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
+             Width="200"
              d:DesignWidth="180">
     <Grid>
         <Grid.Resources>
             <Style TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Arial" />
+                <Setter Property="FontSize" Value="8pt" />
                 <Setter Property="Padding" Value="2" />
+                <Setter Property="LineHeight" Value="12pt" />
             </Style>
         </Grid.Resources>
         <TextBlock x:Name="EventTime"
                    HorizontalAlignment="Right" VerticalAlignment="Top"
-                   FontSize="8pt"
                    Text="1:00:03" />
         <StackPanel>
             <TextBlock x:Name="EventName"
