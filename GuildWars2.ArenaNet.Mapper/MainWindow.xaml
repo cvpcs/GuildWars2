@@ -172,7 +172,11 @@
             <Border x:Name="EventTimer">
                 <StackPanel>
                     <ScrollViewer MaxHeight="400" ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                        <StackPanel x:Name="EventTimerItems" Visibility="Collapsed" />
+                        <StackPanel x:Name="EventTimerItems" Visibility="Collapsed">
+                            <StackPanel x:Name="EventTimerItems_Boss" />
+                            <StackPanel x:Name="EventTimerItems_PreEvent" />
+                            <StackPanel x:Name="EventTimerItems_Other" />
+                        </StackPanel>
                     </ScrollViewer>
                     <Image HorizontalAlignment="Right"
                            Source="/Resources/event_boss_gray.png" Width="26" Height="26"

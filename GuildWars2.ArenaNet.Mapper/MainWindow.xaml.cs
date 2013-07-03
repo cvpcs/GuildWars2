@@ -282,7 +282,19 @@ namespace GuildWars2.ArenaNet.Mapper
                     EventTimerBox box = new EventTimerBox();
                     box.SetData(e);
                     m_EventTimerBoxes.Add(e.Id, box);
-                    EventTimerItems.Children.Add(box);
+
+                    switch (e.StageTypeEnum)
+                    {
+                        case MetaEventStage.StageType.Boss:
+                            EventTimerItems_Boss.Children.Add(box);
+                            break;
+                        case MetaEventStage.StageType.PreEvent:
+                            EventTimerItems_PreEvent.Children.Add(box);
+                            break;
+                        default:
+                            EventTimerItems_Other.Children.Add(box);
+                            break;
+                    }
                 }
             }
 
@@ -442,8 +454,28 @@ namespace GuildWars2.ArenaNet.Mapper
                     {
                         Dispatcher.Invoke(() =>
                             {
+                                EventTimerItems_Boss.Children.Clear();
+                                EventTimerItems_PreEvent.Children.Clear();
+                                EventTimerItems_Other.Children.Clear();
+
                                 foreach (MetaEventStatus e in timerData.Events)
-                                    m_EventTimerBoxes[e.Id].SetData(e);
+                                {
+                                    EventTimerBox box = m_EventTimerBoxes[e.Id];
+                                    box.SetData(e);
+
+                                    switch (e.StageTypeEnum)
+                                    {
+                                        case MetaEventStage.StageType.Boss:
+                                            EventTimerItems_Boss.Children.Add(box);
+                                            break;
+                                        case MetaEventStage.StageType.PreEvent:
+                                            EventTimerItems_PreEvent.Children.Add(box);
+                                            break;
+                                        default:
+                                            EventTimerItems_Other.Children.Add(box);
+                                            break;
+                                    }
+                                }
                             }, DispatcherPriority.Background, CancellationToken.None, new TimeSpan(0, 0, 25));
                     }
                 }
