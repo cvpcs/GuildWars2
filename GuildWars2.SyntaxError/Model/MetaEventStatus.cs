@@ -41,7 +41,11 @@ namespace GuildWars2.SyntaxError.Model
         {
             get
             {
-                return (MetaEventStage.StageType)Enum.Parse(typeof(MetaEventStage.StageType), StageType, true);
+                MetaEventStage.StageType type;
+                if (Enum.TryParse<MetaEventStage.StageType>(StageType, true, out type))
+                    return type;
+
+                return MetaEventStage.StageType.Invalid;
             }
             set
             {
