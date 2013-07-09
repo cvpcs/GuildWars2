@@ -31,6 +31,33 @@
             <Setter Property="Template" Value="{StaticResource ImagePushpinTemplate}" />
         </Style>
 
+        <Style TargetType="l:SectorPushpin">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="l:SectorPushpin">
+                        <StackPanel>
+                            <StackPanel.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily" Value="Resources/#MenomoniaItalic" />
+                                    <Setter Property="FontSize" Value="12pt" />
+                                    <Setter Property="TextAlignment" Value="Center" />
+                                    <Setter Property="HorizontalAlignment" Value="Center" />
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect ShadowDepth="0" BlurRadius="30" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </StackPanel.Resources>
+                            <TextBlock Text="{Binding Path=SectorName, RelativeSource={RelativeSource FindAncestor,AncestorType=l:SectorPushpin}}" />
+                            <TextBlock Text="{Binding Path=SectorLevel, RelativeSource={RelativeSource FindAncestor,AncestorType=l:SectorPushpin}}"
+                                       FontSize="8pt" />
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style TargetType="l:EventPushpin">
             <Setter Property="Template" Value="{StaticResource ImagePushpinTemplate}" />
         </Style>

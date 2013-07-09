@@ -83,6 +83,7 @@
     <Compile Include="ArenaNetTileLayer.cs" />
     <Compile Include="ArenaNetTileLayerSource.cs" />
     <Compile Include="BountyMapLayer.cs" />
+    <Compile Include="SectorPushpin.cs" />
     <Compile Include="EventMapPolygon.cs" />
     <Compile Include="EventPushpin.cs" />
     <Compile Include="EventTimerBox.xaml.cs">
@@ -110,6 +111,8 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Resource Include="Resources\menomonia-italic.ttf" />
+    <Resource Include="Resources\menomonia.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -50,6 +50,7 @@ namespace GuildWars2.ArenaNet.Mapper
         private IDictionary<int, MapLayer> m_MapVistas;
         private IDictionary<int, MapLayer> m_MapRenownHearts;
         private IDictionary<int, MapLayer> m_MapSkillPoints;
+        private IDictionary<int, MapLayer> m_MapSectors;
 
         private IDictionary<int, MapLayer> m_MapBounties;
 
@@ -83,6 +84,7 @@ namespace GuildWars2.ArenaNet.Mapper
             m_MapVistas = new Dictionary<int, MapLayer>();
             m_MapRenownHearts = new Dictionary<int, MapLayer>();
             m_MapSkillPoints = new Dictionary<int, MapLayer>();
+            m_MapSectors = new Dictionary<int, MapLayer>();
 
             m_MapBounties = new Dictionary<int, MapLayer>();
 
@@ -108,12 +110,14 @@ namespace GuildWars2.ArenaNet.Mapper
                         m_MapVistas.Add(mid, new MapLayer());
                         m_MapRenownHearts.Add(mid, new MapLayer());
                         m_MapSkillPoints.Add(mid, new MapLayer());
+                        m_MapSectors.Add(mid, new MapLayer());
 
                         m_MapLayers[mid].Children.Add(m_MapWaypoints[mid]);
                         m_MapLayers[mid].Children.Add(m_MapPointsOfInterest[mid]);
                         m_MapLayers[mid].Children.Add(m_MapVistas[mid]);
                         m_MapLayers[mid].Children.Add(m_MapRenownHearts[mid]);
                         m_MapLayers[mid].Children.Add(m_MapSkillPoints[mid]);
+                        m_MapLayers[mid].Children.Add(m_MapSectors[mid]);
 
                         foreach (PointOfInterest poi in map.PointsOfInterest)
                         {
@@ -153,6 +157,17 @@ namespace GuildWars2.ArenaNet.Mapper
                             spPin.Location = Map.Unproject(new Point(sp.Coord[0], sp.Coord[1]), Map.MaxZoomLevel);
 
                             m_MapSkillPoints[mid].Children.Add(spPin);
+                        }
+
+                        // hide sectors by default
+                        m_MapSectors[mid].Visibility = Visibility.Hidden;
+                        foreach (Sector s in map.Sectors)
+                        {
+                            Pushpin sPin = new SectorPushpin(s);
+
+                            sPin.Location = Map.Unproject(new Point(s.Coord[0], s.Coord[1]), Map.MaxZoomLevel);
+
+                            m_MapSectors[mid].Children.Add(sPin);
                         }
                     }
                 }
@@ -545,6 +560,9 @@ namespace GuildWars2.ArenaNet.Mapper
 
         private void Legend_SkillPointsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapSkillPoints, Visibility.Visible); }
         private void Legend_SkillPointsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapSkillPoints, Visibility.Hidden); }
+
+        private void Legend_SectorsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapSectors, Visibility.Visible); }
+        private void Legend_SectorsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapSectors, Visibility.Hidden); }
 
         private void Legend_BountiesChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapBounties, Visibility.Visible); }
         private void Legend_BountiesUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapBounties, Visibility.Hidden); }
