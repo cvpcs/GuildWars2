@@ -136,6 +136,13 @@
                     <TextBlock Grid.Row="4">Skill Points</TextBlock>
 
                     <CheckBox  Grid.Row="5" Checked="Legend_SectorsChecked" Unchecked="Legend_SectorsUnchecked" IsChecked="False" />
+                    <TextBlock Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center"
+                               FontFamily="Resources/#MenomoniaItalic" FontSize="12pt" FontWeight="ExtraBold"
+                               Foreground="Gray" Text="A">
+                        <TextBlock.Effect>
+                            <DropShadowEffect ShadowDepth="0" BlurRadius="30" />
+                        </TextBlock.Effect>
+                    </TextBlock>
                     <TextBlock Grid.Row="5">Sectors</TextBlock>
 
                     <CheckBox  Grid.Row="6" Checked="Legend_BountiesChecked" Unchecked="Legend_BountiesUnchecked" IsChecked="False" />
