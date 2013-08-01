@@ -47,6 +47,8 @@ namespace GuildWars2.ArenaNet.EventTimer
         {
             LogLine("Starting service...");
 
+            m_TimerData = new EventTimerData();
+
             // load up our database
             try
             {
@@ -54,12 +56,17 @@ namespace GuildWars2.ArenaNet.EventTimer
                 {
                     LogLine("Loading database from file...");
 
-                    m_TimerData = p_Serializer.ReadObject(stream) as EventTimerData;
-                    m_StatusListMap = new Dictionary<string, int>();
-                    for (int i = 0; i < m_TimerData.Events.Count; i++)
+                    EventTimerData oldTimerData = p_Serializer.ReadObject(stream) as EventTimerData;
+                    ResetTimers(oldTimerData.Build);
+                    m_TimerData.Timestamp = oldTimerData.Timestamp;
+
+                    foreach (MetaEventStatus status in oldTimerData.Events)
                     {
-                        MetaEventStatus status = m_TimerData.Events[i];
-                        m_StatusListMap[status.Id] = i;
+                        if (m_StatusListMap.ContainsKey(status.Id))
+                        {
+                            int i = m_StatusListMap[status.Id];
+                            m_TimerData.Events[i] = status;
+                        }
                     }
 
                     LogLine("Database loading complete");
@@ -70,10 +77,7 @@ namespace GuildWars2.ArenaNet.EventTimer
             BuildResponse build = new BuildRequest().Execute();
             int buildId = (build != null ? build.BuildId : -1);
             if (m_TimerData == null || m_TimerData.Build != buildId)
-            {
-                m_TimerData = new EventTimerData();
                 ResetTimers(buildId);
-            }
 
             // start the http json server
             m_JsonServer.OnRequestReceived += GetJson;
