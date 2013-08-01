@@ -17,7 +17,7 @@ namespace GuildWars2.SyntaxError.Model
         {
             MetaEvents = new List<MetaEvent>();
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("claw", "The Claw of Jormag", 10800, 16200)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Crystals scatter the landscape")
                             .AddEvent(new Guid("0CA3A7E3-5F66-4651-B0CB-C45D3F0CAD95")) // Destroy the dragon crystal on the road to Slough of Despond.
@@ -40,6 +40,7 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
 
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("eye", "Eye of Zhaitan")
                     // TODO: other stages?
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Search Zho'qafa Catacombs")
@@ -76,7 +77,7 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("foulbear", "Foulbear Chieftain")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault Foulbear Kraal", 600)
                             .AddEvent(new Guid("D9F1CF48-B1CB-49F5-BFAF-4CEC5E68C9CF")) // Assault Foulbear Kraal by killing its leaders before the ogres can rally.
@@ -90,6 +91,7 @@ namespace GuildWars2.SyntaxError.Model
                 );
 
             /* READY FOR TEST */
+            /* Needs to be fixed in some way to handle state */
             MetaEvents.Add(new MetaEvent("maw", "The Frozen Maw", 3600, 7200)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "The grawl are attacking")
                             .AddEvent(new Guid("6F516B2C-BD87-41A9-9197-A209538BB9DF")) // Protect Tor the Tall's supplies from the grawl.
@@ -146,7 +148,7 @@ namespace GuildWars2.SyntaxError.Model
                             .AddEvent(new Guid("456DD563-9FDA-4411-B8C7-4525F0AC4A6F")) // Destroy the blighted growth.
                             .AddEvent(new Guid("1DCFE4AA-A2BD-44AC-8655-BBD508C505D1")) // Kill the giant blighted grub.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Event more blighted things")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Even more blighted things")
                             .AddEvent(new Guid("61BA7299-6213-4569-948B-864100F35E16")) // Destroy the avatars of blight.
                         )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "The wurm has surfaced")
@@ -154,7 +156,7 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("karka", "Karka Queen")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the Karka Queen", 600)
                             .AddEvent(new Guid("E1CC6E63-EFFE-4986-A321-95C89EA58C07")) // Defeat the Karka Queen threatening the settlements.
@@ -164,7 +166,7 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
             
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("megadestroyer", "Megadestroyer")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill the Megadestroyer", 1200)
                             .AddEvent(new Guid("C876757A-EF3E-4FBE-A484-07FF790D9B05")) // Kill the megadestroyer before it blows everyone up.
@@ -173,12 +175,21 @@ namespace GuildWars2.SyntaxError.Model
 
             /* READY FOR TEST */
             MetaEvents.Add(new MetaEvent("ulgoth", "Modniir Ulgoth")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault Kingsgate", 1200)
+                            .AddEvent(new Guid("DDC0A526-A239-4791-8984-E7396525B648")) // Assault Kingsgate and drive the centaurs back before they can rally their forces.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Kill the war council", 1200)
+                            .AddEvent(new Guid("A3101CDC-A4A0-4726-85C0-147EF8463A50")) // Kill the centaur war council before reinforcements arrive.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Dig in at Kingsgate")
+                            .AddEvent(new Guid("DA465AE1-4D89-4972-AD66-A9BE3C5A1823")) // Keep the Modniir invaders from retaking Kingsgate.
+                        )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat Ulgoth and his minions", 1200)
                             .AddEvent(new Guid("E6872A86-E434-4FC1-B803-89921FF0F6D6")) // Defeat Ulgoth the Modniir and his minions.
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("behemoth", "Shadow Behemoth", 7200, 9000)
                     /* TODO: FIGURE OUT HOW BLOCKING EVENTS WILL WORK
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Blocking, "Assistance is needed at the monestary")
@@ -218,10 +229,94 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
 
+            /* READY FOR TEST */
             MetaEvents.Add(new MetaEvent("taidha", "Taidha Covington")
-                    // TODO: other stages?
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy the canons")
+                            .AddEvent(new Guid("B6B7EE2A-AD6E-451B-9FE5-D5B0AD125BB2")) // Eliminate the cannons at the northern defensive tower.
+                            .AddEvent(new Guid("189E7ABE-1413-4F47-858E-4612D40BF711")) // Capture Taidha Covington's southern defensive tower.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault the gate")
+                            .AddEvent(new Guid("0E0801AF-28CF-4FF7-8064-BB2F4A816D23")) // Defend the galleon and help it destroy Taidha's gate.
+                        )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill Taidha Covington")
                             .AddEvent(new Guid("242BD241-E360-48F1-A8D9-57180E146789")) // Kill Admiral Taidha Covington.
+                        )
+                );
+
+            /* READY FOR TEST */
+            MetaEvents.Add(new MetaEvent("balthazar", "Temple of Balthazar")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Escort the Pact")
+                            .AddEvent(new Guid("D0ECDACE-41F8-46BD-BB17-8762EF29868C")) // Help the Pact reach the Altar of Betrayal before their morale is depleted.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Seize the alter")
+                            .AddEvent(new Guid("7B7D6D27-67A0-44EF-85EA-7460FFA621A1")) // Seize the Altar of Betrayal before Pact morale can be broken.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the Risen Priest", 600)
+                            .AddEvent(new Guid("2555EFCB-2927-4589-AB61-1957D9CC70C8")) // Defeat the Risen Priest of Balthazar before it can summon a horde of Risen.
+                        )
+                );
+
+            /* READY FOR TEST */
+            MetaEvents.Add(new MetaEvent("dwayna", "Temple of Dwayna")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Escort Historian Vermoth")
+                            .AddEvent(new Guid("F531683F-FC09-467F-9661-6741E8382E24")) // Escort Historian Vermoth to the Altar of Tempests.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Defeat the Risen Priestess")
+                            .AddEvent(new Guid("7EF31D63-DB2A-4FEB-A6C6-478F382BFBCB")) // Defeat the Risen Priestess of Dwayna.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Beat up Malchor")
+                            .AddEvent(new Guid("526732A0-E7F2-4E7E-84C9-7CDED1962000")) // Drive Malchor to the Altar of Tempests.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the possessed statue")
+                            .AddEvent(new Guid("6A6FD312-E75C-4ABF-8EA1-7AE31E469ABA")) // Defeat the possessed statue of Dwayna.
+                        )
+                );
+
+            /* READY FOR TEST */
+            MetaEvents.Add(new MetaEvent("grenth", "Temple of Grenth")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault the temple")
+                            .AddEvent(new Guid("C8139970-BE46-419B-B026-485A14002D44")) // Ensure that Keeper Jonez Deadrun reaches the Cathedral of Silence.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Slay the Risen Priest")
+                            .AddEvent(new Guid("E16113B1-CE68-45BB-9C24-91523A663BCB")) // Use portals to fight shades, slay the Champion Risen Priest of Grenth, and protect Keeper Jonez Deadrun.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Cover Keeper Jonez", 360)
+                            .AddEvent(new Guid("99254BA6-F5AE-4B07-91F1-61A9E7C51A51")) // Cover Keeper Jonez Deadrun as he performs the cleansing ritual.
+                        )
+                );
+
+            /* READY FOR TEST */
+            MetaEvents.Add(new MetaEvent("lyssa", "Temple of Lyssa")
+                    /* TODO: Make this not suck
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Capture the seals")
+                            .AddEvent(new Guid("F66922B5-B4BD-461F-8EC5-03327BD2B558")) // Protect the Pact golems until they charge the neutralizer device.
+                            .AddEvent(new Guid("35997B10-179B-4E39-AD7F-54E131ECDD57")) // Destroy the Risen fortifications to capture the Seal of Union.
+                            .AddEvent(new Guid("590364E0-0053-4933-945E-21D396B10B20")) // Defend the Seal of Lyss until the Pact cannon is online.
+                        ) */
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the High Priestess")
+                            .AddEvent(new Guid("0372874E-59B7-4A8F-B535-2CF57B8E67E4")) // Kill the Corrupted High Priestess
+                        )
+                );
+
+            /* READY FOR TEST */
+            MetaEvents.Add(new MetaEvent("melandru", "Temple of Melandru")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Place the first beacon")
+                            .AddEvent(new Guid("3D333172-24CE-47BA-8F1A-1AD47E7B69E4")) // Escort Magister Izzmek to the site of the first signal beacon.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Place the second beacon")
+                            .AddEvent(new Guid("E7563D8D-838D-4AF4-80CD-1D3A25B6F6AB")) // Escort Magister Izzmek to the site of the second signal beacon.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Defend the second beacon", 300)
+                            .AddEvent(new Guid("F0CE1E71-4B96-48C6-809D-E1941AF40B1D")) // Defend the beacon until Pact reinforcements can arrive.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Escort the Pact")
+                            .AddEvent(new Guid("351F7480-2B1C-4846-B03B-ED1B8556F3D7")) // Escort the Pact forces to the Temple of Melandru.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Destroy the Risen Priest")
+                            .AddEvent(new Guid("7E24F244-52AF-49D8-A1D7-8A1EE18265E0")) // Destroy the Risen Priest of Melandru.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend the interrupter", 360)
+                            .AddEvent(new Guid("A5B5C2AF-22B1-4619-884D-F231A0EE0877")) // Defend the Pact interrupter device while it charges to cleanse the temple.
                         )
                 );
 
