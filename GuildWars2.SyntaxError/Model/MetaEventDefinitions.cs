@@ -287,12 +287,12 @@ namespace GuildWars2.SyntaxError.Model
 
             /* READY FOR TEST */
             MetaEvents.Add(new MetaEvent("lyssa", "Temple of Lyssa")
-                    /* TODO: Make this not suck
+                    /* TODO: The end event is always active, need to find a way to better handle this */
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Capture the seals")
                             .AddEvent(new Guid("F66922B5-B4BD-461F-8EC5-03327BD2B558")) // Protect the Pact golems until they charge the neutralizer device.
                             .AddEvent(new Guid("35997B10-179B-4E39-AD7F-54E131ECDD57")) // Destroy the Risen fortifications to capture the Seal of Union.
                             .AddEvent(new Guid("590364E0-0053-4933-945E-21D396B10B20")) // Defend the Seal of Lyss until the Pact cannon is online.
-                        ) */
+                        )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the High Priestess")
                             .AddEvent(new Guid("0372874E-59B7-4A8F-B535-2CF57B8E67E4")) // Kill the Corrupted High Priestess
                         )
