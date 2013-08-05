@@ -168,7 +168,7 @@ namespace GuildWars2.ArenaNet.EventTimer
                 // discover meta-event states
                 foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
                 {
-                    int stageId = meta.GetStageId(metaEvents);
+                    int stageId = meta.GetStageId(metaEvents, m_TimerData.Events[m_StatusListMap[meta.Id]].StageId);
 
                     // stock state
                     MetaEventStatus status = new MetaEventStatus()

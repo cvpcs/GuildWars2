@@ -40,7 +40,7 @@ namespace GuildWars2.SyntaxError.Model
             return this;
         }
 
-        public int GetStageId(IList<EventState> eventStates)
+        public int GetStageId(IList<EventState> eventStates, int prevStageId = -1)
         {
             int stageId = -1;
 
@@ -70,6 +70,26 @@ namespace GuildWars2.SyntaxError.Model
                         break;
                     }
                 }
+            }
+
+            /* The following logic checks if the previous stage succeeded and therefore the stage is active.
+             * This is to deal with meta events that don't immediately put the next stage events into Perparation
+             * or Active status. This will only execute if we have yet to find a stage, the previous stage is
+             * supplied, and the previous stage is not the last stage. If all of these conditions are met, set the
+             * stage to the prevStageId + 1 if all of the previous stage's events are at status Success.
+             */
+            if (stageId < 0 && prevStageId >= 0 && prevStageId < Stages.Count - 1)
+            {
+                MetaEventStage prevStage = Stages[prevStageId];
+
+                // get previous stage event ids
+                IEnumerable<Guid> prevStageEventIds = prevStage.EventStates.Select(es => es.Event).Distinct();
+                // get previous stage successful events
+                IEnumerable<EventState> prevStageEvents = eventStates.Where(es => prevStageEventIds.Contains(es.EventId) && es.StateEnum == EventStateType.Success);
+
+                // if all of the previous events were successfull, keep the same stage
+                if (prevStageEventIds.Count() == prevStageEvents.Count())
+                    stageId = prevStageId;
             }
 
             return stageId;
