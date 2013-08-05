@@ -301,7 +301,7 @@ namespace GuildWars2.SyntaxError.Model
             /* READY FOR TEST */
             MetaEvents.Add(new MetaEvent("melandru", "Temple of Melandru")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Place the first beacon")
-                            .AddEvent(new Guid("3D333172-24CE-47BA-8F1A-1AD47E7B69E4")) // Escort Magister Izzmek to the site of the first signal beacon.
+                            .AddEvent(new Guid("3D333172-24CE-47BA-8F1A-1AD47E7B69E4"), EventStateType.Active) // Escort Magister Izzmek to the site of the first signal beacon.
                         )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Place the second beacon")
                             .AddEvent(new Guid("E7563D8D-838D-4AF4-80CD-1D3A25B6F6AB")) // Escort Magister Izzmek to the site of the second signal beacon.
