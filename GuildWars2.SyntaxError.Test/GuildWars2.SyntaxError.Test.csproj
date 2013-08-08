@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FDA6740A-4370-4B57-990C-285C3C77E97D}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GuildWars2.SyntaxError</RootNamespace>
-    <AssemblyName>GuildWars2.SyntaxError</AssemblyName>
+    <RootNamespace>GuildWars2.SyntaxError.Test</RootNamespace>
+    <AssemblyName>GuildWars2.SyntaxError.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Mono</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,7 +35,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,32 +42,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="API\ChampionEventsRequest.cs" />
-    <Compile Include="API\EventTimerDataRequest.cs" />
-    <Compile Include="API\EventTimerDataResponse.cs" />
-    <Compile Include="API\Request.cs" />
-    <Compile Include="Model\ChatCode.cs" />
-    <Compile Include="Model\ChatCodeType.cs" />
-    <Compile Include="Model\EventTimerData.cs" />
-    <Compile Include="Model\GuildBounty.cs" />
-    <Compile Include="Model\GuildBountyDefinitions.cs" />
-    <Compile Include="Model\GuildBountyPath.cs" />
-    <Compile Include="Model\MetaEvent.cs" />
-    <Compile Include="Model\MetaEventDefinitions.cs" />
-    <Compile Include="Model\MetaEventStage.cs" />
-    <Compile Include="Model\MetaEventStatus.cs" />
-    <Compile Include="Model\PathDirectionType.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RestSharpDataContractJsonDeserializer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GuildWars2.ArenaNet\GuildWars2.ArenaNet.csproj">
       <Project>{65382ece-3e80-47e3-9864-0c6995907c2b}</Project>
       <Name>GuildWars2.ArenaNet</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RestSharp\RestSharp.csproj">
-      <Project>{2ececfbf-5f3e-40ee-a963-72336dc7abe2}</Project>
-      <Name>RestSharp</Name>
+    <ProjectReference Include="..\GuildWars2.SyntaxError\GuildWars2.SyntaxError.csproj">
+      <Project>{fda6740a-4370-4b57-990c-285c3c77e97d}</Project>
+      <Name>GuildWars2.SyntaxError</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

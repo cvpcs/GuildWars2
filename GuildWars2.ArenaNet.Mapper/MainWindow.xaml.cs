@@ -215,6 +215,8 @@ namespace GuildWars2.ArenaNet.Mapper
             EventDetailsResponse events = new EventDetailsRequest().Execute();
             if (events != null)
             {
+                IList<Guid> championEvents = new ChampionEventsRequest().Execute();
+
                 foreach (KeyValuePair<string, EventDetails> entry in events.Events)
                 {
                     Guid eid = new Guid(entry.Key);
@@ -238,7 +240,7 @@ namespace GuildWars2.ArenaNet.Mapper
                         switch(ev.Location.TypeEnum)
                         {
                             case LocationType.Poly:
-                                EventMapPolygon evPoly = new EventMapPolygon(ev);
+                                EventMapPolygon evPoly = new EventMapPolygon(ev, championEvents.Contains(eid));
 
                                 foreach (List<double> pt in ev.Location.Points)
                                 {
@@ -257,7 +259,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
                             case LocationType.Sphere:
                             case LocationType.Cylinder:
-                                EventMapPolygon evCircle = new EventMapPolygon(ev);
+                                EventMapPolygon evCircle = new EventMapPolygon(ev, championEvents.Contains(eid));
 
                                 double radius = TranslateX(ev.Location.Center[0] + ev.Location.Radius, map.MapRect, map.ContinentRect) - center.X;
 
