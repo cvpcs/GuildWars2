@@ -57,6 +57,8 @@ namespace GuildWars2.ArenaNet.Mapper
             DateTime then = new DateTime(1970, 1, 1).AddMilliseconds(e.Timestamp);
             TimeSpan span = DateTime.UtcNow - then;
 
+            m_Countdown = false;
+
             string windowType = null;
             if (e.MinCountdown > 0)
             {
@@ -79,6 +81,7 @@ namespace GuildWars2.ArenaNet.Mapper
                     }
                 }
             }
+
             m_EventTime = span;
 
             Visibility = Visibility.Visible;
