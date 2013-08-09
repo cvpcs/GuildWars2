@@ -48,6 +48,8 @@
     <Compile Include="API\ColorsResponse.cs" />
     <Compile Include="API\ContinentsRequest.cs" />
     <Compile Include="API\ContinentsResponse.cs" />
+    <Compile Include="API\FilesResponse.cs" />
+    <Compile Include="API\FilesRequest.cs" />
     <Compile Include="API\EventDetailsRequest.cs" />
     <Compile Include="API\EventDetailsResponse.cs" />
     <Compile Include="API\MapFloorRequest.cs" />
@@ -80,9 +82,11 @@
     <Compile Include="API\Wvw\MatchesResponse.cs" />
     <Compile Include="API\Wvw\ObjectiveNamesRequest.cs" />
     <Compile Include="API\Wvw\ObjectiveNamesResponse.cs" />
+    <Compile Include="ImageServices.cs" />
     <Compile Include="Model\Color.cs" />
     <Compile Include="Model\Continent.cs" />
     <Compile Include="Model\EventFlagType.cs" />
+    <Compile Include="Model\AssetFile.cs" />
     <Compile Include="Model\LocationType.cs" />
     <Compile Include="Model\EventDetails.cs" />
     <Compile Include="Model\Location.cs" />

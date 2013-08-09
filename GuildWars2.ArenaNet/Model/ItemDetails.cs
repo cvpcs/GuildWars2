@@ -97,6 +97,20 @@ namespace GuildWars2.ArenaNet.Model
             }
         }
 
+        public int IconFileId { get; set; }
+        public string IconFileSignature { get; set; }
+        public AssetFile IconFile
+        {
+            get
+            {
+                return new AssetFile()
+                    {
+                        FileId = IconFileId,
+                        Signature = IconFileSignature
+                    };
+            }
+        }
+
         // armor?
         // weapon?
         // other stats?
