@@ -48,11 +48,6 @@ namespace GuildWars2.ArenaNet.Mapper
         public EventPushpin(EventDetails ev)
             : base()
         {
-            Width = 20;
-            Height = 20;
-
-            PositionOrigin = PositionOrigin.Center;
-
             if (!string.IsNullOrWhiteSpace(ev.Name))
                 ToolTip = string.Format("{0} ({1})", ev.Name, ev.Level);
 

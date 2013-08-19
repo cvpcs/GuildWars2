@@ -5,32 +5,6 @@
              xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ControlTemplate x:Key="ImagePushpinTemplate" TargetType="l:ImagePushpin">
-            <Rectangle Width="{Binding Path=Width, RelativeSource={RelativeSource FindAncestor,AncestorType=m:Pushpin}}"
-                                    Height="{Binding Path=Height, RelativeSource={RelativeSource FindAncestor,AncestorType=m:Pushpin}}">
-                <Rectangle.Fill>
-                    <ImageBrush x:Name="ImagePushpinTemplateBrush"
-                                ImageSource="{Binding Path=Image, RelativeSource={RelativeSource FindAncestor,AncestorType=l:ImagePushpin}}" />
-                </Rectangle.Fill>
-            </Rectangle>
-        </ControlTemplate>
-        
-        <Style TargetType="l:ImagePushpin">
-            <Setter Property="Template" Value="{StaticResource ImagePushpinTemplate}" />
-        </Style>
-
-        <Style TargetType="l:PointOfInterestPushpin">
-            <Setter Property="Template" Value="{StaticResource ImagePushpinTemplate}" />
-        </Style>
-
-        <Style TargetType="l:TaskPushpin">
-            <Setter Property="Template" Value="{StaticResource ImagePushpinTemplate}" />
-        </Style>
-
-        <Style TargetType="l:SkillChallengePushpin">
-            <Setter Property="Template" Value="{StaticResource ImagePushpinTemplate}" />
-        </Style>
-
         <Style TargetType="l:SectorPushpin">
             <Setter Property="Template">
                 <Setter.Value>
@@ -56,10 +30,6 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>
-
-        <Style TargetType="l:EventPushpin">
-            <Setter Property="Template" Value="{StaticResource ImagePushpinTemplate}" />
         </Style>
 
         <ControlTemplate x:Key="PlayerPushpin">

@@ -39,11 +39,6 @@ namespace GuildWars2.ArenaNet.Mapper
         public PointOfInterestPushpin(PointOfInterest poi)
             : base()
         {
-            Width = 20;
-            Height = 20;
-
-            PositionOrigin = PositionOrigin.Center;
-
             if (IMAGES.ContainsKey(poi.TypeEnum))
                 Image = IMAGES[poi.TypeEnum];
 

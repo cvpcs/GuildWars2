@@ -83,13 +83,15 @@
     <Compile Include="ArenaNetTileLayer.cs" />
     <Compile Include="ArenaNetTileLayerSource.cs" />
     <Compile Include="BountyMapLayer.cs" />
+    <Compile Include="ImagePushpin.xaml.cs">
+      <DependentUpon>ImagePushpin.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SectorPushpin.cs" />
     <Compile Include="EventMapPolygon.cs" />
     <Compile Include="EventPushpin.cs" />
     <Compile Include="EventTimerBox.xaml.cs">
       <DependentUpon>EventTimerBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ImagePushpin.cs" />
     <Compile Include="SkillChallengePushpin.cs" />
     <Compile Include="TaskPushpin.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -129,6 +131,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="EventTimerBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ImagePushpin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

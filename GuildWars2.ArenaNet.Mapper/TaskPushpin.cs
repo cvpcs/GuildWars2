@@ -23,11 +23,6 @@ namespace GuildWars2.ArenaNet.Mapper
         public TaskPushpin(Task task)
             : base()
         {
-            Width = 20;
-            Height = 20;
-
-            PositionOrigin = PositionOrigin.Center;
-
             Image = IMAGE;
 
             if (!string.IsNullOrWhiteSpace(task.Objective))
