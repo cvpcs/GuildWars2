@@ -14,16 +14,6 @@ namespace GuildWars2.ArenaNet.Mapper
 {
     public class BountyMapLayer : MapLayer
     {
-        private static BitmapImage IMAGE;
-
-        static BountyMapLayer()
-        {
-            IMAGE = new BitmapImage();
-            IMAGE.BeginInit();
-            IMAGE.StreamSource = Application.GetResourceStream(new Uri("/Resources/bounty.png", UriKind.Relative)).Stream;
-            IMAGE.EndInit();
-        }
-
         public string BountyName { get; set; }
 
         public BountyMapLayer(string name)
@@ -34,11 +24,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
         public void AddSpawningPoint(Location loc)
         {
-            ImagePushpin pin = new ImagePushpin();
-            pin.Image = IMAGE;
-            pin.Width = 20;
-            pin.Height = 20;
-            pin.PositionOrigin = PositionOrigin.Center;
+            BountyPushpin pin = new BountyPushpin();
             pin.ToolTip = string.Format("{0} (Spawning Point)", BountyName);
             pin.Location = loc;
             Children.Add(pin);
@@ -71,11 +57,7 @@ namespace GuildWars2.ArenaNet.Mapper
                 {
                     Location loc = polyPoints[j];
 
-                    ImagePushpin pin = new ImagePushpin();
-                    pin.Image = IMAGE;
-                    pin.Width = 20;
-                    pin.Height = 20;
-                    pin.PositionOrigin = PositionOrigin.Center;
+                    BountyPushpin pin = new BountyPushpin();
                     pin.ToolTip = string.Format("{0} ({1}Path)", BountyName,
                             (direction == PathDirectionType.Invalid ? string.Empty : Enum.GetName(typeof(PathDirectionType), direction) + " "));
                     pin.Location = loc;
