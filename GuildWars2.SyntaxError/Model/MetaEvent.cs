@@ -81,15 +81,17 @@ namespace GuildWars2.SyntaxError.Model
             if (stageId < 0 && prevStageId >= 0 && prevStageId < Stages.Count - 1)
             {
                 MetaEventStage prevStage = Stages[prevStageId];
+                if (!prevStage.IsEndStage)
+                {
+                    // get previous stage event ids
+                    IEnumerable<Guid> prevStageEventIds = prevStage.EventStates.Select(es => es.Event).Distinct();
+                    // get previous stage successful events
+                    IEnumerable<EventState> prevStageEvents = eventStates.Where(es => prevStageEventIds.Contains(es.EventId) && es.StateEnum == EventStateType.Success);
 
-                // get previous stage event ids
-                IEnumerable<Guid> prevStageEventIds = prevStage.EventStates.Select(es => es.Event).Distinct();
-                // get previous stage successful events
-                IEnumerable<EventState> prevStageEvents = eventStates.Where(es => prevStageEventIds.Contains(es.EventId) && es.StateEnum == EventStateType.Success);
-
-                // if all of the previous events were successfull, keep the same stage
-                if (prevStageEventIds.Count() == prevStageEvents.Count())
-                    stageId = prevStageId;
+                    // if all of the previous events were successfull, keep the same stage
+                    if (prevStageEventIds.Count() == prevStageEvents.Count())
+                        stageId = prevStageId;
+                }
             }
 
             return stageId;

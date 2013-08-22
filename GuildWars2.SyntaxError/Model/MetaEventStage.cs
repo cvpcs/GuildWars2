@@ -10,19 +10,22 @@ namespace GuildWars2.SyntaxError.Model
         public StageType Type { get; private set; }
         public string Name { get; private set; }
         public IList<EventState> EventStates { get; private set; }
+        public bool IsEndStage { get; private set; }
 
         // 0 = no countdown
         // MaxValue = continue from previous
         // other = value in seconds
         public uint Countdown { get; private set; }
 
-        public MetaEventStage(StageType type, string desc, uint countdown = 0)
+        public MetaEventStage(StageType type, string name, uint countdown = 0, bool isEndStage = false)
         {
             Type = type;
-            Name = desc;
+            Name = name;
             EventStates = new List<EventState>();
 
             Countdown = countdown;
+
+            IsEndStage = isEndStage;
         }
 
         public MetaEventStage AddEvent(Guid ev)

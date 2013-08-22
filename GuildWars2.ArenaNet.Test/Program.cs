@@ -14,23 +14,44 @@ namespace GuildWars2.ArenaNet.Test
     {
         public static void Main(string[] args)
         {
-            FilesResponse fr = new FilesRequest().Execute();
+            IDictionary<string, Event> event_names = new EventNamesRequest().Execute().Where(e => {
+                string n = e.Name.ToLower();
 
-            ItemDetailsResponse idr = new ItemDetailsRequest(44977).Execute();
+                return (n.Contains("scarlet") || n.Contains("aetherblade") || n.Contains("molten"));
+            }).ToDictionary(e => e.Id.ToString().ToUpper());
+            IDictionary<int, Map> map_names = new MapNamesRequest().Execute().ToDictionary(m => m.Id);
+            IDictionary<string, EventDetails> event_details = new EventDetailsRequest().Execute().Events;
 
-            byte[] img1 = ImageServices.WorldMapTileService(1, 2, 1, 1, 1);
-            byte[] img2 = ImageServices.RenderService(idr.IconFile);
-            byte[] img3 = ImageServices.RenderService(fr.MapWaypointContested, ImageServices.RenderServiceFormat.JPG);
+            IDictionary<int, IList<string>> map_events = new Dictionary<int, IList<string>>();
 
-            BinaryWriter bw = new BinaryWriter(new FileStream(@"D:\tmp\img1.jpg", FileMode.Create));
-            bw.Write(img1);
-            bw.Close();
-            bw = new BinaryWriter(new FileStream(@"D:\tmp\img2.png", FileMode.Create));
-            bw.Write(img2);
-            bw.Close();
-            bw = new BinaryWriter(new FileStream(@"D:\tmp\img3.jpg", FileMode.Create));
-            bw.Write(img3);
-            bw.Close();
+            StreamWriter s = new StreamWriter(new FileStream(@"D:\tmp\stuff.txt", FileMode.Create));
+            
+            foreach (string eid in event_names.Keys)
+            {
+                if (!event_details.ContainsKey(eid))
+                    continue;
+
+                EventDetails details = event_details[eid];
+
+                if (!map_events.ContainsKey(details.MapId))
+                    map_events[details.MapId] = new List<string>();
+
+                map_events[details.MapId].Add(eid);
+            }
+
+            foreach (int mapid in map_events.Keys)
+            {
+                s.WriteLine(string.Format("Scarlet events in [{0}]:", map_names[mapid].Name));
+
+                foreach (string eid in map_events[mapid])
+                {
+                    s.WriteLine(string.Format("  [{0}]: [{1}]", eid, event_names[eid].Name));
+                }
+
+                s.WriteLine();
+            }
+
+            s.Close();
         }
     }
 }

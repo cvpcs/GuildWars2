@@ -90,8 +90,7 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
 
-            /* READY FOR TEST */
-            /* Needs to be fixed in some way to handle state */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("maw", "The Frozen Maw", 3600, 7200)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "The grawl are attacking")
                             .AddEvent(new Guid("6F516B2C-BD87-41A9-9197-A209538BB9DF")) // Protect Tor the Tall's supplies from the grawl.
@@ -173,7 +172,7 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("ulgoth", "Modniir Ulgoth")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault Kingsgate", 1200)
                             .AddEvent(new Guid("DDC0A526-A239-4791-8984-E7396525B648")) // Assault Kingsgate and drive the centaurs back before they can rally their forces.
@@ -229,7 +228,7 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("taidha", "Taidha Covington")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy the canons")
                             .AddEvent(new Guid("B6B7EE2A-AD6E-451B-9FE5-D5B0AD125BB2")) // Eliminate the cannons at the northern defensive tower.
@@ -256,7 +255,7 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("dwayna", "Temple of Dwayna")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Escort Historian Vermoth")
                             .AddEvent(new Guid("F531683F-FC09-467F-9661-6741E8382E24")) // Escort Historian Vermoth to the Altar of Tempests.
@@ -272,7 +271,7 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("grenth", "Temple of Grenth")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault the temple")
                             .AddEvent(new Guid("C8139970-BE46-419B-B026-485A14002D44")) // Ensure that Keeper Jonez Deadrun reaches the Cathedral of Silence.
@@ -298,7 +297,7 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("melandru", "Temple of Melandru")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Place the first beacon")
                             .AddEvent(new Guid("3D333172-24CE-47BA-8F1A-1AD47E7B69E4"), EventStateType.Active) // Escort Magister Izzmek to the site of the first signal beacon.
@@ -320,13 +319,56 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("tequatl", "Tequatl the Sunless", 9000, 10800)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Somthing's in the water")
                             .AddEvent(new Guid("568A30CF-8512-462F-9D67-647D69BEFAED"), EventStateType.Preparation)
                         )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat Tequatl the Sunless")
                             .AddEvent(new Guid("568A30CF-8512-462F-9D67-647D69BEFAED"), EventStateType.Active) // Defeat Tequatl the Sunless.
+                        )
+                );
+
+            /* READY FOR TEST */
+            MetaEvents.Add(new MetaEvent("scarlet", "Scarlet Briar")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Lornar's Pass", 2700, true)
+                            .AddEvent(new Guid("6DEB01AE-675E-4FF9-9789-53CB73FC621E"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Bloodtide Coast", 2700, true)
+                            .AddEvent(new Guid("11442531-6B20-411F-B0A6-D2A2C31DD668"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Dredgehaunt Cliffs", 2700, true)
+                            .AddEvent(new Guid("526EFDC9-3F3C-492E-911E-14AFE9EAE70D"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Gendarran Fields", 2700, true)
+                            .AddEvent(new Guid("90FEBBE9-0066-42CF-9C48-703C920AFB9D"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Timberline Falls", 2700, true)
+                            .AddEvent(new Guid("6195E248-1DD4-452B-A7DD-3472162E0683"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Frostgorge Sound", 2700, true)
+                            .AddEvent(new Guid("46BBCFDD-1285-4246-A9FA-620773C7D4C6"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Fields of Ruin", 2700, true)
+                            .AddEvent(new Guid("C7CC535C-81A1-4E84-993B-6384C911399A"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Harathi Hinterlands", 2700, true)
+                            .AddEvent(new Guid("9795C994-4C12-4E1F-82A6-D541F76D9D37"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Fireheart Rise", 2700, true)
+                            .AddEvent(new Guid("5FE50E83-758B-4573-A424-A1661FBC970A"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Mount Maelstrom", 2700, true)
+                            .AddEvent(new Guid("FE5F6233-DAD6-4C63-921D-F132DFCF3397"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Iron Marches", 2700, true)
+                            .AddEvent(new Guid("D1B8B6D2-5E61-44DE-92C6-D49A9BBBB6E2"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Blazeridge Steppes", 2700, true)
+                            .AddEvent(new Guid("CF657BC1-D5CE-41D3-A630-A3E509451B7A"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Sparkfly Fen", 2700, true)
+                            .AddEvent(new Guid("92979945-63A4-42D7-8AE5-1EFADC9E636F"), EventStateType.Active) // Scarlet's Minions Invade!
                         )
                 );
 
