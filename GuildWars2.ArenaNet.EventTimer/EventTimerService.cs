@@ -246,6 +246,7 @@ namespace GuildWars2.ArenaNet.EventTimer
             {
                 // log an exception so it can be fixed
                 LogLine("Exception thrown in worker thread: {0}", ex.Message);
+                LogLine(ex.StackTrace);
             }
 
             // reset sync to 0
@@ -313,8 +314,12 @@ namespace GuildWars2.ArenaNet.EventTimer
                     if (string.IsNullOrWhiteSpace(message))
                         writer.WriteLine();
                     else
-                        writer.WriteLine("[{0}] - {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                            string.Format(message, args));
+                    {
+                        message = string.Format(message, args);
+
+                        foreach (string line in message.Replace("\r", string.Empty).Split('\n'))
+                            writer.WriteLine("[{0}] - {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), line);
+                    }
 
                     writer.Close();
                 }
