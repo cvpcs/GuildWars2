@@ -47,6 +47,7 @@
     <Compile Include="API\Request.cs" />
     <Compile Include="Model\ChatCode.cs" />
     <Compile Include="Model\ChatCodeType.cs" />
+    <Compile Include="Model\MetaEventMultiLineStage.cs" />
     <Compile Include="Model\EventTimerData.cs" />
     <Compile Include="Model\GuildBounty.cs" />
     <Compile Include="Model\GuildBountyDefinitions.cs" />

@@ -46,29 +46,10 @@ namespace GuildWars2.SyntaxError.Model
 
             for (int i = 0; i < Stages.Count; i++)
             {
-                MetaEventStage stage = Stages[i];
-
-                IEnumerable<EventState> stageEvents = eventStates.Where(es => stage.EventStates.Contains(new MetaEventStage.EventState() { Event = es.EventId, State = es.StateEnum }));
-
-                if (stageEvents.Where(es => es.StateEnum == EventStateType.Active).Count() > 0)
+                if (Stages[i].IsActive(eventStates))
                 {
                     stageId = i;
                     break;
-                }
-                else if (stageEvents.Where(es => es.StateEnum == EventStateType.Preparation).Count() > 0)
-                {
-                    stageId = i;
-                    break;
-                }
-                else if (stageEvents.Where(es => es.StateEnum == EventStateType.Warmup).Count() > 0)
-                {
-                    if (stage.Type != MetaEventStage.StageType.Recovery ||
-                            (i > 1 && Stages[i - 1].Type == MetaEventStage.StageType.Recovery
-                                    && eventStates.Where(es => es.StateEnum == EventStateType.Success && Stages[i - 1].EventStates.Select(ses => ses.Event).Contains(es.EventId)).Count() > 0))
-                    {
-                        stageId = i;
-                        break;
-                    }
                 }
             }
 
@@ -81,17 +62,9 @@ namespace GuildWars2.SyntaxError.Model
             if (stageId < 0 && prevStageId >= 0 && prevStageId < Stages.Count - 1)
             {
                 MetaEventStage prevStage = Stages[prevStageId];
-                if (!prevStage.IsEndStage)
-                {
-                    // get previous stage event ids
-                    IEnumerable<Guid> prevStageEventIds = prevStage.EventStates.Select(es => es.Event).Distinct();
-                    // get previous stage successful events
-                    IEnumerable<EventState> prevStageEvents = eventStates.Where(es => prevStageEventIds.Contains(es.EventId) && es.StateEnum == EventStateType.Success);
 
-                    // if all of the previous events were successfull, keep the same stage
-                    if (prevStageEventIds.Count() == prevStageEvents.Count())
-                        stageId = prevStageId;
-                }
+                if (!prevStage.IsEndStage && prevStage.IsSuccessful(eventStates))
+                    stageId = prevStageId;
             }
 
             return stageId;

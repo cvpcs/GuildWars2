@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using GuildWars2.ArenaNet.Model;
 
@@ -7,10 +8,11 @@ namespace GuildWars2.SyntaxError.Model
 {
     public class MetaEventStage
     {
-        public StageType Type { get; private set; }
-        public string Name { get; private set; }
-        public IList<EventState> EventStates { get; private set; }
+        public virtual StageType Type { get; private set; }
+        public virtual string Name { get; private set; }
         public bool IsEndStage { get; private set; }
+
+        public IList<EventState> EventStates { get; private set; }
 
         // 0 = no countdown
         // MaxValue = continue from previous
@@ -28,16 +30,39 @@ namespace GuildWars2.SyntaxError.Model
             IsEndStage = isEndStage;
         }
 
-        public MetaEventStage AddEvent(Guid ev)
+        public virtual MetaEventStage AddEvent(Guid ev)
         {
             return AddEvent(ev, EventStateType.Preparation)
                     .AddEvent(ev, EventStateType.Active);
         }
 
-        public MetaEventStage AddEvent(Guid ev, EventStateType state)
+        public virtual MetaEventStage AddEvent(Guid ev, EventStateType state)
         {
-            EventStates.Add(new EventState() { Event = ev, State = state });
+            EventState evs = new EventState() { Event = ev, State = state };
+
+            if (!EventStates.Contains(evs))
+                EventStates.Add(evs);
+
             return this;
+        }
+
+        public virtual bool IsActive(IList<GuildWars2.ArenaNet.Model.EventState> events)
+        {
+            return events.Where(es => EventStates.Contains(new EventState() { Event = es.EventId, State = es.StateEnum })).Count() > 0;
+        }
+
+        public virtual bool IsSuccessful(IList<GuildWars2.ArenaNet.Model.EventState> events)
+        {
+            IEnumerable<Guid> eventIds = EventStates.Select(es => es.Event).Distinct();
+
+            return events.Where(es => eventIds.Contains(es.EventId) && es.StateEnum == EventStateType.Success).Count() == eventIds.Count();
+        }
+
+        public virtual bool IsFailed(IList<GuildWars2.ArenaNet.Model.EventState> events)
+        {
+            IEnumerable<Guid> eventIds = EventStates.Select(es => es.Event).Distinct();
+
+            return events.Where(es => eventIds.Contains(es.EventId) && es.StateEnum == EventStateType.Fail).Count() > 0;
         }
 
         public struct EventState
@@ -50,7 +75,6 @@ namespace GuildWars2.SyntaxError.Model
         {
             Reset,
             Invalid,
-            Window,
             Recovery,
             Blocking,
             PreEvent,
