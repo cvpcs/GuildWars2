@@ -4,8 +4,13 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+#if SILVERLIGHT
+using Microsoft.Maps.MapControl;
+using Location = Microsoft.Maps.MapControl.Location;
+#else
 using Microsoft.Maps.MapControl.WPF;
 using Location = Microsoft.Maps.MapControl.WPF.Location;
+#endif
 
 using GuildWars2.ArenaNet.Model;
 using GuildWars2.SyntaxError.Model;

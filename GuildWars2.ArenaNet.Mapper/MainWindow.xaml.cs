@@ -41,56 +41,30 @@ namespace GuildWars2.ArenaNet.Mapper
 
         // map stuff
         private volatile bool m_FollowPlayer;
-        private Pushpin m_Player;
+        private PlayerPushpin m_Player;
 
-        private MapLayer m_MapLayerContainer;
-        private IDictionary<int, MapLayer> m_MapLayers;
-        private IDictionary<int, MapLayer> m_MapWaypoints;
-        private IDictionary<int, MapLayer> m_MapPointsOfInterest;
-        private IDictionary<int, MapLayer> m_MapVistas;
-        private IDictionary<int, MapLayer> m_MapRenownHearts;
-        private IDictionary<int, MapLayer> m_MapSkillPoints;
-        private IDictionary<int, MapLayer> m_MapSectors;
-
-        private IDictionary<int, MapLayer> m_MapBounties;
-
-        private IDictionary<int, MapLayer> m_MapEvents;
-        private IDictionary<Guid, EventPushpin> m_EventPushpins;
-        private IDictionary<Guid, EventMapPolygon> m_EventMapPolygons;
+        private ArenaNetMapLayerContainer m_MapLayerContainer;
 
         // event timer stuff
         private IDictionary<string, EventTimerBox> m_EventTimerBoxes;
 
         public MainWindow()
         {
+            m_MapLayerContainer = new ArenaNetMapLayerContainer();
+
             InitializeComponent();
 
             m_Link = new MumbleLink();
             m_MapData = new Dictionary<int, FloorMapDetails>();
 
             m_FollowPlayer = false;
-            m_Player = new Pushpin();
+            m_Player = new PlayerPushpin();
             m_Player.Template = (ControlTemplate)Application.Current.Resources["PlayerPushpin"];
             m_Player.PositionOrigin = PositionOrigin.Center;
             m_Player.Visibility = Visibility.Hidden;
             Map.Children.Add(m_Player);
 
-            m_MapLayerContainer = new MapLayer();
             Map.Children.Add(m_MapLayerContainer);
-
-            m_MapLayers = new Dictionary<int, MapLayer>();
-            m_MapWaypoints = new Dictionary<int, MapLayer>();
-            m_MapPointsOfInterest = new Dictionary<int, MapLayer>();
-            m_MapVistas = new Dictionary<int, MapLayer>();
-            m_MapRenownHearts = new Dictionary<int, MapLayer>();
-            m_MapSkillPoints = new Dictionary<int, MapLayer>();
-            m_MapSectors = new Dictionary<int, MapLayer>();
-
-            m_MapBounties = new Dictionary<int, MapLayer>();
-
-            m_MapEvents = new Dictionary<int, MapLayer>();
-            m_EventPushpins = new Dictionary<Guid, EventPushpin>();
-            m_EventMapPolygons = new Dictionary<Guid, EventMapPolygon>();
 
             MapFloorResponse floor = new MapFloorRequest(1, 2).Execute();
             if (floor != null)
@@ -101,116 +75,14 @@ namespace GuildWars2.ArenaNet.Mapper
                     {
                         int mid = int.Parse(mapId);
                         FloorMapDetails map = region.Maps[mapId];
-
+                        
                         m_MapData.Add(mid, map);
-
-                        m_MapLayers.Add(mid, new MapLayer());
-                        m_MapWaypoints.Add(mid, new MapLayer());
-                        m_MapPointsOfInterest.Add(mid, new MapLayer());
-                        m_MapVistas.Add(mid, new MapLayer());
-                        m_MapRenownHearts.Add(mid, new MapLayer());
-                        m_MapSkillPoints.Add(mid, new MapLayer());
-                        m_MapSectors.Add(mid, new MapLayer());
-
-                        m_MapLayers[mid].Children.Add(m_MapWaypoints[mid]);
-                        m_MapLayers[mid].Children.Add(m_MapPointsOfInterest[mid]);
-                        m_MapLayers[mid].Children.Add(m_MapVistas[mid]);
-                        m_MapLayers[mid].Children.Add(m_MapRenownHearts[mid]);
-                        m_MapLayers[mid].Children.Add(m_MapSkillPoints[mid]);
-                        m_MapLayers[mid].Children.Add(m_MapSectors[mid]);
-
-                        foreach (PointOfInterest poi in map.PointsOfInterest)
-                        {
-                            Pushpin poiPin = new PointOfInterestPushpin(poi);
-
-                            poiPin.Location = Map.Unproject(new Point(poi.Coord[0], poi.Coord[1]), Map.MaxZoomLevel);
-
-                            switch (poi.TypeEnum)
-                            {
-                                case PointOfInterestType.Waypoint:
-                                    m_MapWaypoints[mid].Children.Add(poiPin);
-                                    break;
-                                case PointOfInterestType.Landmark:
-                                    m_MapPointsOfInterest[mid].Children.Add(poiPin);
-                                    break;
-                                case PointOfInterestType.Vista:
-                                    m_MapVistas[mid].Children.Add(poiPin);
-                                    break;
-                                default:
-                                    continue;
-                            }
-                        }
-
-                        foreach (Task rh in map.Tasks)
-                        {
-                            Pushpin rhPin = new TaskPushpin(rh);
-
-                            rhPin.Location = Map.Unproject(new Point(rh.Coord[0], rh.Coord[1]), Map.MaxZoomLevel);
-
-                            m_MapRenownHearts[mid].Children.Add(rhPin);
-                        }
-
-                        foreach (MappedModel sp in map.SkillChallenges)
-                        {
-                            Pushpin spPin = new SkillChallengePushpin(sp);
-
-                            spPin.Location = Map.Unproject(new Point(sp.Coord[0], sp.Coord[1]), Map.MaxZoomLevel);
-
-                            m_MapSkillPoints[mid].Children.Add(spPin);
-                        }
-
-                        // hide sectors by default
-                        m_MapSectors[mid].Visibility = Visibility.Hidden;
-                        foreach (Sector s in map.Sectors)
-                        {
-                            Pushpin sPin = new SectorPushpin(s);
-
-                            sPin.Location = Map.Unproject(new Point(s.Coord[0], s.Coord[1]), Map.MaxZoomLevel);
-
-                            m_MapSectors[mid].Children.Add(sPin);
-                        }
+                        m_MapLayerContainer.LoadFloorMapDetails(mid, map);
                     }
                 }
             }
 
-            IList<SolidColorBrush> bounty_path_brushes = new List<SolidColorBrush> { Brushes.Blue, Brushes.White, Brushes.Yellow, Brushes.LimeGreen };
-            foreach (GuildBounty bounty in GuildBountyDefinitions.BOUNTIES)
-            {
-                BountyMapLayer b = new BountyMapLayer(bounty.Name);
-
-                if (!m_MapBounties.ContainsKey(bounty.MapId))
-                {
-                    m_MapBounties.Add(bounty.MapId, new MapLayer());
-
-                    // map bounties default to hidden
-                    m_MapBounties[bounty.MapId].Visibility = Visibility.Hidden;
-
-                    // we insert instead of add so events always show up under other pushpins
-                    m_MapLayers[bounty.MapId].Children.Insert(0, m_MapBounties[bounty.MapId]);
-                }
-
-                if (bounty.Spawns != null)
-                {
-                    foreach (List<double> p in bounty.Spawns)
-                        b.AddSpawningPoint(Map.Unproject(new Point(p[0], p[1]), Map.MaxZoomLevel));
-                }
-
-
-                if (bounty.Paths != null)
-                {
-                    int i = 0;
-                    foreach (GuildBountyPath path in bounty.Paths)
-                    {
-                        LocationCollection locs = new LocationCollection();
-                        foreach (List<double> p in path.Points)
-                            locs.Add(Map.Unproject(new Point(p[0], p[1]), Map.MaxZoomLevel));
-                        b.AddPath(locs, bounty_path_brushes[i], path.Direction);
-                        i = (i + 1) % bounty_path_brushes.Count;
-                    }
-                }
-
-                m_MapBounties[bounty.MapId].Children.Add(b);
-            }
+            m_MapLayerContainer.LoadBounties();
 
             EventDetailsResponse events = new EventDetailsRequest().Execute();
             if (events != null)
@@ -224,68 +96,9 @@ namespace GuildWars2.ArenaNet.Mapper
 
                     if (!ev.Name.StartsWith("skill challenge: ", StringComparison.InvariantCultureIgnoreCase) && m_MapData.ContainsKey(ev.MapId))
                     {
-                        if (!m_MapEvents.ContainsKey(ev.MapId))
-                        {
-                            m_MapEvents.Add(ev.MapId, new MapLayer());
-
-                            // we insert instead of add so events always show up under other pushpins
-                            m_MapLayers[ev.MapId].Children.Insert(0, m_MapEvents[ev.MapId]);
-                        }
-
                         FloorMapDetails map = m_MapData[ev.MapId];
 
-                        Point center = new Point(TranslateX(ev.Location.Center[0], map.MapRect, map.ContinentRect),
-                                    TranslateZ(ev.Location.Center[1], map.MapRect, map.ContinentRect));
-
-                        switch(ev.Location.TypeEnum)
-                        {
-                            case LocationType.Poly:
-                                EventMapPolygon evPoly = new EventMapPolygon(ev, championEvents.Contains(eid));
-
-                                foreach (List<double> pt in ev.Location.Points)
-                                {
-                                    evPoly.Locations.Add(
-                                            Map.Unproject(
-                                                    new Point(
-                                                            TranslateX(pt[0], map.MapRect, map.ContinentRect),
-                                                            TranslateZ(pt[1], map.MapRect, map.ContinentRect)),
-                                                    Map.MaxZoomLevel));
-                                }
-
-                                m_EventMapPolygons[eid] = evPoly;
-                                // insert so polys are below all pushpins
-                                m_MapEvents[ev.MapId].Children.Insert(0, evPoly);
-                                break;
-
-                            case LocationType.Sphere:
-                            case LocationType.Cylinder:
-                                EventMapPolygon evCircle = new EventMapPolygon(ev, championEvents.Contains(eid));
-
-                                double radius = TranslateX(ev.Location.Center[0] + ev.Location.Radius, map.MapRect, map.ContinentRect) - center.X;
-
-                                for (int i = 0; i < 360; i+=10)
-                                {
-                                    evCircle.Locations.Add(
-                                            Map.Unproject(
-                                                    new Point(
-                                                            center.X + radius * Math.Cos(i * (Math.PI / 180)),
-                                                            center.Y + radius * Math.Sin(i * (Math.PI / 180))),
-                                                    Map.MaxZoomLevel));
-                                }
-
-                                m_EventMapPolygons[eid] = evCircle;
-                                // insert so polys are below all pushpins
-                                m_MapEvents[ev.MapId].Children.Insert(0, evCircle);
-                                break;
-
-                            default:
-                                break;
-                        }
-
-                        EventPushpin evPin = new EventPushpin(ev);
-                        evPin.Location = Map.Unproject(center, Map.MaxZoomLevel);
-                        m_EventPushpins[eid] = evPin;
-                        m_MapEvents[ev.MapId].Children.Add(evPin);
+                        m_MapLayerContainer.LoadEvent(eid, ev, map, championEvents.Contains(eid));
                     }
                 }
             }
@@ -354,25 +167,6 @@ namespace GuildWars2.ArenaNet.Mapper
             return -1;
         }
 
-        private void SetMapLayerVisibility(IDictionary<int, MapLayer> layerDict, Visibility visibility)
-        {
-            if (layerDict == null)
-                return;
-
-            foreach (MapLayer layer in layerDict.Values)
-                layer.Visibility = visibility;
-        }
-
-        private double TranslateX(double x, List<List<double>> mapRect, List<List<double>> continentRect)
-        {
-            return (x - mapRect[0][0]) / (mapRect[1][0] - mapRect[0][0]) * (continentRect[1][0] - continentRect[0][0]) + continentRect[0][0];
-        }
-
-        private double TranslateZ(double z, List<List<double>> mapRect, List<List<double>> continentRect)
-        {
-            return (1 - ((z - mapRect[0][1]) / (mapRect[1][1] - mapRect[0][1]))) * (continentRect[1][1] - continentRect[0][1]) + continentRect[0][1];
-        }
-
         #region Worker Threads
         private void PlayerWorkerThread()
         {
@@ -389,10 +183,10 @@ namespace GuildWars2.ArenaNet.Mapper
                         double posZ = m_Link.PositionZ * 39.3700787;
                         double rot = m_Link.RotationPlayer;
 
-                        posX = TranslateX(posX, map.MapRect, map.ContinentRect);
-                        posZ = TranslateZ(posZ, map.MapRect, map.ContinentRect);
+                        posX = ArenaNetMap.TranslateX(posX, map.MapRect, map.ContinentRect);
+                        posZ = ArenaNetMap.TranslateZ(posZ, map.MapRect, map.ContinentRect);
 
-                        Location loc = Map.Unproject(new Point(posX, posZ), Map.MaxZoomLevel);
+                        Location loc = ArenaNetMap.Unproject(new Point(posX, posZ), ArenaNetMap.MaxZoomLevel);
 
                         // move the player icon
                         Dispatcher.Invoke(() =>
@@ -427,11 +221,7 @@ namespace GuildWars2.ArenaNet.Mapper
                         {
                             foreach (EventState ev in events.Events)
                             {
-                                if (m_EventPushpins.ContainsKey(ev.EventId))
-                                    m_EventPushpins[ev.EventId].SetEventState(ev.StateEnum);
-
-                                if (m_EventMapPolygons.ContainsKey(ev.EventId))
-                                    m_EventMapPolygons[ev.EventId].SetEventState(ev.StateEnum);
+                                m_MapLayerContainer.SetEventState(ev.EventId, ev.StateEnum);
                             }
                         }, DispatcherPriority.Background, CancellationToken.None, new TimeSpan(0, 0, 25));
                 }
@@ -509,19 +299,16 @@ namespace GuildWars2.ArenaNet.Mapper
         #region Map Handlers
         private void Map_UpdateView(double zoomLevel)
         {
-            m_MapLayerContainer.Children.Clear();
+            m_MapLayerContainer.HideMapLayer();
 
             if (zoomLevel >= 3)
             {
-                int mid = GetMapByCenter(Map.Project(Map.Center, Map.MaxZoomLevel));
-                if (m_MapLayers.ContainsKey(mid))
-                {
-                    m_MapLayerContainer.Children.Add(m_MapLayers[mid]);
-                }
+                int mid = GetMapByCenter(ArenaNetMap.Project(Map.Center, ArenaNetMap.MaxZoomLevel));
+                m_MapLayerContainer.ShowMapLayer(mid);
             }
 
-            ZoomInButton.IsEnabled = (zoomLevel < Map.MaxZoomLevel);
-            ZoomOutButton.IsEnabled = (zoomLevel > Map.MinZoomLevel);
+            ZoomInButton.IsEnabled = (zoomLevel < ArenaNetMap.MaxZoomLevel);
+            ZoomOutButton.IsEnabled = (zoomLevel > ArenaNetMap.MinZoomLevel);
         }
 
         private void Map_ViewChangeOnFrame(object sender, MapEventArgs e)
@@ -548,29 +335,29 @@ namespace GuildWars2.ArenaNet.Mapper
             LegendIcon.Visibility = Visibility.Visible;
         }
 
-        private void Legend_WaypointsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapWaypoints, Visibility.Visible); }
-        private void Legend_WaypointsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapWaypoints, Visibility.Hidden); }
+        private void Legend_WaypointsChecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowWaypoints(true); }
+        private void Legend_WaypointsUnchecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowWaypoints(false); }
 
-        private void Legend_PointsOfInterestChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapPointsOfInterest, Visibility.Visible); }
-        private void Legend_PointsOfInterestUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapPointsOfInterest, Visibility.Hidden); }
+        private void Legend_PointsOfInterestChecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowPointsOfInterest(true); }
+        private void Legend_PointsOfInterestUnchecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowPointsOfInterest(false); }
 
-        private void Legend_VistasChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapVistas, Visibility.Visible); }
-        private void Legend_VistasUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapVistas, Visibility.Hidden); }
+        private void Legend_VistasChecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowVistas(true); }
+        private void Legend_VistasUnchecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowVistas(false); }
 
-        private void Legend_RenownHeartsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapRenownHearts, Visibility.Visible); }
-        private void Legend_RenownHeartsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapRenownHearts, Visibility.Hidden); }
+        private void Legend_RenownHeartsChecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowRenownHearts(true); }
+        private void Legend_RenownHeartsUnchecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowRenownHearts(false); }
 
-        private void Legend_SkillPointsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapSkillPoints, Visibility.Visible); }
-        private void Legend_SkillPointsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapSkillPoints, Visibility.Hidden); }
+        private void Legend_SkillPointsChecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowSkillPoints(true); }
+        private void Legend_SkillPointsUnchecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowSkillPoints(false); }
 
-        private void Legend_SectorsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapSectors, Visibility.Visible); }
-        private void Legend_SectorsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapSectors, Visibility.Hidden); }
+        private void Legend_SectorsChecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowSectors(true); }
+        private void Legend_SectorsUnchecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowSectors(false); }
 
-        private void Legend_BountiesChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapBounties, Visibility.Visible); }
-        private void Legend_BountiesUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapBounties, Visibility.Hidden); }
+        private void Legend_BountiesChecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowBounties(true); }
+        private void Legend_BountiesUnchecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowBounties(false); }
 
-        private void Legend_EventsChecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapEvents, Visibility.Visible); }
-        private void Legend_EventsUnchecked(object sender, RoutedEventArgs e) { SetMapLayerVisibility(m_MapEvents, Visibility.Hidden); }
+        private void Legend_EventsChecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowEvents(true); }
+        private void Legend_EventsUnchecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowEvents(false); }
 
         private void Legend_FollowPlayerChecked(object sender, RoutedEventArgs e) { m_FollowPlayer = true; }
         private void Legend_FollowPlayerUnchecked(object sender, RoutedEventArgs e) { m_FollowPlayer = false; }
@@ -579,7 +366,7 @@ namespace GuildWars2.ArenaNet.Mapper
         #region Zoom Handlers
         private void ZoomInButton_Clicked(object sender, RoutedEventArgs e)
         {
-            double newZoomLevel = Math.Min(Map.ZoomLevel + 1.0, Map.MaxZoomLevel);
+            double newZoomLevel = Math.Min(Map.ZoomLevel + 1.0, ArenaNetMap.MaxZoomLevel);
 
             if (newZoomLevel != Map.ZoomLevel)
                 Map.SetView(newZoomLevel, Map.Heading);
@@ -587,7 +374,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
         private void ZoomOutButton_Clicked(object sender, RoutedEventArgs e)
         {
-            double newZoomLevel = Math.Max(Map.ZoomLevel - 1.0, Map.MinZoomLevel);
+            double newZoomLevel = Math.Max(Map.ZoomLevel - 1.0, ArenaNetMap.MinZoomLevel);
 
             if (newZoomLevel != Map.ZoomLevel)
                 Map.SetView(newZoomLevel, Map.Heading);
@@ -634,7 +421,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
                 for (int i = 0, n= m_DrawingPolygonItem.Locations.Count; i < n; i++)
                 {
-                    Point p = Map.Project(m_DrawingPolygonItem.Locations[i], Map.MaxZoomLevel);
+                    Point p = ArenaNetMap.Project(m_DrawingPolygonItem.Locations[i], ArenaNetMap.MaxZoomLevel);
                     sb.AppendFormat("{0}{{{1}, {2}}}", (i == 0 ? string.Empty : ", "), p.X, p.Y);
                 }
 

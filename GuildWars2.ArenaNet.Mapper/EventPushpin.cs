@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
+#if SILVERLIGHT
+using Microsoft.Maps.MapControl;
+#else
 using Microsoft.Maps.MapControl.WPF;
+#endif
 
 using GuildWars2.ArenaNet.Model;
 
@@ -11,36 +15,16 @@ namespace GuildWars2.ArenaNet.Mapper
 {
     public class EventPushpin : ImagePushpin
     {
-        private static IDictionary<EventFlagType, IList<BitmapImage>> IMAGES;
-
-        static EventPushpin()
-        {
-            IMAGES = new Dictionary<EventFlagType, IList<BitmapImage>>();
-
-            IMAGES.Add(EventFlagType.None, new List<BitmapImage>());
-            BitmapImage img = new BitmapImage();
-            img.BeginInit();
-            img.StreamSource = Application.GetResourceStream(new Uri("/Resources/event_star_gray.png", UriKind.Relative)).Stream;
-            img.EndInit();
-            IMAGES[EventFlagType.None].Add(img);
-            img = new BitmapImage();
-            img.BeginInit();
-            img.StreamSource = Application.GetResourceStream(new Uri("/Resources/event_star.png", UriKind.Relative)).Stream;
-            img.EndInit();
-            IMAGES[EventFlagType.None].Add(img);
-
-            IMAGES.Add(EventFlagType.GroupEvent, new List<BitmapImage>());
-            img = new BitmapImage();
-            img.BeginInit();
-            img.StreamSource = Application.GetResourceStream(new Uri("/Resources/event_boss_gray.png", UriKind.Relative)).Stream;
-            img.EndInit();
-            IMAGES[EventFlagType.GroupEvent].Add(img);
-            img = new BitmapImage();
-            img.BeginInit();
-            img.StreamSource = Application.GetResourceStream(new Uri("/Resources/event_boss.png", UriKind.Relative)).Stream;
-            img.EndInit();
-            IMAGES[EventFlagType.GroupEvent].Add(img);
-        }
+        private static IDictionary<EventFlagType, IList<BitmapImage>> IMAGES = new Dictionary<EventFlagType, IList<BitmapImage>>() {
+                { EventFlagType.None, new List<BitmapImage>() {
+                        new BitmapImage(new Uri("pack://application:,,,/Resources/event_star_gray.png")),
+                        new BitmapImage(new Uri("pack://application:,,,/Resources/event_star.png"))
+                    } },
+                { EventFlagType.GroupEvent, new List<BitmapImage>() {
+                        new BitmapImage(new Uri("pack://application:,,,/Resources/event_boss_gray.png")),
+                        new BitmapImage(new Uri("pack://application:,,,/Resources/event_boss.png"))
+                    } }
+            };
 
         private BitmapImage m_PreparationImage;
         private BitmapImage m_ActiveImage;
@@ -81,7 +65,7 @@ namespace GuildWars2.ArenaNet.Mapper
                     Image = m_PreparationImage;
                     break;
                 default:
-                    Visibility = Visibility.Hidden;
+                    Visibility = Visibility.Collapsed;
                     break;
             }
         }

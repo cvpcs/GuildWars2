@@ -12,14 +12,17 @@ using GuildWars2.ArenaNet.Model;
 
 namespace GuildWars2.ArenaNet.Mapper
 {
-    public class BountyPushpin : ImagePushpin
+    public class PlayerPushpin : ImagePushpin
     {
-        private static BitmapImage IMAGE = new BitmapImage(new Uri("pack://application:,,,/Resources/bounty.png"));
+        private static BitmapImage IMAGE = new BitmapImage(new Uri("pack://application:,,,/Resources/player_position.png"));
 
-        public BountyPushpin()
+        public PlayerPushpin()
             : base()
         {
             Image = IMAGE;
+
+            Width = 32;
+            Height = 32;
         }
     }
 }

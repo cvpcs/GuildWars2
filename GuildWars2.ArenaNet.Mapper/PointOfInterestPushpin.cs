@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
+#if SILVERLIGHT
+using Microsoft.Maps.MapControl;
+#else
 using Microsoft.Maps.MapControl.WPF;
+#endif
 
 using GuildWars2.ArenaNet.Model;
 
@@ -11,30 +15,11 @@ namespace GuildWars2.ArenaNet.Mapper
 {
     public class PointOfInterestPushpin : ImagePushpin
     {
-        private static IDictionary<PointOfInterestType, BitmapImage> IMAGES;
-
-        static PointOfInterestPushpin()
-        {
-            IMAGES = new Dictionary<PointOfInterestType, BitmapImage>();
-
-            BitmapImage img = new BitmapImage();
-            img.BeginInit();
-            img.StreamSource = Application.GetResourceStream(new Uri("/Resources/poi.png", UriKind.Relative)).Stream;
-            img.EndInit();
-            IMAGES.Add(PointOfInterestType.Landmark, img);
-
-            img = new BitmapImage();
-            img.BeginInit();
-            img.StreamSource = Application.GetResourceStream(new Uri("/Resources/vista.png", UriKind.Relative)).Stream;
-            img.EndInit();
-            IMAGES.Add(PointOfInterestType.Vista, img);
-
-            img = new BitmapImage();
-            img.BeginInit();
-            img.StreamSource = Application.GetResourceStream(new Uri("/Resources/waypoint.png", UriKind.Relative)).Stream;
-            img.EndInit();
-            IMAGES.Add(PointOfInterestType.Waypoint, img);
-        }
+        private static IDictionary<PointOfInterestType, BitmapImage> IMAGES = new Dictionary<PointOfInterestType, BitmapImage>() {
+                { PointOfInterestType.Landmark, new BitmapImage(new Uri("pack://application:,,,/Resources/poi.png")) },
+                { PointOfInterestType.Vista, new BitmapImage(new Uri("pack://application:,,,/Resources/vista.png")) },
+                { PointOfInterestType.Waypoint, new BitmapImage(new Uri("pack://application:,,,/Resources/waypoint.png")) }
+            };
 
         public PointOfInterestPushpin(PointOfInterest poi)
             : base()

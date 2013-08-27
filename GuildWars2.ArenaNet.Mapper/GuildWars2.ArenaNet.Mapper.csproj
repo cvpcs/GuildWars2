@@ -80,10 +80,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArenaNetMap.cs" />
+    <Compile Include="ArenaNetMapLayerContainer.cs" />
     <Compile Include="ArenaNetTileLayer.cs" />
     <Compile Include="ArenaNetTileLayerSource.cs" />
     <Compile Include="BountyMapLayer.cs" />
     <Compile Include="BountyPushpin.cs" />
+    <Compile Include="PlayerPushpin.cs" />
     <Compile Include="ImagePushpin.cs" />
     <Compile Include="PointOfInterestPushpin.cs" />
     <Compile Include="SectorPushpin.cs" />
@@ -138,6 +140,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ImagePushpinTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SectorPushpinTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,6 +1,10 @@
 ﻿using System;
 
+#if SILVERLIGHT
+using Microsoft.Maps.MapControl;
+#else
 using Microsoft.Maps.MapControl.WPF;
+#endif
 
 namespace GuildWars2.ArenaNet.Mapper
 {

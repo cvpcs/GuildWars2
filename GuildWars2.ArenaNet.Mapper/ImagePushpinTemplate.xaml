@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0"?>
 <ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                 xmlns:l="clr-namespace:GuildWars2.ArenaNet.Mapper;assembly=GuildWars2.ArenaNet.Mapper"
-                 xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF">
-    <Rectangle Width="{Binding Path=Width, RelativeSource={RelativeSource FindAncestor,AncestorType=m:Pushpin}}"
-               Height="{Binding Path=Height, RelativeSource={RelativeSource FindAncestor,AncestorType=m:Pushpin}}">
+                 xmlns:l="clr-namespace:GuildWars2.ArenaNet.Mapper">
+    <Rectangle Width="{Binding Path=Width, RelativeSource={RelativeSource FindAncestor,AncestorType=l:ImagePushpin}}"
+               Height="{Binding Path=Height, RelativeSource={RelativeSource FindAncestor,AncestorType=l:ImagePushpin}}">
         <Rectangle.Fill>
             <ImageBrush x:Name="ImagePushpinTemplateBrush"
                         ImageSource="{Binding Path=Image, RelativeSource={RelativeSource FindAncestor,AncestorType=l:ImagePushpin}}" />

@@ -13,7 +13,18 @@ namespace GuildWars2.ArenaNet.Mapper
         private IntPtr m_LinkedMem;
 
         private LinkedMem Link
-        { get { return (LinkedMem)Marshal.PtrToStructure(m_LinkedMem, typeof(LinkedMem)); } }
+        {
+            get
+            {
+#if SILVERLIGHT
+                LinkedMem buffer = new LinkedMem();
+                Marshal.PtrToStructure(m_LinkedMem, buffer);
+                return buffer;
+#else
+                return (LinkedMem)Marshal.PtrToStructure(m_LinkedMem, typeof(LinkedMem));
+#endif
+            }
+        }
 
         public bool DataAvailable
         {
