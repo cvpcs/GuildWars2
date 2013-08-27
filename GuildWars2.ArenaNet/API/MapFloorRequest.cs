@@ -26,7 +26,7 @@ namespace GuildWars2.ArenaNet.API
 
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/map_floor.json"; }
+            get { return "/" + Version + "/map_floor.json"; }
         }
 
         public MapFloorRequest(int continent_id, int floor, LanguageCode lang = LanguageCode.EN)

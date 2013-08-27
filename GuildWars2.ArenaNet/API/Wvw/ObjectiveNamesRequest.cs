@@ -9,7 +9,7 @@ namespace GuildWars2.ArenaNet.API.Wvw
     {
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/wvw/objective_names.json"; }
+            get { return "/" + Version + "/wvw/objective_names.json"; }
         }
 
         public ObjectiveNamesRequest(LanguageCode lang = LanguageCode.EN)

@@ -1,0 +1,332 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7E80EA20-61E4-485C-AFBA-AE18E47626CE}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GuildWars2.ArenaNet.Silverlight</RootNamespace>
+    <AssemblyName>GuildWars2.ArenaNet.Silverlight</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core">
+      <HintPath>$(TargetFrameworkDirectory)System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\GuildWars2.ArenaNet\API\BuildRequest.cs">
+      <Link>API\BuildRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\BuildResponse.cs">
+      <Link>API\BuildResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\ColorsRequest.cs">
+      <Link>API\ColorsRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\ColorsResponse.cs">
+      <Link>API\ColorsResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\ContinentsRequest.cs">
+      <Link>API\ContinentsRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\ContinentsResponse.cs">
+      <Link>API\ContinentsResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\EventDetailsRequest.cs">
+      <Link>API\EventDetailsRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\EventDetailsResponse.cs">
+      <Link>API\EventDetailsResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\EventNamesRequest.cs">
+      <Link>API\EventNamesRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\EventNamesResponse.cs">
+      <Link>API\EventNamesResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\EventsRequest.cs">
+      <Link>API\EventsRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\EventsResponse.cs">
+      <Link>API\EventsResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\FilesRequest.cs">
+      <Link>API\FilesRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\FilesResponse.cs">
+      <Link>API\FilesResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\GuildDetailsRequest.cs">
+      <Link>API\GuildDetailsRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\GuildDetailsResponse.cs">
+      <Link>API\GuildDetailsResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\ItemDetailsRequest.cs">
+      <Link>API\ItemDetailsRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\ItemDetailsResponse.cs">
+      <Link>API\ItemDetailsResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\ItemsRequest.cs">
+      <Link>API\ItemsRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\ItemsResponse.cs">
+      <Link>API\ItemsResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\MapFloorRequest.cs">
+      <Link>API\MapFloorRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\MapFloorResponse.cs">
+      <Link>API\MapFloorResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\MapNamesRequest.cs">
+      <Link>API\MapNamesRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\MapNamesResponse.cs">
+      <Link>API\MapNamesResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\MapsRequest.cs">
+      <Link>API\MapsRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\MapsResponse.cs">
+      <Link>API\MapsResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\RecipeDetailsRequest.cs">
+      <Link>API\RecipeDetailsRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\RecipeDetailsResponse.cs">
+      <Link>API\RecipeDetailsResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\RecipesRequest.cs">
+      <Link>API\RecipesRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\RecipesResponse.cs">
+      <Link>API\RecipesResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\Request.Async.cs">
+      <Link>API\Request.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\Request.cs">
+      <Link>API\Request.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\TranslatableRequest.cs">
+      <Link>API\TranslatableRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\WorldNamesRequest.cs">
+      <Link>API\WorldNamesRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\WorldNamesResponse.cs">
+      <Link>API\WorldNamesResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\Wvw\MatchDetailsRequest.cs">
+      <Link>API\Wvw\MatchDetailsRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\Wvw\MatchDetailsResponse.cs">
+      <Link>API\Wvw\MatchDetailsResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\Wvw\MatchesRequest.cs">
+      <Link>API\Wvw\MatchesRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\Wvw\MatchesResponse.cs">
+      <Link>API\Wvw\MatchesResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\Wvw\ObjectiveNamesRequest.cs">
+      <Link>API\Wvw\ObjectiveNamesRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\API\Wvw\ObjectiveNamesResponse.cs">
+      <Link>API\Wvw\ObjectiveNamesResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\ImageServices.Async.cs">
+      <Link>ImageServices.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\ImageServices.cs">
+      <Link>ImageServices.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\AssetFile.cs">
+      <Link>Model\AssetFile.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Color.cs">
+      <Link>Model\Color.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Continent.cs">
+      <Link>Model\Continent.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Event.cs">
+      <Link>Model\Event.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\EventDetails.cs">
+      <Link>Model\EventDetails.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\EventFlagType.cs">
+      <Link>Model\EventFlagType.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\EventState.cs">
+      <Link>Model\EventState.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\EventStateType.cs">
+      <Link>Model\EventStateType.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\FlagType.cs">
+      <Link>Model\FlagType.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Floor.cs">
+      <Link>Model\Floor.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\FloorMapDetails.cs">
+      <Link>Model\FloorMapDetails.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\FloorRegion.cs">
+      <Link>Model\FloorRegion.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\GameType.cs">
+      <Link>Model\GameType.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Guild.cs">
+      <Link>Model\Guild.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\GuildEmblem.cs">
+      <Link>Model\GuildEmblem.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\ItemDetails.cs">
+      <Link>Model\ItemDetails.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\ItemType.cs">
+      <Link>Model\ItemType.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\LanguageCode.cs">
+      <Link>Model\LanguageCode.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Location.cs">
+      <Link>Model\Location.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\LocationType.cs">
+      <Link>Model\LocationType.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Map.cs">
+      <Link>Model\Map.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\MapDetails.cs">
+      <Link>Model\MapDetails.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\MappedModel.cs">
+      <Link>Model\MappedModel.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\MaterialColor.cs">
+      <Link>Model\MaterialColor.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\NamedModel.cs">
+      <Link>Model\NamedModel.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\PointOfInterest.cs">
+      <Link>Model\PointOfInterest.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\PointOfInterestType.cs">
+      <Link>Model\PointOfInterestType.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\RarityType.cs">
+      <Link>Model\RarityType.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\RegionType.cs">
+      <Link>Model\RegionType.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\RestrictionType.cs">
+      <Link>Model\RestrictionType.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Sector.cs">
+      <Link>Model\Sector.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Task.cs">
+      <Link>Model\Task.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\World.cs">
+      <Link>Model\World.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Wvw\MapState.cs">
+      <Link>Model\Wvw\MapState.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Wvw\MapType.cs">
+      <Link>Model\Wvw\MapType.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Wvw\Match.cs">
+      <Link>Model\Wvw\Match.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Wvw\MatchDetails.cs">
+      <Link>Model\Wvw\MatchDetails.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Wvw\Objective.cs">
+      <Link>Model\Wvw\Objective.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Wvw\ObjectiveOwnerType.cs">
+      <Link>Model\Wvw\ObjectiveOwnerType.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\Wvw\ObjectiveState.cs">
+      <Link>Model\Wvw\ObjectiveState.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RestSharp.Silverlight\RestSharp.Silverlight.csproj">
+      <Project>{940083d4-dd57-43c1-9506-a7a811216d36}</Project>
+      <Name>RestSharp.Silverlight</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

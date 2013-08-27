@@ -8,7 +8,7 @@ namespace GuildWars2.ArenaNet.API.Wvw
     {
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/wvw/matches.json"; }
+            get { return "/" + Version + "/wvw/matches.json"; }
         }
     }
 }

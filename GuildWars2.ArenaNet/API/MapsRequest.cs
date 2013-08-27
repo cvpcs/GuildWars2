@@ -24,7 +24,7 @@ namespace GuildWars2.ArenaNet.API
 
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/maps.json"; }
+            get { return "/" + Version + "/maps.json"; }
         }
 
         public MapsRequest(int? map_id = null, LanguageCode lang = LanguageCode.EN)

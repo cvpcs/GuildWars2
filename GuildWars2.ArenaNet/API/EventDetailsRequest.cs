@@ -24,7 +24,7 @@ namespace GuildWars2.ArenaNet.API
 
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/event_details.json"; }
+            get { return "/" + Version + "/event_details.json"; }
         }
 
         public EventDetailsRequest(Guid? event_id = null, LanguageCode lang = LanguageCode.EN)

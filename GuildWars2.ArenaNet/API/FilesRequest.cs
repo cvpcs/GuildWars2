@@ -9,7 +9,7 @@ namespace GuildWars2.ArenaNet.API
     {
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/files.json"; }
+            get { return "/" + Version + "/files.json"; }
         }
 
         public FilesRequest()

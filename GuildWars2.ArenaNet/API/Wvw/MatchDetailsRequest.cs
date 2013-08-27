@@ -21,7 +21,7 @@ namespace GuildWars2.ArenaNet.API.Wvw
 
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/wvw/match_details.json"; }
+            get { return "/" + Version + "/wvw/match_details.json"; }
         }
 
         public MatchDetailsRequest(string match_id)

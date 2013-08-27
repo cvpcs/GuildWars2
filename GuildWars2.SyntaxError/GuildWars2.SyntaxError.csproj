@@ -41,10 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\ChampionEventsRequest.Async.cs" />
     <Compile Include="API\ChampionEventsRequest.cs" />
+    <Compile Include="API\ChampionEventsRequest.Sync.cs" />
     <Compile Include="API\EventTimerDataRequest.cs" />
     <Compile Include="API\EventTimerDataResponse.cs" />
+    <Compile Include="API\Request.Async.cs" />
     <Compile Include="API\Request.cs" />
+    <Compile Include="API\Request.Sync.cs" />
     <Compile Include="Model\ChatCode.cs" />
     <Compile Include="Model\ChatCodeType.cs" />
     <Compile Include="Model\MetaEventMultiLineStage.cs" />

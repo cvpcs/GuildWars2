@@ -27,7 +27,7 @@ namespace GuildWars2.SyntaxError.Model
 
         public override string ToString()
         {
-            return string.Format("[&{0}]", Convert.ToBase64String(Data, Base64FormattingOptions.None));
+            return string.Format("[&{0}]", Convert.ToBase64String(Data));
         }
 
         #region Static Creation Methods

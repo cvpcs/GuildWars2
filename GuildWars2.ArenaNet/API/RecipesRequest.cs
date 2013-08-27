@@ -6,7 +6,7 @@ namespace GuildWars2.ArenaNet.API
     {
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/recipes.json"; }
+            get { return "/" + Version + "/recipes.json"; }
         }
     }
 }

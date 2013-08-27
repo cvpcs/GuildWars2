@@ -23,7 +23,7 @@ namespace GuildWars2.ArenaNet.API
 
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/item_details.json"; }
+            get { return "/" + Version + "/item_details.json"; }
         }
 
         public ItemDetailsRequest(int item_id, LanguageCode lang = LanguageCode.EN)

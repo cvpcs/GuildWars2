@@ -25,7 +25,7 @@ namespace GuildWars2.ArenaNet.API
 
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/guild_details.json"; }
+            get { return "/" + Version + "/guild_details.json"; }
         }
 
         public GuildDetailsRequest(Guid guild_id)

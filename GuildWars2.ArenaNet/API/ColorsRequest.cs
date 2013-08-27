@@ -9,7 +9,7 @@ namespace GuildWars2.ArenaNet.API
     {
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/colors.json"; }
+            get { return "/" + Version + "/colors.json"; }
         }
 
         public ColorsRequest(LanguageCode lang = LanguageCode.EN)

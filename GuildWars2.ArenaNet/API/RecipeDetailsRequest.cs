@@ -21,7 +21,7 @@ namespace GuildWars2.ArenaNet.API
 
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/recipe_details.json"; }
+            get { return "/" + Version + "/recipe_details.json"; }
         }
 
         public RecipeDetailsRequest(int recipe_id)

@@ -9,7 +9,7 @@ namespace GuildWars2.ArenaNet.API
     {
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/continents.json"; }
+            get { return "/" + Version + "/continents.json"; }
         }
 
         public ContinentsRequest(LanguageCode lang = LanguageCode.EN)

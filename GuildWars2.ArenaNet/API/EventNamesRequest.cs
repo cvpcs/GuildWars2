@@ -9,7 +9,7 @@ namespace GuildWars2.ArenaNet.API
     {
         protected override string APIPath
         {
-            get { return "/" + VERSION + "/event_names.json"; }
+            get { return "/" + Version + "/event_names.json"; }
         }
 
         public EventNamesRequest(LanguageCode lang = LanguageCode.EN)
