@@ -14,7 +14,7 @@ namespace GuildWars2.ArenaNet.Mapper
 {
     public class PlayerPushpin : ImagePushpin
     {
-        private static BitmapImage IMAGE = new BitmapImage(new Uri("pack://application:,,,/Resources/player_position.png"));
+        private static BitmapImage IMAGE = new BitmapImage(new Uri("pack://application:,,,/GuildWars2.ArenaNet.Mapper;component/Resources/player_position.png"));
 
         public PlayerPushpin()
             : base()

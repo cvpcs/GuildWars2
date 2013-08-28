@@ -14,7 +14,7 @@ namespace GuildWars2.ArenaNet.Mapper
 {
     public class TaskPushpin : ImagePushpin
     {
-        private static BitmapImage IMAGE = new BitmapImage(new Uri("pack://application:,,,/Resources/renown_heart.png"));
+        private static BitmapImage IMAGE = new BitmapImage(new Uri("pack://application:,,,/GuildWars2.ArenaNet.Mapper;component/Resources/renown_heart.png"));
 
         public TaskPushpin(Task task)
             : base()

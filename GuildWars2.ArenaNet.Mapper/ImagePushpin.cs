@@ -23,13 +23,13 @@ namespace GuildWars2.ArenaNet.Mapper
         static ImagePushpin()
         {
 #if SILVERLIGHT
-            using (StreamReader sr = new StreamReader(Application.GetResourceStream(new Uri("/ImagePushpinTemplate.xaml", UriKind.Relative)).Stream))
+            using (StreamReader sr = new StreamReader(Application.GetResourceStream(new Uri("/GuildWars2.ArenaNet.Mapper;component/ImagePushpinTemplate.xaml", UriKind.Relative)).Stream))
             {
                 TEMPLATE = (ControlTemplate)XamlReader.Load(sr.ReadToEnd());
             }
 #else
             TEMPLATE = (ControlTemplate)Application.LoadComponent(
-                new Uri("/ImagePushpinTemplate.xaml", UriKind.Relative));
+                new Uri("/GuildWars2.ArenaNet.Mapper;component/ImagePushpinTemplate.xaml", UriKind.Relative));
 #endif
         }
 
