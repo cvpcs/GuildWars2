@@ -24,20 +24,28 @@ namespace GuildWars2.ArenaNet.Mapper
     {
         private static LinearGradientBrush BOSS_GRADIENT = new LinearGradientBrush(
                 new GradientStopCollection() {
-                        new GradientStop(Color.FromArgb(  0,   0,   0,   0), 0.0),
-                        new GradientStop(Color.FromArgb(128, 220,   0,   0), 0.1),
-                        new GradientStop(Color.FromArgb(192, 220,   0,   0), 0.5),
-                        new GradientStop(Color.FromArgb(128, 220,   0,   0), 0.9),
-                        new GradientStop(Color.FromArgb(  0,   0,   0,   0), 1.0)
+                        new GradientStop() { Color = Color.FromArgb(  0,   0,   0,   0), Offset =  0.0 },
+                        new GradientStop() { Color = Color.FromArgb(128, 220,   0,   0), Offset =  0.1 },
+                        new GradientStop() { Color = Color.FromArgb(192, 220,   0,   0), Offset =  0.5 },
+                        new GradientStop() { Color = Color.FromArgb(128, 220,   0,   0), Offset =  0.9 },
+                        new GradientStop() { Color = Color.FromArgb(  0,   0,   0,   0), Offset =  1.0 }
                     }, 0.0);
         private static LinearGradientBrush PRE_GRADIENT = new LinearGradientBrush(
                 new GradientStopCollection() {
-                        new GradientStop(Color.FromArgb(  0,   0,   0,   0), 0.0),
-                        new GradientStop(Color.FromArgb(128, 220, 220,   0), 0.1),
-                        new GradientStop(Color.FromArgb(192, 220, 220,   0), 0.5),
-                        new GradientStop(Color.FromArgb(128, 220, 220,   0), 0.9),
-                        new GradientStop(Color.FromArgb(  0,   0,   0,   0), 1.0)
+                        new GradientStop() { Color = Color.FromArgb(  0,   0,   0,   0), Offset =  0.0 },
+                        new GradientStop() { Color = Color.FromArgb(128, 220, 220,   0), Offset =  0.1 },
+                        new GradientStop() { Color = Color.FromArgb(192, 220, 220,   0), Offset =  0.5 },
+                        new GradientStop() { Color = Color.FromArgb(128, 220, 220,   0), Offset =  0.9 },
+                        new GradientStop() { Color = Color.FromArgb(  0,   0,   0,   0), Offset =  1.0 }
                     }, 0.0);
+
+#if SILVERLIGHT
+        private static SolidColorBrush WINDOW_FOREGROUND = new SolidColorBrush(Colors.Blue);
+        private static SolidColorBrush BEHIND_FOREGROUND = new SolidColorBrush(Colors.Red);
+#else
+        private static SolidColorBrush WINDOW_FOREGROUND = Brushes.Blue;
+        private static SolidColorBrush BEHIND_FOREGROUND = Brushes.Red;
+#endif
 
         private bool m_Countdown;
         private TimeSpan m_EventTime;
@@ -95,9 +103,9 @@ namespace GuildWars2.ArenaNet.Mapper
                 Background = null;
 
                 if (windowType == "window")
-                    EventTime.Foreground = Brushes.Blue;
+                    EventTime.Foreground = WINDOW_FOREGROUND;
                 else if (windowType == "behind")
-                    EventTime.Foreground = Brushes.Red;
+                    EventTime.Foreground = BEHIND_FOREGROUND;
                 else
                 {
                     EventTime.Foreground = null;
