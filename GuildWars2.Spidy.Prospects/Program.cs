@@ -73,7 +73,7 @@ namespace GuildWars2.Spidy.Prospects
                 prospects = fetchProspects(searchConfig);
                 ok();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 error();
                 Console.WriteLine("  There was a problem communicating with Gw2Spidy. The website may be offline.");
