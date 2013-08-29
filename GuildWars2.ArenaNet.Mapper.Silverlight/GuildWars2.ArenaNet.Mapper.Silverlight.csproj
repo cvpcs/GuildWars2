@@ -102,10 +102,6 @@
     <Compile Include="..\GuildWars2.ArenaNet.Mapper\EventPushpin.cs">
       <Link>EventPushpin.cs</Link>
     </Compile>
-    <Compile Include="..\GuildWars2.ArenaNet.Mapper\EventTimerBox.xaml.cs">
-      <DependentUpon>EventTimerBox.xaml</DependentUpon>
-      <Link>EventTimerBox.xaml.cs</Link>
-    </Compile>
     <Compile Include="..\GuildWars2.ArenaNet.Mapper\ImagePushpin.cs">
       <Link>ImagePushpin.cs</Link>
     </Compile>
@@ -140,11 +136,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Page Include="..\GuildWars2.ArenaNet.Mapper\EventTimerBox.xaml">
-      <Link>EventTimerBox.xaml</Link>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="..\GuildWars2.ArenaNet.Mapper\ImagePushpinTemplate.xaml">
       <Link>ImagePushpinTemplate.xaml</Link>
       <Generator>MSBuild:Compile</Generator>
