@@ -34,6 +34,9 @@ namespace GuildWars2.ArenaNet.Mapper
         private IDictionary<int, FloorMapDetails> m_MapData;
 
         private volatile bool m_Running;
+        private ManualResetEvent m_MapDataLoaded = new ManualResetEvent(false);
+        private ManualResetEvent m_EventDataLoaded = new ManualResetEvent(false);
+        private ManualResetEvent m_TimerDataLoaded = new ManualResetEvent(false);
         private ManualResetEvent m_Canceled;
         private Thread m_PlayerWorkerThread;
         private Thread m_EventWorkerThread;
@@ -64,67 +67,101 @@ namespace GuildWars2.ArenaNet.Mapper
 
             Map.Children.Add(m_MapLayerContainer);
 
-            MapFloorResponse floor = new MapFloorRequest(1, 2).Execute();
-            if (floor != null)
-            {
-                foreach (FloorRegion region in floor.Regions.Values)
+            new MapFloorRequest(1, 2).ExecuteAsync(floor =>
                 {
-                    foreach (string mapId in region.Maps.Keys)
+                    if (floor != null)
                     {
-                        int mid = int.Parse(mapId);
-                        FloorMapDetails map = region.Maps[mapId];
-                        
-                        m_MapData.Add(mid, map);
-                        m_MapLayerContainer.LoadFloorMapDetails(mid, map);
+                        foreach (FloorRegion region in floor.Regions.Values)
+                        {
+                            foreach (string mapId in region.Maps.Keys)
+                            {
+                                int mid = int.Parse(mapId);
+                                FloorMapDetails map = region.Maps[mapId];
+                                m_MapData.Add(mid, map);
+                            }
+                        }
+
+                        m_MapDataLoaded.Set();
+
+                        Dispatcher.BeginInvoke(new Action(() => 
+                            {
+                                foreach (KeyValuePair<int, FloorMapDetails> entry in m_MapData)
+                                {
+                                    m_MapLayerContainer.LoadFloorMapDetails(entry.Key, entry.Value);
+                                }
+                            }), DispatcherPriority.Background);
                     }
-                }
-            }
+                });
 
             m_MapLayerContainer.LoadBounties();
 
-            EventDetailsResponse events = new EventDetailsRequest().Execute();
-            if (events != null)
-            {
-                IList<Guid> championEvents = new ChampionEventsRequest().Execute();
-
-                foreach (KeyValuePair<string, EventDetails> entry in events.Events)
+            new EventDetailsRequest().ExecuteAsync(events =>
                 {
-                    Guid eid = new Guid(entry.Key);
-                    EventDetails ev = entry.Value;
-
-                    if (!ev.Name.StartsWith("skill challenge: ", StringComparison.InvariantCultureIgnoreCase) && m_MapData.ContainsKey(ev.MapId))
+                    if (events != null)
                     {
-                        FloorMapDetails map = m_MapData[ev.MapId];
+                        new ChampionEventsRequest().ExecuteAsync(championEvents =>
+                        {
+                            IDictionary<Guid, EventDetails> evDetails = new Dictionary<Guid, EventDetails>();
+                            IDictionary<Guid, bool> evChamps = new Dictionary<Guid, bool>();
 
-                        m_MapLayerContainer.LoadEvent(eid, ev, map, championEvents.Contains(eid));
+                            foreach (KeyValuePair<string, EventDetails> entry in events.Events)
+                            {
+                                Guid eid = new Guid(entry.Key);
+                                EventDetails ev = entry.Value;
+                                if (!ev.Name.StartsWith("skill challenge: ", StringComparison.InvariantCultureIgnoreCase) && m_MapData.ContainsKey(ev.MapId))
+                                {
+                                    evDetails[eid] = ev;
+                                    evChamps[eid] = championEvents.Contains(eid);
+                                }
+                            }
+
+                            // ensure map data is loaded
+                            m_MapDataLoaded.WaitOne();
+
+                            Dispatcher.BeginInvoke(new Action(() =>
+                                {
+                                    foreach (KeyValuePair<Guid, EventDetails> entry in evDetails)
+                                    {
+                                        m_MapLayerContainer.LoadEvent(entry.Key, entry.Value, m_MapData[entry.Value.MapId], evChamps[entry.Key]);
+                                    }
+
+                                    m_EventDataLoaded.Set();
+                                }), DispatcherPriority.Background);
+                        });
                     }
-                }
-            }
+                });
 
             m_EventTimerBoxes = new Dictionary<string, EventTimerBox>();
-            EventTimerDataResponse timerData = new EventTimerDataRequest().Execute();
-            if (timerData != null)
-            {
-                foreach (MetaEventStatus e in timerData.Events)
+            new EventTimerDataRequest().ExecuteAsync(timerData =>
                 {
-                    EventTimerBox box = new EventTimerBox();
-                    box.SetData(e);
-                    m_EventTimerBoxes.Add(e.Id, box);
-
-                    switch (e.StageTypeEnum)
+                    if (timerData != null)
                     {
-                        case MetaEventStage.StageType.Boss:
-                            EventTimerItems_Boss.Children.Add(box);
-                            break;
-                        case MetaEventStage.StageType.PreEvent:
-                            EventTimerItems_PreEvent.Children.Add(box);
-                            break;
-                        default:
-                            EventTimerItems_Other.Children.Add(box);
-                            break;
+                        Dispatcher.BeginInvoke(new Action(() =>
+                            {
+                                foreach (MetaEventStatus e in timerData.Events)
+                                {
+                                    EventTimerBox box = new EventTimerBox();
+                                    box.SetData(e);
+                                    m_EventTimerBoxes.Add(e.Id, box);
+
+                                    switch (e.StageTypeEnum)
+                                    {
+                                        case MetaEventStage.StageType.Boss:
+                                            EventTimerItems_Boss.Children.Add(box);
+                                            break;
+                                        case MetaEventStage.StageType.PreEvent:
+                                            EventTimerItems_PreEvent.Children.Add(box);
+                                            break;
+                                        default:
+                                            EventTimerItems_Other.Children.Add(box);
+                                            break;
+                                    }
+                                }
+
+                                m_TimerDataLoaded.Set();
+                            }), DispatcherPriority.Background);
                     }
-                }
-            }
+                });
 
             MouseDown += DrawPolyMouseDownHandler;
             KeyDown += DrawPolyKeyDownHandler;
@@ -168,6 +205,9 @@ namespace GuildWars2.ArenaNet.Mapper
         #region Worker Threads
         private void PlayerWorkerThread()
         {
+            // wait for map data to be loaded before proceeding (or if we are cancelled)
+            EventWaitHandle.WaitAny(new ManualResetEvent[] { m_MapDataLoaded, m_Canceled });
+
             while (m_Running)
             {
                 try
@@ -209,6 +249,9 @@ namespace GuildWars2.ArenaNet.Mapper
 
         private void EventWorkerThread()
         {
+            // wait for event data to be loaded before proceeding (or if we are cancelled)
+            EventWaitHandle.WaitAny(new ManualResetEvent[] { m_EventDataLoaded, m_Canceled });
+
             while (m_Running)
             {
                 try
@@ -232,6 +275,8 @@ namespace GuildWars2.ArenaNet.Mapper
 
         private void EventTimerWorkerThread()
         {
+            // wait for timer data to be loaded before proceeding (or if we are cancelled)
+            EventWaitHandle.WaitAny(new ManualResetEvent[] { m_TimerDataLoaded, m_Canceled });
 
             Timer ticker = new Timer();
             ticker.Interval = 1000;
