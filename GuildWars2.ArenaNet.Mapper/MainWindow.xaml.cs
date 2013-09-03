@@ -59,8 +59,6 @@ namespace GuildWars2.ArenaNet.Mapper
 
             m_FollowPlayer = false;
             m_Player = new PlayerPushpin();
-            m_Player.Template = (ControlTemplate)Application.Current.Resources["PlayerPushpin"];
-            m_Player.PositionOrigin = PositionOrigin.Center;
             m_Player.Visibility = Visibility.Hidden;
             Map.Children.Add(m_Player);
 
