@@ -151,8 +151,8 @@ namespace GuildWars2.ArenaNet.Mapper
         #region Worker Threads
         private void EventWorkerThread()
         {
-            // wait for event data to be loaded before proceeding
-            m_EventDataLoaded.WaitOne();
+            // wait for event data to be loaded before proceeding (or if we are cancelled)
+            EventWaitHandle.WaitAny(new ManualResetEvent[] { m_EventDataLoaded, m_Canceled });
 
             while (m_Running)
             {
