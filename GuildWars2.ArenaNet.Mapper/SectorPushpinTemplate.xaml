@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                 xmlns:l="clr-namespace:GuildWars2.ArenaNet.Mapper">
+                 xmlns:l="clr-namespace:GuildWars2.ArenaNet.Mapper;assembly=GuildWars2.ArenaNet.Mapper">
     <StackPanel>
         <StackPanel.Resources>
             <Style TargetType="TextBlock">
-                <Setter Property="FontFamily" Value="Resources/#MenomoniaItalic" />
-                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontFamily" Value="/GuildWars2.ArenaNet.Mapper;component/Resources/menomonia-italic.ttf#MenomoniaItalic" />
+                <Setter Property="FontSize" Value="13" />
                 <Setter Property="TextAlignment" Value="Center" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Setter Property="Effect">
@@ -18,6 +18,6 @@
         </StackPanel.Resources>
         <TextBlock Text="{Binding Path=SectorName, RelativeSource={RelativeSource FindAncestor,AncestorType=l:SectorPushpin}}" />
         <TextBlock Text="{Binding Path=SectorLevel, RelativeSource={RelativeSource FindAncestor,AncestorType=l:SectorPushpin}}"
-                                       FontSize="8pt" />
+                                       FontSize="8" />
     </StackPanel>
 </ControlTemplate>

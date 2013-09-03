@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -15,21 +14,16 @@ using Microsoft.Maps.MapControl.WPF;
 
 namespace GuildWars2.ArenaNet.Mapper
 {
-    public abstract class ImagePushpin : Pushpin
+    public abstract class ImagePushpin : TemplatedPushpin
     {
         private static string IMAGEBRUSH_NAME = "ImagePushpinTemplateBrush";
-        private static ControlTemplate TEMPLATE;
 
-        static ImagePushpin()
+        protected static BitmapImage LoadImageResource(string resourceUri)
         {
 #if SILVERLIGHT
-            using (StreamReader sr = new StreamReader(Application.GetResourceStream(new Uri("/GuildWars2.ArenaNet.Mapper;component/ImagePushpinTemplate.xaml", UriKind.Relative)).Stream))
-            {
-                TEMPLATE = (ControlTemplate)XamlReader.Load(sr.ReadToEnd());
-            }
+            return new BitmapImage(new Uri(string.Format("/GuildWars2.ArenaNet.Mapper.Silverlight;component{0}", resourceUri), UriKind.Relative));
 #else
-            TEMPLATE = (ControlTemplate)Application.LoadComponent(
-                new Uri("/GuildWars2.ArenaNet.Mapper;component/ImagePushpinTemplate.xaml", UriKind.Relative));
+            return new BitmapImage(new Uri(string.Format("pack://application:,,,/GuildWars2.ArenaNet.Mapper;component{0}", resourceUri)));
 #endif
         }
 
@@ -60,13 +54,12 @@ namespace GuildWars2.ArenaNet.Mapper
 #endif
 
         public ImagePushpin()
+            : base("/ImagePushpinTemplate.xaml")
         {
             Width = 20;
             Height = 20;
 
             PositionOrigin = PositionOrigin.Center;
-
-            Template = TEMPLATE;
         }
 
         public override void OnApplyTemplate()

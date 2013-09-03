@@ -14,7 +14,7 @@ namespace GuildWars2.ArenaNet.Mapper
 {
     public class BountyPushpin : ImagePushpin
     {
-        private static BitmapImage IMAGE = new BitmapImage(new Uri("pack://application:,,,/GuildWars2.ArenaNet.Mapper;component/Resources/bounty.png"));
+        private static BitmapImage IMAGE = LoadImageResource("/Resources/bounty.png");
 
         public BountyPushpin()
             : base()

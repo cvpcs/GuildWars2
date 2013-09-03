@@ -16,9 +16,9 @@ namespace GuildWars2.ArenaNet.Mapper
     public class PointOfInterestPushpin : ImagePushpin
     {
         private static IDictionary<PointOfInterestType, BitmapImage> IMAGES = new Dictionary<PointOfInterestType, BitmapImage>() {
-                { PointOfInterestType.Landmark, new BitmapImage(new Uri("pack://application:,,,/GuildWars2.ArenaNet.Mapper;component/Resources/poi.png")) },
-                { PointOfInterestType.Vista, new BitmapImage(new Uri("pack://application:,,,/GuildWars2.ArenaNet.Mapper;component/Resources/vista.png")) },
-                { PointOfInterestType.Waypoint, new BitmapImage(new Uri("pack://application:,,,/GuildWars2.ArenaNet.Mapper;component/Resources/waypoint.png")) }
+                { PointOfInterestType.Landmark, LoadImageResource("/Resources/poi.png") },
+                { PointOfInterestType.Vista, LoadImageResource("/Resources/vista.png") },
+                { PointOfInterestType.Waypoint, LoadImageResource("/Resources/waypoint.png") }
             };
 
         public PointOfInterestPushpin(PointOfInterest poi)

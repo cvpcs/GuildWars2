@@ -14,7 +14,7 @@ namespace GuildWars2.ArenaNet.Mapper
 {
     public class SkillChallengePushpin : ImagePushpin
     {
-        private static BitmapImage IMAGE = new BitmapImage(new Uri("pack://application:,,,/GuildWars2.ArenaNet.Mapper;component/Resources/skill_point.png"));
+        private static BitmapImage IMAGE = LoadImageResource("/Resources/skill_point.png");
 
         public SkillChallengePushpin(MappedModel skill_challenge)
             : base()
