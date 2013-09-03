@@ -60,6 +60,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Expression.Interactions, Version=5.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Maps.MapControl">
       <HintPath>Libraries\Microsoft.Maps.MapControl.dll</HintPath>
       <Aliases>global</Aliases>
@@ -74,6 +75,7 @@
       <HintPath>$(TargetFrameworkDirectory)System.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Interactivity, Version=5.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
@@ -105,12 +107,6 @@
     <Compile Include="..\GuildWars2.ArenaNet.Mapper\ImagePushpin.cs">
       <Link>ImagePushpin.cs</Link>
     </Compile>
-    <Compile Include="..\GuildWars2.ArenaNet.Mapper\MumbleLink.cs">
-      <Link>MumbleLink.cs</Link>
-    </Compile>
-    <Compile Include="..\GuildWars2.ArenaNet.Mapper\PlayerPushpin.cs">
-      <Link>PlayerPushpin.cs</Link>
-    </Compile>
     <Compile Include="..\GuildWars2.ArenaNet.Mapper\PointOfInterestPushpin.cs">
       <Link>PointOfInterestPushpin.cs</Link>
     </Compile>
@@ -122,6 +118,9 @@
     </Compile>
     <Compile Include="..\GuildWars2.ArenaNet.Mapper\TaskPushpin.cs">
       <Link>TaskPushpin.cs</Link>
+    </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet.Mapper\TemplatedPushpin.cs">
+      <Link>TemplatedPushpin.cs</Link>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -188,9 +187,6 @@
     </Resource>
     <Resource Include="..\GuildWars2.ArenaNet.Mapper\Resources\layers.png">
       <Link>Resources\layers.png</Link>
-    </Resource>
-    <Resource Include="..\GuildWars2.ArenaNet.Mapper\Resources\player_position.png">
-      <Link>Resources\player_position.png</Link>
     </Resource>
     <Resource Include="..\GuildWars2.ArenaNet.Mapper\Resources\poi.png">
       <Link>Resources\poi.png</Link>

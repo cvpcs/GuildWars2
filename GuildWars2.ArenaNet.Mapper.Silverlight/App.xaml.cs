@@ -27,11 +27,12 @@ namespace GuildWars2.ArenaNet.Mapper.Silverlight
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             this.RootVisual = new MainPage();
+            (this.RootVisual as MainPage).StartThreads();
         }
 
         private void Application_Exit(object sender, EventArgs e)
         {
-
+            (this.RootVisual as MainPage).StopThreads();
         }
 
         private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)

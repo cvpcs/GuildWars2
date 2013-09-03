@@ -1,15 +1,17 @@
-﻿<UserControl x:Class="GuildWars2.ArenaNet.Mapper.Silverlight.MainPage"
+﻿<UserControl x:Class="GuildWars2.ArenaNet.Mapper.MainPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:l="clr-namespace:GuildWars2.ArenaNet.Mapper"
-             xmlns:m="clr-namespace:Microsoft.Maps.MapControl;assembly=Microsoft.Maps.MapControl"
+             xmlns:l="clr-namespace:GuildWars2.ArenaNet.Mapper;assembly=GuildWars2.ArenaNet.Mapper.Silverlight"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="800">
     <Grid>
-        <l:ArenaNetMap x:Name="Map" CredentialsProvider="AhTEAKIQU-ZIgRRohOT9wwe3V8s6nGrhPX1PEmnPtvJwB9mvCd5Nqp-WUb47dfp5" />
-<!--
+        <l:ArenaNetMap x:Name="Map" CredentialsProvider="AhTEAKIQU-ZIgRRohOT9wwe3V8s6nGrhPX1PEmnPtvJwB9mvCd5Nqp-WUb47dfp5"
+                       ViewChangeOnFrame="Map_ViewChangeOnFrame" ViewChangeEnd="Map_ViewChangeEnd" />
+
         <StackPanel Margin="5,5,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
             <StackPanel.Resources>
                 <Style x:Key="ButtonBorderStyle" TargetType="Border">
@@ -21,15 +23,14 @@
                     <Setter Property="HorizontalAlignment" Value="Center" />
                     <Setter Property="VerticalAlignment" Value="Center" />
                     <Setter Property="FontFamily" Value="Arial" />
-                    <Setter Property="FontSize" Value="18px" />
+                    <Setter Property="FontSize" Value="14" />
                     <Setter Property="FontWeight" Value="Bold" />
                 </Style>
                 <ControlTemplate x:Key="PlusButtonTemplate" TargetType="Button">
-                    <Border x:Name="ButtonBorder" Style="{StaticResource ButtonBorderStyle}"
-                            CornerRadius="5,5,0,0" Padding="5,5,5,2">
+                    <Border Style="{StaticResource ButtonBorderStyle}" CornerRadius="5,5,0,0" Padding="5,5,5,2">
                         <TextBlock x:Name="ButtonTextBlock" Style="{StaticResource ButtonTextBlockStyle}"
                                    Text="+" />
-                    </Border>
+                    </Border><!--
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ButtonBorder" Property="Background" Value="White" />
@@ -37,14 +38,13 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ButtonTextBlock" Property="Foreground" Value="Gray" />
                         </Trigger>
-                    </ControlTemplate.Triggers>
+                    </ControlTemplate.Triggers>-->
                 </ControlTemplate>
                 <ControlTemplate x:Key="MinusButtonTemplate" TargetType="Button">
-                    <Border x:Name="ButtonBorder" Style="{StaticResource ButtonBorderStyle}"
-                            CornerRadius="0,0,5,5" Padding="5,2,5,5">
+                    <Border Style="{StaticResource ButtonBorderStyle}" CornerRadius="0,0,5,5" Padding="5,2,5,5">
                         <TextBlock x:Name="ButtonTextBlock" Style="{StaticResource ButtonTextBlockStyle}"
                                    Text="-" />
-                    </Border>
+                    </Border><!--
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ButtonBorder" Property="Background" Value="White" />
@@ -52,7 +52,7 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ButtonTextBlock" Property="Foreground" Value="Gray" />
                         </Trigger>
-                    </ControlTemplate.Triggers>
+                    </ControlTemplate.Triggers>-->
                 </ControlTemplate>
             </StackPanel.Resources>
             <StackPanel.Effect>
@@ -77,7 +77,7 @@
             </Grid.Resources>
             <Border x:Name="LegendIcon"
                     MouseEnter="LegendIcon_MouseEnter">
-                <Image Source="/Resources/layers.png" Width="26" Height="26" />
+                <Image Source="/GuildWars2.ArenaNet.Mapper.Silverlight;component/Resources/layers.png" Width="26" Height="26" />
             </Border>
             <Border x:Name="Legend"
                 Background="White"
@@ -93,13 +93,12 @@
                         <Style TargetType="Image">
                             <Setter Property="Grid.Column" Value="1" />
                             <Setter Property="Margin" Value="5,0,5,0" />
+                            <Setter Property="Height" Value="20" />
+                            <Setter Property="Width" Value="20" />
                         </Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Grid.Column" Value="2" />
                             <Setter Property="VerticalAlignment" Value="Center" />
-                        </Style>
-                        <Style TargetType="RowDefinition">
-                            <Setter Property="Height" Value="20" />
                         </Style>
                     </Grid.Resources>
                     <Grid.ColumnDefinitions>
@@ -116,31 +115,30 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
-                        <RowDefinition />
                     </Grid.RowDefinitions>
                     <CheckBox  Grid.Row="0" Checked="Legend_WaypointsChecked" Unchecked="Legend_WaypointsUnchecked" />
-                    <Image     Grid.Row="0" Source="/Resources/waypoint.png" />
+                    <Image     Grid.Row="0" Source="/GuildWars2.ArenaNet.Mapper.Silverlight;component/Resources/waypoint.png" />
                     <TextBlock Grid.Row="0">Waypoints</TextBlock>
 
                     <CheckBox  Grid.Row="1" Checked="Legend_PointsOfInterestChecked" Unchecked="Legend_PointsOfInterestUnchecked" />
-                    <Image     Grid.Row="1" Source="/Resources/poi.png" />
+                    <Image     Grid.Row="1" Source="/GuildWars2.ArenaNet.Mapper.Silverlight;component/Resources/poi.png" />
                     <TextBlock Grid.Row="1">Points of Interest</TextBlock>
 
                     <CheckBox  Grid.Row="2" Checked="Legend_VistasChecked" Unchecked="Legend_VistasUnchecked" />
-                    <Image     Grid.Row="2" Source="/Resources/vista.png" />
+                    <Image     Grid.Row="2" Source="/GuildWars2.ArenaNet.Mapper.Silverlight;component/Resources/vista.png" />
                     <TextBlock Grid.Row="2">Vistas</TextBlock>
 
                     <CheckBox  Grid.Row="3" Checked="Legend_RenownHeartsChecked" Unchecked="Legend_RenownHeartsUnchecked" />
-                    <Image     Grid.Row="3" Source="/Resources/renown_heart.png" />
+                    <Image     Grid.Row="3" Source="/GuildWars2.ArenaNet.Mapper.Silverlight;component/Resources/renown_heart.png" />
                     <TextBlock Grid.Row="3">Renown Hearts</TextBlock>
 
                     <CheckBox  Grid.Row="4" Checked="Legend_SkillPointsChecked" Unchecked="Legend_SkillPointsUnchecked" />
-                    <Image     Grid.Row="4" Source="/Resources/skill_point.png" Width="20" Height="20" />
+                    <Image     Grid.Row="4" Source="/GuildWars2.ArenaNet.Mapper.Silverlight;component/Resources/skill_point.png" />
                     <TextBlock Grid.Row="4">Skill Points</TextBlock>
 
                     <CheckBox  Grid.Row="5" Checked="Legend_SectorsChecked" Unchecked="Legend_SectorsUnchecked" IsChecked="False" />
                     <TextBlock Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center"
-                               FontFamily="Resources/#MenomoniaItalic" FontSize="12pt" FontWeight="ExtraBold"
+                               FontFamily="/GuildWars2.ArenaNet.Mapper.Silverlight;component/Resources/menomonia-italic.ttf#MenomoniaItalic" FontSize="13" FontWeight="ExtraBold"
                                Foreground="Gray" Text="A">
                         <TextBlock.Effect>
                             <DropShadowEffect ShadowDepth="0" BlurRadius="30" />
@@ -149,55 +147,14 @@
                     <TextBlock Grid.Row="5">Sectors</TextBlock>
 
                     <CheckBox  Grid.Row="6" Checked="Legend_BountiesChecked" Unchecked="Legend_BountiesUnchecked" IsChecked="False" />
-                    <Image     Grid.Row="6" Source="/Resources/bounty.png" />
+                    <Image     Grid.Row="6" Source="/GuildWars2.ArenaNet.Mapper.Silverlight;component/Resources/bounty.png" />
                     <TextBlock Grid.Row="6">Guild Bounties</TextBlock>
 
                     <CheckBox  Grid.Row="7" Checked="Legend_EventsChecked" Unchecked="Legend_EventsUnchecked" />
-                    <Image     Grid.Row="7" Source="/Resources/event_star.png" />
+                    <Image     Grid.Row="7" Source="/GuildWars2.ArenaNet.Mapper.Silverlight;component/Resources/event_star.png" />
                     <TextBlock Grid.Row="7">Events</TextBlock>
-
-                    <CheckBox  Grid.Row="8" Checked="Legend_FollowPlayerChecked" Unchecked="Legend_FollowPlayerUnchecked" IsChecked="False" />
-                    <Image     Grid.Row="8" Source="/Resources/player_position.png" />
-                    <TextBlock Grid.Row="8">Follow Player</TextBlock>
                 </Grid>
             </Border>
         </Grid>
-
-        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,5,5">
-            <StackPanel.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="Background" Value="LightGray" />
-                    <Setter Property="CornerRadius" Value="5" />
-                    <Setter Property="Padding" Value="5" />
-                    <Setter Property="Effect">
-                        <Setter.Value>
-                            <DropShadowEffect Opacity="0.5" />
-                        </Setter.Value>
-                    </Setter>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="White" />
-                        </Trigger>
-                        <DataTrigger Binding="{Binding Path=Visibility,ElementName=EventTimerItems}" Value="Visible">
-                            <Setter Property="Background" Value="White" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </StackPanel.Resources>
-            <Border x:Name="EventTimer">
-                <StackPanel>
-                    <ScrollViewer MaxHeight="400" ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                        <StackPanel x:Name="EventTimerItems" Visibility="Collapsed">
-                            <StackPanel x:Name="EventTimerItems_Boss" />
-                            <StackPanel x:Name="EventTimerItems_PreEvent" />
-                            <StackPanel x:Name="EventTimerItems_Other" />
-                        </StackPanel>
-                    </ScrollViewer>
-                    <Image HorizontalAlignment="Right"
-                           Source="/Resources/event_boss_gray.png" Width="26" Height="26"
-                           MouseDown="EventTimerIcon_MouseDown" />
-                </StackPanel>
-            </Border>
-        </StackPanel>-->
     </Grid>
 </UserControl>
