@@ -36,6 +36,7 @@ namespace GuildWars2.ArenaNet.Mapper
             Locations = new LocationCollection();
             Opacity = 0.5;
             StrokeThickness = 2;
+
             if (hasChampion)
             {
                 Fill = REGULAR_EVENT_BRUSH_FILL;
@@ -46,6 +47,8 @@ namespace GuildWars2.ArenaNet.Mapper
                 Fill = CHAMPION_EVENT_BRUSH_FILL;
                 Stroke = CHAMPION_EVENT_BRUSH_STROKE;
             }
+
+            SetEventState(EventStateType.Invalid);
         }
 
         public void SetEventState(EventStateType state)
