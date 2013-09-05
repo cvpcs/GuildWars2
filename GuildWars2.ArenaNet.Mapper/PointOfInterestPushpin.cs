@@ -3,12 +3,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
-#if SILVERLIGHT
-using Microsoft.Maps.MapControl;
-#else
-using Microsoft.Maps.MapControl.WPF;
-#endif
-
 using GuildWars2.ArenaNet.Model;
 
 namespace GuildWars2.ArenaNet.Mapper

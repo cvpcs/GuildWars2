@@ -48,6 +48,8 @@ namespace GuildWars2.ArenaNet.Mapper
             if (!TEMPLATES.ContainsKey(templateResourceUri))
                 TEMPLATES[templateResourceUri] = LoadTemplateResource(templateResourceUri);
 
+            PositionOrigin = PositionOrigin.Center;
+
             Template = TEMPLATES[templateResourceUri];
         }
     }

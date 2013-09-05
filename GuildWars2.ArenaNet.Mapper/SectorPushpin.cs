@@ -1,11 +1,5 @@
 ﻿using System;
 
-#if SILVERLIGHT
-using Microsoft.Maps.MapControl;
-#else
-using Microsoft.Maps.MapControl.WPF;
-#endif
-
 using GuildWars2.ArenaNet.Model;
 
 namespace GuildWars2.ArenaNet.Mapper
@@ -18,8 +12,6 @@ namespace GuildWars2.ArenaNet.Mapper
         public SectorPushpin(Sector sector)
             : base("/SectorPushpinTemplate.xaml")
         {
-            PositionOrigin = PositionOrigin.Center;
-
             Width = Double.NaN;
             Height = Double.NaN;
 

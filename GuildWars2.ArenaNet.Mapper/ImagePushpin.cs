@@ -6,10 +6,6 @@ using System.Windows.Media.Imaging;
 #if SILVERLIGHT
 using System.IO;
 using System.Windows.Markup;
-
-using Microsoft.Maps.MapControl;
-#else
-using Microsoft.Maps.MapControl.WPF;
 #endif
 
 namespace GuildWars2.ArenaNet.Mapper
@@ -58,8 +54,6 @@ namespace GuildWars2.ArenaNet.Mapper
         {
             Width = 20;
             Height = 20;
-
-            PositionOrigin = PositionOrigin.Center;
         }
 
         public override void OnApplyTemplate()
