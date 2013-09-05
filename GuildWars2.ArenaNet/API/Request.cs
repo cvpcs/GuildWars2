@@ -9,9 +9,8 @@ namespace GuildWars2.ArenaNet.API
         where T : class, new()
     {
         public static int Timeout = 10000;
-
-        private static string URL = "https://api.guildwars2.com";
-        protected static string Version = "v1";
+        public static readonly string URL = "https://api.guildwars2.com";
+        public static readonly string Version = "v1";
 
         protected abstract string APIPath { get; }
 

@@ -9,8 +9,8 @@ namespace GuildWars2.SyntaxError.API
 {
     public partial class ChampionEventsRequest
     {
+        public static readonly string URL = "http://wiki.guildwars2.com/wiki/List_of_champions";
         private static Regex NameClean = new Regex("[^a-z0-9]");
-        private static Uri URL = new Uri("http://wiki.guildwars2.com/wiki/List_of_champions");
 
         private List<string> ParseChampionWikiPage(string html)
         {

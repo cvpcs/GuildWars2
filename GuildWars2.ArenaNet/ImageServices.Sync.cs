@@ -9,13 +9,13 @@ namespace GuildWars2.ArenaNet
     {
         public static byte[] WorldMapTileService(int continent, int floor, int x, int y, int z)
         {
-            return DownloadFile(new Uri(m_WorldMapTileServiceBaseUri, string.Format("/{0}/{1}/{2}/{3}/{4}.jpg",
+            return DownloadFile(new Uri(new Uri(WorldMapTileServiceBaseURL), string.Format("/{0}/{1}/{2}/{3}/{4}.jpg",
                     continent, floor, z, x, y)));
         }
 
         public static byte[] RenderService(AssetFile file, RenderServiceFormat format = RenderServiceFormat.PNG)
         {
-            return DownloadFile(new Uri(m_RenderServiceBaseURI, string.Format("/file/{0}/{1}.{2}",
+            return DownloadFile(new Uri(new Uri(RenderServiceBaseURL), string.Format("/file/{0}/{1}.{2}",
                     file.Signature, file.FileId, Enum.GetName(typeof(RenderServiceFormat), format).ToLower())));
         }
 

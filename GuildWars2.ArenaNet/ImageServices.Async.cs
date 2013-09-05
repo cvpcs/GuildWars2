@@ -10,13 +10,13 @@ namespace GuildWars2.ArenaNet
     {
         public static void WorldMapTileServiceAsync(Action<byte[]> callback, int continent, int floor, int x, int y, int z)
         {
-            DownloadFileAsync(callback, new Uri(m_WorldMapTileServiceBaseUri, string.Format("/{0}/{1}/{2}/{3}/{4}.jpg",
+            DownloadFileAsync(callback, new Uri(new Uri(WorldMapTileServiceBaseURL), string.Format("/{0}/{1}/{2}/{3}/{4}.jpg",
                     continent, floor, z, x, y)));
         }
 
         public static void RenderServiceAsync(Action<byte[]> callback, AssetFile file, RenderServiceFormat format = RenderServiceFormat.PNG)
         {
-            DownloadFileAsync(callback, new Uri(m_RenderServiceBaseURI, string.Format("/file/{0}/{1}.{2}",
+            DownloadFileAsync(callback, new Uri(new Uri(RenderServiceBaseURL), string.Format("/file/{0}/{1}.{2}",
                     file.Signature, file.FileId, Enum.GetName(typeof(RenderServiceFormat), format).ToLower())));
         }
 

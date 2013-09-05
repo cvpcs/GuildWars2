@@ -21,7 +21,8 @@ namespace GuildWars2.ArenaNet.Mapper
 
         public override Uri GetUri(int x, int y, int zoomLevel)
         {
-            return new Uri(string.Format("https://tiles.guildwars2.com/{0}/{1}/{4}/{2}/{3}.jpg",
+            return new Uri(string.Format("{0}/{1}/{2}/{5}/{3}/{4}.jpg",
+                    ImageServices.WorldMapTileServiceBaseURL,
                     ContinentId,
                     Floor,
                     x,

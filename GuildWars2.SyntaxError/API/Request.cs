@@ -10,7 +10,7 @@ namespace GuildWars2.SyntaxError.API
     {
         public static int Timeout = 10000;
 
-        private static string URL = "http://synt4x3rr0r.net";
+        public static readonly string URL = "http://synt4x3rr0r.net";
 
         protected abstract string APIPath { get; }
 
