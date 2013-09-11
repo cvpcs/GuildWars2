@@ -15,8 +15,8 @@ namespace GuildWars2.ArenaNet.Mapper
         {
             Image = IMAGE;
 
-            Width = 32;
-            Height = 32;
+            ImageWidth = 32;
+            ImageHeight = 32;
         }
     }
 }

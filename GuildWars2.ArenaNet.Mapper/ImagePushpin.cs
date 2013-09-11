@@ -1,18 +1,25 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 #if SILVERLIGHT
-using System.IO;
-using System.Windows.Markup;
+using Microsoft.Maps.MapControl;
+#else
+using Microsoft.Maps.MapControl.WPF;
 #endif
 
 namespace GuildWars2.ArenaNet.Mapper
 {
     public abstract class ImagePushpin : TemplatedPushpin
     {
-        private static string IMAGEBRUSH_NAME = "ImagePushpinTemplateBrush";
+        private static string POPUP_NAME = "ImagePushpinTemplatePopup";
+        private static string POPUPCONTENT_NAME = "ImagePushpinTemplatePopupContent";
+        private static string POPUPPATH_NAME = "ImagePushpinTemplatePopupPath";
+        private static string IMAGE_NAME = "ImagePushpinTemplateImage";
 
         protected static BitmapImage LoadImageResource(string resourceUri)
         {
@@ -24,27 +31,47 @@ namespace GuildWars2.ArenaNet.Mapper
         }
 
         private bool m_TemplateApplied = false;
+        private object m_SavedToolTip;
 
         private BitmapImage m_Image;
         public BitmapImage Image
         {
             get { return m_Image; }
-            set
-            {
-                m_Image = value;
+            set { SetImage(value); }
+        }
+        
+        private double m_ImageWidth = 20;
+        public double ImageWidth
+        {
+            get { return m_ImageWidth; }
+            set { SetImageSize(value, m_ImageHeight); }
+        }
 
-                if (m_TemplateApplied)
-                {
-                    ImageBrush brush = (ImageBrush)GetTemplateChild(IMAGEBRUSH_NAME);
-                    brush.ImageSource = m_Image;
-                }
-            }
+        private double m_ImageHeight = 20;
+        public double ImageHeight
+        {
+            get { return m_ImageHeight; }
+            set { SetImageSize(value, m_ImageHeight); }
+        }
+
+        private double m_ImageRotation = 0;
+        public double ImageRotation
+        {
+            get { return m_ImageRotation; }
+            set { SetImageRotation(value); }
+        }
+
+        private object m_PopupContent;
+        public object PopupContent
+        {
+            get { return m_PopupContent; }
+            set { SetPopupContent(value); }
         }
 
 #if SILVERLIGHT
-        public string ToolTip
+        public object ToolTip
         {
-            get { return ToolTipService.GetToolTip(this).ToString(); }
+            get { return ToolTipService.GetToolTip(this); }
             set { ToolTipService.SetToolTip(this, value); }
         }
 #endif
@@ -52,14 +79,130 @@ namespace GuildWars2.ArenaNet.Mapper
         public ImagePushpin()
             : base("/ImagePushpinTemplate.xaml")
         {
-            Width = 20;
-            Height = 20;
+            // make sure the global pushpin's width/height is Auto
+            Height = double.NaN;
+            Width = double.NaN;
+
+            ImageRotation = 120;
+            PopupContent = new Ellipse() { Fill = new SolidColorBrush(Colors.Blue), Width = 100, Height = 100 };
         }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+
             m_TemplateApplied = true;
+
+            SetImage(m_Image);
+            SetImageSize(m_ImageWidth, m_ImageHeight);
+            SetImageRotation(m_ImageRotation);
+
+            if (m_PopupContent != null)
+            {
+                Rectangle image = (Rectangle)GetTemplateChild(IMAGE_NAME);
+                image.MouseLeftButtonDown += PopupClickHandler;
+            }
+        }
+
+        private void SetImage(BitmapImage img)
+        {
+            m_Image = img;
+
+            if (m_TemplateApplied)
+            {
+                Rectangle image = (Rectangle)GetTemplateChild(IMAGE_NAME);
+                ((ImageBrush)image.Fill).ImageSource = m_Image;
+            }
+        }
+
+        private void SetImageSize(double width, double height)
+        {
+            m_ImageWidth = width;
+            m_ImageHeight = height;
+
+            if (m_TemplateApplied)
+            {
+                Rectangle image = (Rectangle)GetTemplateChild(IMAGE_NAME);
+                image.Width = m_ImageWidth;
+                image.Height = m_ImageHeight;
+                RotateTransform rotate = (RotateTransform)image.RenderTransform;
+                rotate.CenterX = m_ImageWidth / 2;
+                rotate.CenterY = m_ImageHeight / 2;
+
+                Path path = (Path)GetTemplateChild(POPUPPATH_NAME);
+                path.Width = m_ImageWidth;
+            }
+
+            if (m_PopupContent != null)
+                Margin = new Thickness(-(m_ImageWidth / 2), 0, 0, -(m_ImageHeight / 2));
+        }
+
+        private void SetImageRotation(double angle)
+        {
+            m_ImageRotation = angle;
+
+            if (m_TemplateApplied)
+            {
+                Rectangle image = (Rectangle)GetTemplateChild(IMAGE_NAME);
+                RotateTransform rotate = (RotateTransform)image.RenderTransform;
+                rotate.Angle = m_ImageRotation;
+                rotate.CenterX = m_ImageWidth / 2;
+                rotate.CenterY = m_ImageHeight / 2;
+            }
+        }
+
+        private void SetPopupContent(object content)
+        {
+            if (m_PopupContent == null && content != null)
+            {
+                PositionOrigin = PositionOrigin.BottomLeft;
+                Margin = new Thickness(-(m_ImageWidth / 2), 0, 0, -(m_ImageHeight / 2));
+
+                if (m_TemplateApplied)
+                {
+                    Rectangle image = (Rectangle)GetTemplateChild(IMAGE_NAME);
+                    image.MouseLeftButtonDown += PopupClickHandler;
+                }
+            }
+            else if (m_PopupContent != null && content == null)
+            {
+                PositionOrigin = PositionOrigin.Center;
+                Margin = new Thickness(0);
+
+                if (m_TemplateApplied)
+                {
+                    Rectangle image = (Rectangle)GetTemplateChild(IMAGE_NAME);
+                    image.MouseLeftButtonDown -= PopupClickHandler;
+
+                    Grid popup = (Grid)GetTemplateChild(POPUP_NAME);
+                    popup.Visibility = Visibility.Collapsed;
+                }
+            }
+
+            m_PopupContent = content;
+
+            if (m_TemplateApplied)
+            {
+                ContentPresenter popupContent = (ContentPresenter)GetTemplateChild(POPUPCONTENT_NAME);
+                popupContent.Content = m_PopupContent;
+            }
+        }
+
+        private void PopupClickHandler(object sender, MouseButtonEventArgs e)
+        {
+            Grid popup = (Grid)GetTemplateChild(POPUP_NAME);
+
+            if (popup.Visibility == Visibility.Collapsed)
+            {
+                m_SavedToolTip = ToolTip;
+                ToolTip = null;
+                popup.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                popup.Visibility = Visibility.Collapsed;
+                ToolTip = m_SavedToolTip;
+            }
         }
     }
 }
