@@ -82,9 +82,6 @@ namespace GuildWars2.ArenaNet.Mapper
             // make sure the global pushpin's width/height is Auto
             Height = double.NaN;
             Width = double.NaN;
-
-            ImageRotation = 120;
-            PopupContent = new Ellipse() { Fill = new SolidColorBrush(Colors.Blue), Width = 100, Height = 100 };
         }
 
         public override void OnApplyTemplate()
