@@ -32,6 +32,8 @@ namespace GuildWars2.ArenaNet.Mapper
 
         private bool m_TemplateApplied = false;
         private object m_SavedToolTip;
+        private MapLayer m_SavedMapLayer;
+        private int m_SavedMapLayerPosition;
 
         private BitmapImage m_Image;
         public BitmapImage Image
@@ -82,6 +84,8 @@ namespace GuildWars2.ArenaNet.Mapper
             // make sure the global pushpin's width/height is Auto
             Height = double.NaN;
             Width = double.NaN;
+
+            MouseLeftButtonDown += PushpinClickHandler;
         }
 
         public override void OnApplyTemplate()
@@ -185,6 +189,37 @@ namespace GuildWars2.ArenaNet.Mapper
             }
         }
 
+        private Map FindMap()
+        {
+            DependencyObject parent = VisualTreeHelper.GetParent(this);
+
+            while (parent != null)
+            {
+                if (typeof(Map).IsAssignableFrom(parent.GetType()))
+                    return (Map)parent;
+
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+
+            return null;
+        }
+
+        private MapLayer FindParentMapLayer()
+        {
+            DependencyObject parent = VisualTreeHelper.GetParent(this);
+
+            while (parent != null)
+            {
+                if (typeof(MapLayer).IsAssignableFrom(parent.GetType()) &&
+                        ((MapLayer)parent).Children.Contains(this))
+                    return (MapLayer)parent;
+
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+
+            return null;
+        }
+
         private void PopupClickHandler(object sender, MouseButtonEventArgs e)
         {
             Grid popup = (Grid)GetTemplateChild(POPUP_NAME);
@@ -199,6 +234,40 @@ namespace GuildWars2.ArenaNet.Mapper
             {
                 popup.Visibility = Visibility.Collapsed;
                 ToolTip = m_SavedToolTip;
+            }
+        }
+
+        private void PushpinClickHandler(object sender, MouseButtonEventArgs e)
+        {
+            Grid popup = (Grid)GetTemplateChild(POPUP_NAME);
+            Map map = FindMap();
+            map.Children.Remove(this);
+
+            if (popup.Visibility == Visibility.Visible)
+            {
+                if (m_SavedMapLayer == null)
+                {
+                    m_SavedMapLayer = FindParentMapLayer();
+
+                    for (int i = 0; i < m_SavedMapLayer.Children.Count; i++)
+                    {
+                        if (m_SavedMapLayer.Children[i] == this)
+                        {
+                            m_SavedMapLayerPosition = i;
+                            break;
+                        }
+                    }
+
+                    m_SavedMapLayer.Children.Remove(this);
+                }
+
+                map.Children.Add(this);
+            }
+            else if (m_SavedMapLayer != null)
+            {
+                m_SavedMapLayer.Children.Insert(m_SavedMapLayerPosition, this);
+                m_SavedMapLayer = null;
+                m_SavedMapLayerPosition = -1;
             }
         }
     }
