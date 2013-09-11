@@ -44,6 +44,7 @@ namespace GuildWars2.ArenaNet.Mapper
         private IDictionary<int, MapLayer> m_MapBounties;
 
         private IDictionary<int, MapLayer> m_MapEvents;
+        private IDictionary<int, MapLayer> m_MapEventPolygons;
         private IDictionary<Guid, EventPushpin> m_EventPushpins;
         private IDictionary<Guid, EventMapPolygon> m_EventMapPolygons;
 
@@ -61,6 +62,7 @@ namespace GuildWars2.ArenaNet.Mapper
             m_MapBounties = new Dictionary<int, MapLayer>();
 
             m_MapEvents = new Dictionary<int, MapLayer>();
+            m_MapEventPolygons = new Dictionary<int, MapLayer>();
             m_EventPushpins = new Dictionary<Guid, EventPushpin>();
             m_EventMapPolygons = new Dictionary<Guid, EventMapPolygon>();
         }
@@ -236,6 +238,14 @@ namespace GuildWars2.ArenaNet.Mapper
                 m_MapLayers[mid].Children.Insert(0, m_MapEvents[mid]);
             }
 
+            if (!m_MapEventPolygons.ContainsKey(mid))
+            {
+                m_MapEventPolygons.Add(mid, new MapLayer());
+
+                // we insert instead of add so events always show up under other pushpins
+                m_MapLayers[mid].Children.Insert(0, m_MapEventPolygons[mid]);
+            }
+
             // clean up
             if (m_EventMapPolygons.ContainsKey(eid))
             {
@@ -269,7 +279,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
                     m_EventMapPolygons[eid] = evPoly;
                     // insert so polys are below all pushpins
-                    m_MapEvents[mid].Children.Insert(0, evPoly);
+                    m_MapEventPolygons[mid].Children.Insert(0, evPoly);
                     break;
 
                 case LocationType.Sphere:
@@ -290,7 +300,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
                     m_EventMapPolygons[eid] = evCircle;
                     // insert so polys are below all pushpins
-                    m_MapEvents[ev.MapId].Children.Insert(0, evCircle);
+                    m_MapEventPolygons[ev.MapId].Children.Insert(0, evCircle);
                     break;
 
                 default:
@@ -349,7 +359,11 @@ namespace GuildWars2.ArenaNet.Mapper
         public void ShowSkillPoints(bool visible) { SetMapLayerVisibility(m_MapSkillPoints, (visible ? Visibility.Visible : Visibility.Collapsed)); }
         public void ShowSectors(bool visible) { SetMapLayerVisibility(m_MapSectors, (visible ? Visibility.Visible : Visibility.Collapsed)); }
         public void ShowBounties(bool visible) { SetMapLayerVisibility(m_MapBounties, (visible ? Visibility.Visible : Visibility.Collapsed)); }
-        public void ShowEvents(bool visible) { SetMapLayerVisibility(m_MapEvents, (visible ? Visibility.Visible : Visibility.Collapsed)); }
+        public void ShowEvents(bool visible)
+        {
+            SetMapLayerVisibility(m_MapEvents, (visible ? Visibility.Visible : Visibility.Collapsed));
+            SetMapLayerVisibility(m_MapEventPolygons, (visible ? Visibility.Visible : Visibility.Collapsed));
+        }
         #endregion
     }
 }
