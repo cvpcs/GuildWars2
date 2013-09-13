@@ -21,7 +21,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
                 PopupContent = new PopupContentFactory()
                         .AppendWikiLink(task.Objective)
-                        .GetContent();
+                        .Content;
             }
         }
     }

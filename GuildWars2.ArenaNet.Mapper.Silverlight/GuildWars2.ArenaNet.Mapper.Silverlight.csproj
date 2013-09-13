@@ -142,6 +142,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Page Include="..\GuildWars2.ArenaNet.Mapper\ImageButtonTemplate.xaml">
+      <Link>ImageButtonTemplate.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="..\GuildWars2.ArenaNet.Mapper\ImagePushpinTemplate.xaml">
       <Link>ImagePushpinTemplate.xaml</Link>
       <Generator>MSBuild:Compile</Generator>
@@ -216,6 +221,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\OutOfBrowserSettings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\GuildWars2.ArenaNet.Mapper\Resources\copy_icon.png">
+      <Link>Resources\copy_icon.png</Link>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

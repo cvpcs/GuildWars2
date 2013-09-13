@@ -34,7 +34,7 @@ namespace GuildWars2.ArenaNet.Mapper
             pin.PopupContent = new PopupContentFactory()
                     .AppendWikiLink(BountyName)
                     .AppendDulfyLink(BountyName)
-                    .GetContent();
+                    .Content;
             pin.Location = loc;
             Children.Add(pin);
         }
@@ -72,7 +72,7 @@ namespace GuildWars2.ArenaNet.Mapper
                     pin.PopupContent = new PopupContentFactory()
                             .AppendWikiLink(BountyName)
                             .AppendDulfyLink(BountyName)
-                            .GetContent();
+                            .Content;
                     pin.Location = loc;
                     Children.Add(pin);
                 }

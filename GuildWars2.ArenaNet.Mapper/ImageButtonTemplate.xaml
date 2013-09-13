@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 TargetType="Button">
+    <Border CornerRadius="2" Padding="1,1,1,1"
+            BorderBrush="Gray" BorderThickness="1">
+        <Image Source="{TemplateBinding Content}" />
+    </Border>
+</ControlTemplate>

@@ -34,7 +34,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
                 PopupContent = new PopupContentFactory()
                         .AppendWikiLink(ev.Name)
-                        .GetContent();
+                        .Content;
             }
 
             if (ev.FlagsEnum == EventFlagType.None)

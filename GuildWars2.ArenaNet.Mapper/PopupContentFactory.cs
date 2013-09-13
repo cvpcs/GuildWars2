@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 using GuildWars2.SyntaxError.Model;
 
@@ -15,6 +17,8 @@ namespace GuildWars2.ArenaNet.Mapper
 {
     public class PopupContentFactory
     {
+        private static BitmapImage COPY_ICON = ResourceUtility.LoadBitmapImage("/Resources/copy_icon.png");
+
         private static IDictionary<string, Uri> DULFY_BOUNTY_LINKS = new Dictionary<string, Uri>()
             {
                 { "2-MULT", new Uri("http://dulfy.net/2013/02/27/gw2-guild-bounty-guide/#0") },
@@ -37,11 +41,11 @@ namespace GuildWars2.ArenaNet.Mapper
                 { "Yanonka the Rat-Wrangler", new Uri("http://dulfy.net/2013/02/27/gw2-guild-bounty-guide/#16") },
             };
 
-        private IList<Paragraph> m_Paragraphs;
+        public StackPanel Content { get; set; }
 
         public PopupContentFactory()
         {
-            m_Paragraphs = new List<Paragraph>();
+            Content = new StackPanel();
         }
 
         public PopupContentFactory AppendLink(string label, string text, Uri uri, string target = "_blank")
@@ -59,18 +63,7 @@ namespace GuildWars2.ArenaNet.Mapper
 
             p.Inlines.Add(link);
 
-            m_Paragraphs.Add(p);
-
-            return this;
-        }
-
-        public PopupContentFactory AppendText(string label, string text)
-        {
-            Paragraph p = new Paragraph();
-
-            p.Inlines.Add(string.Format("{0}: {1}", label, text));
-
-            m_Paragraphs.Add(p);
+            AppendParagraph(p);
 
             return this;
         }
@@ -93,10 +86,30 @@ namespace GuildWars2.ArenaNet.Mapper
 
         public PopupContentFactory AppendChatCode(ChatCode code)
         {
-            return AppendText("Chat code", code.ToString());
+            StackPanel panel = new StackPanel();
+            panel.Orientation = Orientation.Horizontal;
+
+            TextBlock text = new TextBlock();
+            text.Foreground = Brushes.Black;
+            text.Inlines.Add(string.Format("Chat code: {0}", code.ToString()));
+            text.VerticalAlignment = VerticalAlignment.Center;
+            panel.Children.Add(text);
+
+            Button copy = new Button();
+            copy.Template = ResourceUtility.LoadControlTemplate("/ImageButtonTemplate.xaml");
+            copy.Content = COPY_ICON;
+            copy.Width = 18;
+            copy.Height = 18;
+            copy.Margin = new Thickness(2, 1, 0, 1);
+            copy.Click += (s, e) => Clipboard.SetText(code.ToString());
+            panel.Children.Add(copy);
+
+            Content.Children.Add(panel);
+
+            return this;
         }
 
-        public UIElement GetContent()
+        private void AppendParagraph(Paragraph p)
         {
 #if SILVERLIGHT
             RichTextBlock tb = new RichTextBlock();
@@ -105,20 +118,14 @@ namespace GuildWars2.ArenaNet.Mapper
 #endif
             tb.Foreground = Brushes.Black;
 
-            for (int i = 0; i < m_Paragraphs.Count; i++)
-            {
-                Paragraph p = m_Paragraphs[i];
 #if SILVERLIGHT
-                tb.Blocks.Add(p);
+            tb.Blocks.Add(p);
 #else
-                while (p.Inlines.Count > 0)
-                    tb.Inlines.Add(p.Inlines.FirstInline);
-                if (i < m_Paragraphs.Count - 1)
-                    tb.Inlines.Add(new LineBreak());
+            while (p.Inlines.Count > 0)
+                tb.Inlines.Add(p.Inlines.FirstInline);
 #endif
-            }
 
-            return tb;
+            Content.Children.Add(tb);
         }
     }
 }

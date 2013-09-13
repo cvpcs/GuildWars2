@@ -11,6 +11,7 @@ namespace GuildWars2.ArenaNet.Mapper
         public static readonly SolidColorBrush LimeGreen = new SolidColorBrush(Color.FromArgb(0xFF, 0x32, 0xCD, 0x32));
         public static readonly SolidColorBrush Maroon = new SolidColorBrush(Color.FromArgb(0xFF, 0x80, 0x00, 0x00));
         public static readonly SolidColorBrush Red = new SolidColorBrush(Colors.Red);
+        public static readonly SolidColorBrush Transparent = new SolidColorBrush(Colors.Transparent);
         public static readonly SolidColorBrush White = new SolidColorBrush(Colors.White);
         public static readonly SolidColorBrush Yellow = new SolidColorBrush(Colors.Yellow);
     }

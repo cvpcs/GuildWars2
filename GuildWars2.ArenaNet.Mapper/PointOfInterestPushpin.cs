@@ -28,7 +28,7 @@ namespace GuildWars2.ArenaNet.Mapper
                 PopupContent = new PopupContentFactory()
                         .AppendWikiLink(poi.Name)
                         .AppendChatCode(ChatCode.CreateMapLink((uint)poi.PoiId))
-                        .GetContent();
+                        .Content;
             }
         }
     }
