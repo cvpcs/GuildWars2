@@ -37,12 +37,6 @@ namespace GuildWars2.ArenaNet.Mapper
                 { "Yanonka the Rat-Wrangler", new Uri("http://dulfy.net/2013/02/27/gw2-guild-bounty-guide/#16") },
             };
 
-#if SILVERLIGHT
-        private static SolidColorBrush POPUP_FOREGROUND_BRUSH = new SolidColorBrush(Colors.Black);
-#else
-        private static SolidColorBrush POPUP_FOREGROUND_BRUSH = Brushes.Black;
-#endif
-
         private IList<Paragraph> m_Paragraphs;
 
         public PopupContentFactory()
@@ -109,7 +103,7 @@ namespace GuildWars2.ArenaNet.Mapper
 #else
             TextBlock tb = new TextBlock();
 #endif
-            tb.Foreground = POPUP_FOREGROUND_BRUSH;
+            tb.Foreground = Brushes.Black;
 
             for (int i = 0; i < m_Paragraphs.Count; i++)
             {

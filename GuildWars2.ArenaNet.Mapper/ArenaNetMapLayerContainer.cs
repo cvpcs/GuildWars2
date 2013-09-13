@@ -4,8 +4,6 @@ using System.Windows;
 using System.Windows.Media;
 
 #if SILVERLIGHT
-using Color = System.Windows.Media.Color;
-
 using Microsoft.Maps.MapControl;
 #else
 using Microsoft.Maps.MapControl.WPF;
@@ -21,15 +19,8 @@ namespace GuildWars2.ArenaNet.Mapper
 {
     public class ArenaNetMapLayerContainer : MapLayer
     {
-        private static SolidColorBrush[] BOUNTY_PATH_BRUSHES = new SolidColorBrush[] {
-#if SILVERLIGHT
-                new SolidColorBrush(Colors.Blue),
-                new SolidColorBrush(Colors.White),
-                new SolidColorBrush(Colors.Yellow),
-                new SolidColorBrush(Color.FromArgb(0xFF, 0x32, 0xCD, 0x32))
-#else
+        private static readonly SolidColorBrush[] BOUNTY_PATH_BRUSHES = new SolidColorBrush[] {
                 Brushes.Blue, Brushes.White, Brushes.Yellow, Brushes.LimeGreen
-#endif
             };
 
         private IDictionary<int, MapLayer> m_MapLayers;
