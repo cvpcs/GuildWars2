@@ -16,7 +16,13 @@ namespace GuildWars2.ArenaNet.Mapper
             Image = IMAGE;
 
             if (!string.IsNullOrWhiteSpace(task.Objective))
+            {
                 ToolTip = string.Format("{0} ({1})", task.Objective, task.Level);
+
+                PopupContent = new PopupContentFactory()
+                        .AppendWikiLink(task.Objective)
+                        .GetContent();
+            }
         }
     }
 }

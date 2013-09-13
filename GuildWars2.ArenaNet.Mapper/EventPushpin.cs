@@ -27,7 +27,15 @@ namespace GuildWars2.ArenaNet.Mapper
             : base()
         {
             if (!string.IsNullOrWhiteSpace(ev.Name))
-                ToolTip = string.Format("{0} ({1})", ev.Name, ev.Level);
+            {
+                ToolTip = string.Format("{0}{1} ({2})",
+                        ((ev.FlagsEnum & EventFlagType.GroupEvent) == EventFlagType.GroupEvent ? "[Group Event] " : string.Empty),
+                        ev.Name, ev.Level);
+
+                PopupContent = new PopupContentFactory()
+                        .AppendWikiLink(ev.Name)
+                        .GetContent();
+            }
 
             if (ev.FlagsEnum == EventFlagType.None)
             {
@@ -38,9 +46,6 @@ namespace GuildWars2.ArenaNet.Mapper
             {
                 m_PreparationImage = IMAGES[EventFlagType.GroupEvent][0];
                 m_ActiveImage = IMAGES[EventFlagType.GroupEvent][1];
-
-                if (!string.IsNullOrWhiteSpace(ev.Name))
-                    ToolTip = string.Format("[Group Event] {0} ({1})", ev.Name, ev.Level);
             }
 
             SetEventState(EventStateType.Invalid);

@@ -110,6 +110,9 @@
     <Compile Include="..\GuildWars2.ArenaNet.Mapper\PointOfInterestPushpin.cs">
       <Link>PointOfInterestPushpin.cs</Link>
     </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet.Mapper\PopupContentFactory.cs">
+      <Link>PopupContentFactory.cs</Link>
+    </Compile>
     <Compile Include="..\GuildWars2.ArenaNet.Mapper\SectorPushpin.cs">
       <Link>SectorPushpin.cs</Link>
     </Compile>

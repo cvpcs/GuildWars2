@@ -31,6 +31,10 @@ namespace GuildWars2.ArenaNet.Mapper
         {
             BountyPushpin pin = new BountyPushpin();
             pin.ToolTip = string.Format("{0} (Spawning Point)", BountyName);
+            pin.PopupContent = new PopupContentFactory()
+                    .AppendWikiLink(BountyName)
+                    .AppendDulfyLink(BountyName)
+                    .GetContent();
             pin.Location = loc;
             Children.Add(pin);
         }
@@ -65,6 +69,10 @@ namespace GuildWars2.ArenaNet.Mapper
                     BountyPushpin pin = new BountyPushpin();
                     pin.ToolTip = string.Format("{0} ({1}Path)", BountyName,
                             (direction == PathDirectionType.Invalid ? string.Empty : Enum.GetName(typeof(PathDirectionType), direction) + " "));
+                    pin.PopupContent = new PopupContentFactory()
+                            .AppendWikiLink(BountyName)
+                            .AppendDulfyLink(BountyName)
+                            .GetContent();
                     pin.Location = loc;
                     Children.Add(pin);
                 }

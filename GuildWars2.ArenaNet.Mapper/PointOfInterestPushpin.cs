@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Media.Imaging;
 
 using GuildWars2.ArenaNet.Model;
+using GuildWars2.SyntaxError.Model;
 
 namespace GuildWars2.ArenaNet.Mapper
 {
@@ -22,7 +22,14 @@ namespace GuildWars2.ArenaNet.Mapper
                 Image = IMAGES[poi.TypeEnum];
 
             if (!string.IsNullOrWhiteSpace(poi.Name))
+            {
                 ToolTip = poi.Name;
+
+                PopupContent = new PopupContentFactory()
+                        .AppendWikiLink(poi.Name)
+                        .AppendChatCode(ChatCode.CreateMapLink((uint)poi.PoiId))
+                        .GetContent();
+            }
         }
     }
 }
