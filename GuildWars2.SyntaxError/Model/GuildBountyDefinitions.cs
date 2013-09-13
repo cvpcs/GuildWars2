@@ -97,7 +97,7 @@ namespace GuildWars2.SyntaxError.Model
                             {14499, 9792}, {14455, 9835}, {14444, 9852}, {14436, 9869}, {14439, 9883}, {14441, 9896}, {14445, 9912}, {14450, 9924}, {14456, 9930}}, PathDirectionType.Counterclockwise));
 
             BOUNTIES.Add(new GuildBounty()
-                    .SetName("Crusader Michelle")
+                    .SetName("Crusader Michiele")
                     .SetMapId(53)
                     .AddPath(new double[,] {
                             {16876, 19561}, {16881, 19536}, {16890, 19510}, {16899, 19506}, {16912, 19499}, {16919, 19489}, {16925, 19469}, {16954, 19448}, {16960, 19448}, {16965, 19455}, {16972, 19461},
@@ -168,7 +168,7 @@ namespace GuildWars2.SyntaxError.Model
                             {18511, 12424}, {18479, 12392}, {18465, 12387}}, PathDirectionType.Clockwise));
 
             BOUNTIES.Add(new GuildBounty()
-                    .SetName("Devious Tessa")
+                    .SetName("Devious Teesa")
                     .SetMapId(30)
                     .AddPath(new double[,] {
                             {23244, 9234}, {23218, 9216}, {23192, 9207}, {23163, 9208}, {23122, 9207}, {23086, 9199}, {23039, 9194}, {23005, 9193}, {22920, 9197}, {22872, 9194}, {22843, 9193},
@@ -234,7 +234,7 @@ namespace GuildWars2.SyntaxError.Model
                             {6590, 16411}, {6590, 16393}, {6591, 16376}, {6560, 16372}, {6531, 16372}}, PathDirectionType.Clockwise));
 
             BOUNTIES.Add(new GuildBounty()
-                    .SetName("Half Baked Komali")
+                    .SetName("Half-Baked Komali")
                     .SetMapId(39)
                     .AddPath(new double[,] {
                             {17948, 21743}, {17964, 21713}, {18000, 21671}, {18028, 21652}, {18080, 21638}, {18155, 21633}, {18166, 21649}, {18175, 21654}, {18189, 21666}, {18202, 21670}, {18216, 21677},
@@ -497,7 +497,7 @@ namespace GuildWars2.SyntaxError.Model
                             {29318, 18523}, {29335, 18504}, {29340, 18475}, {29339, 18449}, {29337, 18435}, {29342, 18418}}, PathDirectionType.Clockwise));
 
             BOUNTIES.Add(new GuildBounty()
-                    .SetName("Yanonka the Rat Wrangler")
+                    .SetName("Yanonka the Rat-Wrangler")
                     .SetMapId(21)
                     .AddSpawns(new double[,] {
                             {29159, 18531}, {29296, 18529}, {29236, 18802}, {29573, 18788}, {29583, 19011}, {29760, 19037}, {29881, 19021}, {30590, 19014}, {30020, 18597}, {30081, 18404}, {30062, 18256},
