@@ -8,7 +8,7 @@ namespace GuildWars2.ArenaNet.Mapper
 {
     public class PlayerPushpin : ImagePushpin
     {
-        private static BitmapImage IMAGE = LoadImageResource("/Resources/player_position.png");
+        private static BitmapImage IMAGE = ResourceUtility.LoadBitmapImage("/Resources/player_position.png");
 
         public PlayerPushpin()
             : base()

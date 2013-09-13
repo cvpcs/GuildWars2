@@ -11,12 +11,12 @@ namespace GuildWars2.ArenaNet.Mapper
     {
         private static IDictionary<EventFlagType, IList<BitmapImage>> IMAGES = new Dictionary<EventFlagType, IList<BitmapImage>>() {
                 { EventFlagType.None, new List<BitmapImage>() {
-                        LoadImageResource("/Resources/event_star_gray.png"),
-                        LoadImageResource("/Resources/event_star.png")
+                        ResourceUtility.LoadBitmapImage("/Resources/event_star_gray.png"),
+                        ResourceUtility.LoadBitmapImage("/Resources/event_star.png")
                     } },
                 { EventFlagType.GroupEvent, new List<BitmapImage>() {
-                        LoadImageResource("/Resources/event_boss_gray.png"),
-                        LoadImageResource("/Resources/event_boss.png")
+                        ResourceUtility.LoadBitmapImage("/Resources/event_boss_gray.png"),
+                        ResourceUtility.LoadBitmapImage("/Resources/event_boss.png")
                     } }
             };
 

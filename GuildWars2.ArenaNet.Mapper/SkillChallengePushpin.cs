@@ -8,7 +8,7 @@ namespace GuildWars2.ArenaNet.Mapper
 {
     public class SkillChallengePushpin : ImagePushpin
     {
-        private static BitmapImage IMAGE = LoadImageResource("/Resources/skill_point.png");
+        private static BitmapImage IMAGE = ResourceUtility.LoadBitmapImage("/Resources/skill_point.png");
 
         public SkillChallengePushpin(MappedModel skill_challenge)
             : base()

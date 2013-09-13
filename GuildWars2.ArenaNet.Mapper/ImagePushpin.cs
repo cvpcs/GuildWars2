@@ -21,15 +21,6 @@ namespace GuildWars2.ArenaNet.Mapper
         private static string POPUPPATH_NAME = "ImagePushpinTemplatePopupPath";
         private static string IMAGE_NAME = "ImagePushpinTemplateImage";
 
-        protected static BitmapImage LoadImageResource(string resourceUri)
-        {
-#if SILVERLIGHT
-            return new BitmapImage(new Uri(string.Format("/GuildWars2.ArenaNet.Mapper.Silverlight;component{0}", resourceUri), UriKind.Relative));
-#else
-            return new BitmapImage(new Uri(string.Format("pack://application:,,,/GuildWars2.ArenaNet.Mapper;component{0}", resourceUri)));
-#endif
-        }
-
         private bool m_TemplateApplied = false;
         private object m_SavedToolTip;
         private MapLayer m_SavedMapLayer;

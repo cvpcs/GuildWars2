@@ -78,6 +78,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PopupContentFactory.cs" />
+    <Compile Include="ResourceUtility.cs" />
     <Compile Include="TemplatedPushpin.cs" />
   </ItemGroup>
   <ItemGroup>
