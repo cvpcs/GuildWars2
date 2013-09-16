@@ -102,6 +102,12 @@ namespace GuildWars2.ArenaNet.Mapper
             copy.Height = 18;
             copy.Margin = new Thickness(2, 1, 0, 1);
             copy.Click += (s, e) => Clipboard.SetText(code.ToString());
+#if SILVERLIGHT
+            ToolTipService.SetToolTip(copy, "Copy to clipboard");
+#else
+            copy.ToolTip = "Copy to clipboard";
+#endif
+
             panel.Children.Add(copy);
 
             Content.Children.Add(panel);
