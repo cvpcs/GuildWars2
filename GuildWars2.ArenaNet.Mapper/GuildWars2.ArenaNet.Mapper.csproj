@@ -80,6 +80,7 @@
     <Compile Include="PopupContentFactory.cs" />
     <Compile Include="ResourceUtility.cs" />
     <Compile Include="TemplatedPushpin.cs" />
+    <Compile Include="VisualTreeUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArenaNetMap.cs" />

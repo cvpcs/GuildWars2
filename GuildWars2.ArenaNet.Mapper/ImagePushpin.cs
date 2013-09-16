@@ -180,37 +180,6 @@ namespace GuildWars2.ArenaNet.Mapper
             }
         }
 
-        private Map FindMap()
-        {
-            DependencyObject parent = VisualTreeHelper.GetParent(this);
-
-            while (parent != null)
-            {
-                if (typeof(Map).IsAssignableFrom(parent.GetType()))
-                    return (Map)parent;
-
-                parent = VisualTreeHelper.GetParent(parent);
-            }
-
-            return null;
-        }
-
-        private MapLayer FindParentMapLayer()
-        {
-            DependencyObject parent = VisualTreeHelper.GetParent(this);
-
-            while (parent != null)
-            {
-                if (typeof(MapLayer).IsAssignableFrom(parent.GetType()) &&
-                        ((MapLayer)parent).Children.Contains(this))
-                    return (MapLayer)parent;
-
-                parent = VisualTreeHelper.GetParent(parent);
-            }
-
-            return null;
-        }
-
         private void PopupClickHandler(object sender, MouseButtonEventArgs e)
         {
             Grid popup = (Grid)GetTemplateChild(POPUP_NAME);
@@ -231,14 +200,14 @@ namespace GuildWars2.ArenaNet.Mapper
         private void PushpinClickHandler(object sender, MouseButtonEventArgs e)
         {
             Grid popup = (Grid)GetTemplateChild(POPUP_NAME);
-            Map map = FindMap();
+            Map map = (Map)VisualTreeUtility.FindParent(this, typeof(Map));
             map.Children.Remove(this);
 
             if (popup.Visibility == Visibility.Visible)
             {
                 if (m_SavedMapLayer == null)
                 {
-                    m_SavedMapLayer = FindParentMapLayer();
+                    m_SavedMapLayer = (MapLayer)VisualTreeUtility.FindParent(this, typeof(MapLayer));
 
                     for (int i = 0; i < m_SavedMapLayer.Children.Count; i++)
                     {
