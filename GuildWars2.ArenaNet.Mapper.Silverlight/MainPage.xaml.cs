@@ -188,8 +188,8 @@ namespace GuildWars2.ArenaNet.Mapper
                 m_MapLayerContainer.ShowMapLayer(mid);
             }
 
-            ZoomInButton.IsEnabled = (zoomLevel < ArenaNetMap.MaxZoomLevel);
-            ZoomOutButton.IsEnabled = (zoomLevel > ArenaNetMap.MinZoomLevel);
+            ZoomButton_SetEnabled(ZoomInButton, (zoomLevel < ArenaNetMap.MaxZoomLevel));
+            ZoomButton_SetEnabled(ZoomOutButton, (zoomLevel > ArenaNetMap.MinZoomLevel));
         }
 
         private void Map_ViewChangeOnFrame(object sender, MapEventArgs e)
@@ -256,6 +256,25 @@ namespace GuildWars2.ArenaNet.Mapper
 
             if (newZoomLevel != Map.ZoomLevel)
                 Map.SetView(Map.Center, newZoomLevel);
+        }
+
+        private void ZoomButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            foreach (DependencyObject border in VisualTreeUtility.FindChildren((DependencyObject)sender, typeof(Border)))
+                ((Border)border).Background = Brushes.White;
+        }
+
+        private void ZoomButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            foreach (DependencyObject border in VisualTreeUtility.FindChildren((DependencyObject)sender, typeof(Border)))
+                ((Border)border).Background = Brushes.LightGray;
+        }
+
+        private void ZoomButton_SetEnabled(Button button, bool enabled)
+        {
+            button.IsEnabled = enabled;
+            foreach (DependencyObject textBlock in VisualTreeUtility.FindChildren(button, typeof(TextBlock)))
+                ((TextBlock)textBlock).Foreground = (enabled ? Brushes.Black : Brushes.Gray);
         }
         #endregion
     }

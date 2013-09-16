@@ -28,38 +28,22 @@
                 </Style>
                 <ControlTemplate x:Key="PlusButtonTemplate" TargetType="Button">
                     <Border Style="{StaticResource ButtonBorderStyle}" CornerRadius="5,5,0,0" Padding="5,5,5,2">
-                        <TextBlock x:Name="ButtonTextBlock" Style="{StaticResource ButtonTextBlockStyle}"
-                                   Text="+" />
-                    </Border><!--
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ButtonBorder" Property="Background" Value="White" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ButtonTextBlock" Property="Foreground" Value="Gray" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>-->
+                        <TextBlock Style="{StaticResource ButtonTextBlockStyle}" Text="+" />
+                    </Border>
                 </ControlTemplate>
                 <ControlTemplate x:Key="MinusButtonTemplate" TargetType="Button">
                     <Border Style="{StaticResource ButtonBorderStyle}" CornerRadius="0,0,5,5" Padding="5,2,5,5">
-                        <TextBlock x:Name="ButtonTextBlock" Style="{StaticResource ButtonTextBlockStyle}"
-                                   Text="-" />
-                    </Border><!--
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ButtonBorder" Property="Background" Value="White" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ButtonTextBlock" Property="Foreground" Value="Gray" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>-->
+                        <TextBlock Style="{StaticResource ButtonTextBlockStyle}" Text="-" />
+                    </Border>
                 </ControlTemplate>
             </StackPanel.Resources>
             <StackPanel.Effect>
                 <DropShadowEffect Opacity="0.5" />
             </StackPanel.Effect>
-            <Button x:Name="ZoomInButton" Template="{StaticResource PlusButtonTemplate}" Click="ZoomInButton_Clicked" />
-            <Button x:Name="ZoomOutButton" Template="{StaticResource MinusButtonTemplate}" Click="ZoomOutButton_Clicked" IsEnabled="False" />
+            <Button x:Name="ZoomInButton" Template="{StaticResource PlusButtonTemplate}" Click="ZoomInButton_Clicked"
+                    MouseEnter="ZoomButton_MouseEnter" MouseLeave="ZoomButton_MouseLeave" />
+            <Button x:Name="ZoomOutButton" Template="{StaticResource MinusButtonTemplate}" Click="ZoomOutButton_Clicked"
+                    MouseEnter="ZoomButton_MouseEnter" MouseLeave="ZoomButton_MouseLeave" />
         </StackPanel>
 
         <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0">
