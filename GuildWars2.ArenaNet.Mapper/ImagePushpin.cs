@@ -44,7 +44,7 @@ namespace GuildWars2.ArenaNet.Mapper
         public double ImageHeight
         {
             get { return m_ImageHeight; }
-            set { SetImageSize(value, m_ImageHeight); }
+            set { SetImageSize(m_ImageWidth, value); }
         }
 
         private double m_ImageRotation = 0;
