@@ -80,7 +80,7 @@ namespace GuildWars2.SyntaxError.Model
             /* GOOD */
             MetaEvents.Add(new MetaEvent("foulbear", "Foulbear Chieftain")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault Foulbear Kraal", 600)
-                            .AddEvent(new Guid("D9F1CF48-B1CB-49F5-BFAF-4CEC5E68C9CF")) // Assault Foulbear Kraal by killing its leaders before the ogres can rally.
+                            .AddEvent(new Guid("D9F1CF48-B1CB-49F5-BFAF-4CEC5E68C9CF"), EventStateType.Active) // Assault Foulbear Kraal by killing its leaders before the ogres can rally.
                         )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy Foulbear Kraal", 600)
                             .AddEvent(new Guid("4B478454-8CD2-4B44-808C-A35918FA86AA")) // Destroy Foulbear Kraal before the ogres can rally.
@@ -329,7 +329,7 @@ namespace GuildWars2.SyntaxError.Model
                         )
                 );
 
-            /* READY FOR TEST */
+            /* GOOD */
             MetaEvents.Add(new MetaEvent("scarlet", "Scarlet Briar")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Lornar's Pass", 2700, true)
                             .AddEvent(new Guid("6DEB01AE-675E-4FF9-9789-53CB73FC621E"), EventStateType.Active) // Scarlet's Minions Invade!
@@ -369,6 +369,19 @@ namespace GuildWars2.SyntaxError.Model
                         )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Sparkfly Fen", 2700, true)
                             .AddEvent(new Guid("92979945-63A4-42D7-8AE5-1EFADC9E636F"), EventStateType.Active) // Scarlet's Minions Invade!
+                        )
+                );
+
+            /* READY FOR TEST */
+            MetaEvents.Add(new MetaEvent("arah", "Gates of Arah")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Sieze the promenade steps")
+                            .AddEvent(new Guid("E87A021D-4E7C-4A50-BEDB-6F5A54C90A9A")) // Help the Pact seize the steps of the Promenade of the Gods.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Capture the promenade hall")
+                            .AddEvent(new Guid("B1B94EFD-4F67-4716-97C2-880CD16F1297")) // Help the Pact capture the hall of the Promenade of the Gods.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the High Wizard")
+                            .AddEvent(new Guid("02DECBE6-A0BA-47CC-9256-A6D59881D92A")) // Defeat the Risen High Wizard and secure the Promenade of the Gods.
                         )
                 );
 
