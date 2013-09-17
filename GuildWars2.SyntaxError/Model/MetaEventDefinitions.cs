@@ -116,7 +116,7 @@ namespace GuildWars2.SyntaxError.Model
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Recovery, "Harvest kelp")
                             .AddEvent(new Guid("A7E0F553-C4E1-452F-B39F-7BDBEC8B0BB1")) // Harvest kelp from the reef lurker fields so the Lonatl chief can heal his tribe.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Recovery, "Healing the tribe")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Recovery, "Healing the tribe", 420)
                             .AddEvent(new Guid("3ED4FEB4-A976-4597-94E8-8BFD9053522F"), EventStateType.Warmup)
                         )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Waste evacuation soon", 180)
