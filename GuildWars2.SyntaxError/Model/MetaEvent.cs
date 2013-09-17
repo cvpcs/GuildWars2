@@ -49,8 +49,21 @@ namespace GuildWars2.SyntaxError.Model
                 if (Stages[i].IsActive(eventStates))
                 {
                     stageId = i;
+
                     break;
                 }
+            }
+
+            /* Recovery states need special treatment.
+             * If our current stage is recovery and consists entirely of warmups, we need to make sure that the
+             * previous stage was a recovery and was successful to ensure that we were actually in recovery.
+             */
+            if (stageId >= 0 && Stages[stageId].Type == MetaEventStage.StageType.Recovery &&
+                Stages[stageId].EventStates.Where(es => es.State != EventStateType.Warmup).Count() == 0)
+            {
+                if (!(prevStageId >= 0 && Stages[prevStageId].Type == MetaEventStage.StageType.Recovery &&
+                    Stages[prevStageId].IsSuccessful(eventStates)))
+                    stageId = -1;
             }
 
             /* The following logic checks if the previous stage succeeded and therefore the stage is active.
