@@ -28,7 +28,7 @@ namespace GuildWars2.SyntaxError.Model
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "One more crystal...")
                             .AddEvent(new Guid("BFD87D5B-6419-4637-AFC5-35357932AD2C")) // Lure out the Claws of Jormag by destroying the final dragon crystal.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the Claw of Jormag")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the Claw of Jormag", 1800)
                             .AddEvent(new Guid("0464CB9E-1848-4AAA-BA31-4779A959DD71")) // Defeat the Claw of Jormag.
                         )
                 );
@@ -65,7 +65,7 @@ namespace GuildWars2.SyntaxError.Model
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Defend the C.L.E.A.N. golem", 300)
                             .AddEvent(new Guid("2C833C11-5CD5-4D96-A4CE-A74C04C9A278")) // Defend the C.L.E.A.N. 5000 golem.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Destroy the fire elemental")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Destroy the fire elemental", 900)
                             .AddEvent(new Guid("33F76E9E-0BB6-46D0-A3A9-BE4CDFC4A3A4")) // Destroy the fire elemental created from chaotic energy fusing with the C.L.E.A.N. 5000's energy core.
                         )
                 );
@@ -106,7 +106,7 @@ namespace GuildWars2.SyntaxError.Model
                             .AddEvent(new Guid("DB83ABB7-E5FE-4ACB-8916-9876B87D300D")) // Defeat the Svanir shamans spreading the dragon's corruption.
                             .AddEvent(new Guid("374FC8CB-7AB7-4381-AC71-14BFB30D3019")) // Destroy the corrupted portals summoning creatures from the mists.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill the Svanir shaman")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill the Svanir shaman", 900)
                             .AddEvent(new Guid("F7D9D427-5E54-4F12-977A-9809B23FBA99")) // Kill the Svanir shaman chief to break his control over the ice elemental.
                         )
                 );
@@ -129,7 +129,7 @@ namespace GuildWars2.SyntaxError.Model
                             .AddEvent(new Guid("9AA133DC-F630-4A0E-BB5D-EE34A2B306C2"), EventStateType.Warmup)
                             .AddEvent(new Guid("9AA133DC-F630-4A0E-BB5D-EE34A2B306C2"), EventStateType.Preparation)
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "The Golem Mark II has landed")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "The Golem Mark II has landed", 900)
                             .AddEvent(new Guid("9AA133DC-F630-4A0E-BB5D-EE34A2B306C2"), EventStateType.Active) // Defeat the Inquest's golem Mark II.
                         )
                 );
@@ -150,7 +150,7 @@ namespace GuildWars2.SyntaxError.Model
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Even more blighted things")
                             .AddEvent(new Guid("61BA7299-6213-4569-948B-864100F35E16")) // Destroy the avatars of blight.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "The wurm has surfaced")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "The wurm has surfaced", 900)
                             .AddEvent(new Guid("C5972F64-B894-45B4-BC31-2DEEA6B7C033")) // Defeat the great jungle wurm.
                         )
                 );
@@ -205,7 +205,7 @@ namespace GuildWars2.SyntaxError.Model
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Portals are inside the swamp")
                             .AddEvent(new Guid("36330140-7A61-4708-99EB-010B10420E39")) // Drive back Underworld creatures by destroying portals in the swamp.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "The beast has awakened")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "The beast has awakened", 900)
                             // this goes into prep stages before the pres start even if there's a block. maybe display that?
                             .AddEvent(new Guid("31CEBA08-E44D-472F-81B0-7143D73797F5"), EventStateType.Active) // Defeat the shadow behemoth.
                         )
@@ -223,7 +223,7 @@ namespace GuildWars2.SyntaxError.Model
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Ominous winds are blowing")
                             .AddEvent(new Guid("03BF176A-D59F-49CA-A311-39FC6F533F2F"), EventStateType.Preparation)
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Slay the Shatterer")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Slay the Shatterer", 900)
                             .AddEvent(new Guid("03BF176A-D59F-49CA-A311-39FC6F533F2F"), EventStateType.Active) // Slay the Shatterer
                         )
                 );
@@ -237,7 +237,7 @@ namespace GuildWars2.SyntaxError.Model
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault the gate")
                             .AddEvent(new Guid("0E0801AF-28CF-4FF7-8064-BB2F4A816D23")) // Defend the galleon and help it destroy Taidha's gate.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill Taidha Covington")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill Taidha Covington", 600)
                             .AddEvent(new Guid("242BD241-E360-48F1-A8D9-57180E146789")) // Kill Admiral Taidha Covington.
                         )
                 );
