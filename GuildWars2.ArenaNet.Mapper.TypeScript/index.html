@@ -4,7 +4,10 @@
         <title>GuildWars2.ArenaNet.Mapper.JS</title>
         <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
         <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+        <script src="Scripts/guildwars2.arenanet.mapper.js"></script>
         <script>
+            var map = new GuildWars2.ArenaNet.Mapper.ArenaNetMap();
+            /*
             var map, map_floor;
 
             function translateX(x, mapRect, continentRect) { return (x - mapRect[0][0]) / (mapRect[1][0] - mapRect[0][0]) * (continentRect[1][0] - continentRect[0][0]) + continentRect[0][0]; }
@@ -32,7 +35,7 @@
                     }).addTo(map);
                 });
             });
-
+            */
         </script>
 
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
