@@ -6,7 +6,9 @@
         <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
         <script src="Scripts/guildwars2.arenanet.mapper.js"></script>
         <script>
-            var map = new GuildWars2.ArenaNet.Mapper.ArenaNetMap();
+            $(document).ready(function () {
+                var map = new GuildWars2.ArenaNet.Mapper.ArenaNetMap("GuildWars2.ArenaNet.Mapper.JS");
+            });
             /*
             var map, map_floor;
 

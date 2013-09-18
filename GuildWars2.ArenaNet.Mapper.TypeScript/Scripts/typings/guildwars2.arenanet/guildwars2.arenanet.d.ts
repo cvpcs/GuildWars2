@@ -4,17 +4,12 @@ declare module GuildWars2.ArenaNet.Model {
         name: string;
         level: number;
         map_id: number;
-        flags: EventFlagType[];
+        flags: string[]; /* "group_event", "map_wide" */
         location: Location;
     }
 
     export interface EventDetailsResponse {
         events: { [key: string]: EventDetails };
-    }
-
-    export enum EventFlagType {
-        group_event,
-        map_wide
     }
     
     export interface EventsResponse {
@@ -25,16 +20,7 @@ declare module GuildWars2.ArenaNet.Model {
         world_id: number;
         map_id: number;
         event_id: string;
-        state: EventStateType;
-    }
-
-    export enum EventStateType {
-        Active,
-        Success,
-        Fail,
-        Warmup,
-        Inactive,
-        Preparation 
+        state: string; /* "Active", "Success", "Fail", "Warmup", "Inactive", "Preparation" */
     }
 
     export interface Floor {
@@ -62,7 +48,7 @@ declare module GuildWars2.ArenaNet.Model {
     }
 
     export interface Location {
-        type: LocationType;
+        type: string; /* "cylinder", "poly", "sphere" */
 
         /* cylinder / sphere values */
         radius?: number;
@@ -74,12 +60,6 @@ declare module GuildWars2.ArenaNet.Model {
         /* poly only values */
         z_range?: number[];
         points?: number[][];
-    }
-
-    export enum LocationType {
-        cylinder,
-        poly,
-        sphere
     }
 
     export interface Map extends NamedModel < number > { }
@@ -100,15 +80,8 @@ declare module GuildWars2.ArenaNet.Model {
     export interface PointOfInterest extends MappedModel {
         poi_id: number;
         name: string;
-        type: PointOfInterestType;
+        type: string; /* "landmark", "unlock", "vista", "waypoint" */
         floor: number;
-    }
-
-    export enum PointOfInterestType {
-        landmark,
-        unlock,
-        vista,
-        waypoint
     }
 
     export interface Sector extends MappedModel {

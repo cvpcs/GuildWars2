@@ -16,9 +16,13 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
+    <CodeAnalysisDictionary Include="Resources\poi.png" />
+    <CodeAnalysisDictionary Include="Resources\vista.png" />
+    <CodeAnalysisDictionary Include="Resources\waypoint.png" />
     <Content Include="Scripts\typings\guildwars2.arenanet\guildwars2.arenanet.d.ts" />
     <TypeScriptCompile Include="Scripts\guildwars2.arenanet.mapper.ts" />
     <Content Include="index.html" />
+    <Content Include="Scripts\typings\guildwars2.syntaxerror\guildwars2.syntaxerror.d.ts" />
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
     <Content Include="Scripts\typings\leaflet\leaflet.d.ts" />
     <Content Include="web.config" />
