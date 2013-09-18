@@ -320,7 +320,7 @@ namespace GuildWars2.SyntaxError.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("tequatl", "Tequatl the Sunless", 9000, 10800)
+            MetaEvents.Add(new MetaEvent("tequatl", "Tequatl the Sunless", 3000, 6000)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Somthing's in the water")
                             .AddEvent(new Guid("568A30CF-8512-462F-9D67-647D69BEFAED"), EventStateType.Preparation)
                         )
