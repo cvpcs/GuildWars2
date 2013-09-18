@@ -83,7 +83,6 @@ namespace GuildWars2.ArenaNet.EventTimer.WindowAnalyzer
                             {
                                 Id = meta.Id,
                                 StageId = stageId,
-                                StageName = "False",
                                 StageTypeEnum = (stageId >= 0 ? meta.Stages[stageId].Type : MetaEventStage.StageType.Invalid),
                                 Timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds
                             };
@@ -102,7 +101,7 @@ namespace GuildWars2.ArenaNet.EventTimer.WindowAnalyzer
                                 {
                                     ev_id = meta.Id,
                                     spawn_time = newTIme - oldTIme,
-                                    failed = bool.Parse(oldevs.StageName)
+                                    failed = oldevs.StageName
                                 };
 
                             m_Data.Add(spawnData);
@@ -126,7 +125,7 @@ namespace GuildWars2.ArenaNet.EventTimer.WindowAnalyzer
         {
             public string ev_id;
             public TimeSpan spawn_time;
-            public bool failed;
+            public string failed;
         }
     }
 }
