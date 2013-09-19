@@ -1,0 +1,29 @@
+﻿body, html {
+	height: 98% !important;
+}
+
+#map {
+	left: 0px;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	position: absolute;
+}
+
+.leaflet-container {
+    background: #000;
+}
+
+.leaflet-div-icon {
+    text-align: center;
+    color: white;
+    font-family: menomonia;
+    font-size: 16px;
+    text-shadow: -1px -1px 0px black;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.legend, .leaflet-control-layers-selector {
+	vertical-align: middle;
+}

@@ -16,9 +16,16 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
-    <CodeAnalysisDictionary Include="Resources\poi.png" />
-    <CodeAnalysisDictionary Include="Resources\vista.png" />
-    <CodeAnalysisDictionary Include="Resources\waypoint.png" />
+    <Content Include="Resources\dungeon.png" />
+    <Content Include="Resources\event_boss.png" />
+    <Content Include="Resources\event_boss_gray.png" />
+    <Content Include="Resources\event_star.png" />
+    <Content Include="Resources\event_star_gray.png" />
+    <Content Include="Resources\poi.png" />
+    <Content Include="Resources\renown_heart.png" />
+    <Content Include="Resources\skill_point.png" />
+    <Content Include="Resources\vista.png" />
+    <Content Include="Resources\waypoint.png" />
     <Content Include="Scripts\typings\guildwars2.arenanet\guildwars2.arenanet.d.ts" />
     <TypeScriptCompile Include="Scripts\guildwars2.arenanet.mapper.ts" />
     <Content Include="index.html" />
@@ -29,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="Styles\guildwars2.arenanet.mapper.css" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -36,6 +44,7 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

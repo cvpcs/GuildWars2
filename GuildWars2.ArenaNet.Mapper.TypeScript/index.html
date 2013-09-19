@@ -7,45 +7,19 @@
         <script src="Scripts/guildwars2.arenanet.mapper.js"></script>
         <script>
             $(document).ready(function () {
-                var map = new GuildWars2.ArenaNet.Mapper.ArenaNetMap("GuildWars2.ArenaNet.Mapper.JS");
+                var map = new GuildWars2.ArenaNet.Mapper.ArenaNetMap("map");
             });
-            /*
-            var map, map_floor;
-
-            function translateX(x, mapRect, continentRect) { return (x - mapRect[0][0]) / (mapRect[1][0] - mapRect[0][0]) * (continentRect[1][0] - continentRect[0][0]) + continentRect[0][0]; }
-            function translateZ(z, mapRect, continentRect) { return (1 - ((z - mapRect[0][1]) / (mapRect[1][1] - mapRect[0][1]))) * (continentRect[1][1] - continentRect[0][1]) + continentRect[0][1]; }
-            function unproject(coord) { return map.unproject(coord, map.getMaxZoom()); }
-            function project(latlng) { return map.project(latlng, map.getMaxZoom()); }
-
-            $(document).ready(function () {
-                $.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2", function (data) {
-                    map_floor = data;
-                    map = L.map('GuildWars2.ArenaNet.Mapper.JS', {
-                        minZoom: 0,
-                        maxZoom: 7,
-                        crs: L.CRS.Simple
-                    }).setView([0, 0], 0);
-
-                    map.setMaxBounds(new L.LatLngBounds(
-                        unproject([0 - (data.texture_dims[1] * 0.5), data.texture_dims[1] * 1.5]),
-                        unproject([data.texture_dims[0] * 1.5, 0 - (data.texture_dims[0] * 0.5)])));
-
-                    L.tileLayer("https://tiles.guildwars2.com/1/2/{z}/{x}/{y}.jpg", {
-                        minZoom: 0,
-                        maxZoom: 7,
-                        continuousWorld: true
-                    }).addTo(map);
-                });
-            });
-            */
         </script>
 
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
         <!--[if lte IE 8]>
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
         <![endif]-->
+        <link rel="stylesheet" href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia.css" />
+        <link rel="stylesheet" href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia-italic.css" />
+        <link rel="stylesheet" href="Styles/guildwars2.arenanet.mapper.css" />
     </head>
     <body>
-        <div id="GuildWars2.ArenaNet.Mapper.JS" style="width: 800px; height: 600px;"></div>
+        <div id="map"></div>
     </body>
 </html>
