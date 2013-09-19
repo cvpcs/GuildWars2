@@ -28,6 +28,7 @@ namespace GuildWars2.ArenaNet.Mapper
         private IDictionary<int, MapLayer> m_MapWaypoints;
         private IDictionary<int, MapLayer> m_MapPointsOfInterest;
         private IDictionary<int, MapLayer> m_MapVistas;
+        private IDictionary<int, MapLayer> m_MapDungeons;
         private IDictionary<int, MapLayer> m_MapRenownHearts;
         private IDictionary<int, MapLayer> m_MapSkillPoints;
         private IDictionary<int, MapLayer> m_MapSectors;
@@ -46,6 +47,7 @@ namespace GuildWars2.ArenaNet.Mapper
             m_MapWaypoints = new Dictionary<int, MapLayer>();
             m_MapPointsOfInterest = new Dictionary<int, MapLayer>();
             m_MapVistas = new Dictionary<int, MapLayer>();
+            m_MapDungeons = new Dictionary<int, MapLayer>();
             m_MapRenownHearts = new Dictionary<int, MapLayer>();
             m_MapSkillPoints = new Dictionary<int, MapLayer>();
             m_MapSectors = new Dictionary<int, MapLayer>();
@@ -84,6 +86,12 @@ namespace GuildWars2.ArenaNet.Mapper
                 m_MapLayers[mid].Children.Add(m_MapVistas[mid]);
             }
 
+            if (!m_MapDungeons.ContainsKey(mid))
+            {
+                m_MapDungeons.Add(mid, new MapLayer());
+                m_MapLayers[mid].Children.Add(m_MapDungeons[mid]);
+            }
+
             if (!m_MapRenownHearts.ContainsKey(mid))
             {
                 m_MapRenownHearts.Add(mid, new MapLayer());
@@ -105,6 +113,7 @@ namespace GuildWars2.ArenaNet.Mapper
             m_MapWaypoints[mid].Children.Clear();
             m_MapPointsOfInterest[mid].Children.Clear();
             m_MapVistas[mid].Children.Clear();
+            m_MapDungeons[mid].Children.Clear();
             m_MapRenownHearts[mid].Children.Clear();
             m_MapSkillPoints[mid].Children.Clear();
             m_MapSectors[mid].Children.Clear();
@@ -125,6 +134,9 @@ namespace GuildWars2.ArenaNet.Mapper
                         break;
                     case PointOfInterestType.Vista:
                         m_MapVistas[mid].Children.Add(poiPin);
+                        break;
+                    case PointOfInterestType.Unlock:
+                        m_MapDungeons[mid].Children.Add(poiPin);
                         break;
                     default:
                         continue;
@@ -346,6 +358,7 @@ namespace GuildWars2.ArenaNet.Mapper
         public void ShowWaypoints(bool visible) { SetMapLayerVisibility(m_MapWaypoints, (visible ? Visibility.Visible : Visibility.Collapsed)); }
         public void ShowPointsOfInterest(bool visible) { SetMapLayerVisibility(m_MapPointsOfInterest, (visible ? Visibility.Visible : Visibility.Collapsed)); }
         public void ShowVistas(bool visible) { SetMapLayerVisibility(m_MapVistas, (visible ? Visibility.Visible : Visibility.Collapsed)); }
+        public void ShowDungeons(bool visible) { SetMapLayerVisibility(m_MapDungeons, (visible ? Visibility.Visible : Visibility.Collapsed)); }
         public void ShowRenownHearts(bool visible) { SetMapLayerVisibility(m_MapRenownHearts, (visible ? Visibility.Visible : Visibility.Collapsed)); }
         public void ShowSkillPoints(bool visible) { SetMapLayerVisibility(m_MapSkillPoints, (visible ? Visibility.Visible : Visibility.Collapsed)); }
         public void ShowSectors(bool visible) { SetMapLayerVisibility(m_MapSectors, (visible ? Visibility.Visible : Visibility.Collapsed)); }

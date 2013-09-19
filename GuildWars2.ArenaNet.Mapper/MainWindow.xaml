@@ -113,6 +113,7 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
                     <CheckBox  Grid.Row="0" Checked="Legend_WaypointsChecked" Unchecked="Legend_WaypointsUnchecked" />
                     <Image     Grid.Row="0" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/waypoint.png" />
@@ -126,35 +127,39 @@
                     <Image     Grid.Row="2" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/vista.png" />
                     <TextBlock Grid.Row="2">Vistas</TextBlock>
 
-                    <CheckBox  Grid.Row="3" Checked="Legend_RenownHeartsChecked" Unchecked="Legend_RenownHeartsUnchecked" />
-                    <Image     Grid.Row="3" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/renown_heart.png" />
-                    <TextBlock Grid.Row="3">Renown Hearts</TextBlock>
+                    <CheckBox  Grid.Row="3" Checked="Legend_DungeonsChecked" Unchecked="Legend_DungeonsUnchecked" />
+                    <Image     Grid.Row="3" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/dungeon.png" />
+                    <TextBlock Grid.Row="3">Dungeons</TextBlock>
 
-                    <CheckBox  Grid.Row="4" Checked="Legend_SkillPointsChecked" Unchecked="Legend_SkillPointsUnchecked" />
-                    <Image     Grid.Row="4" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/skill_point.png" />
-                    <TextBlock Grid.Row="4">Skill Points</TextBlock>
+                    <CheckBox  Grid.Row="4" Checked="Legend_RenownHeartsChecked" Unchecked="Legend_RenownHeartsUnchecked" />
+                    <Image     Grid.Row="4" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/renown_heart.png" />
+                    <TextBlock Grid.Row="4">Renown Hearts</TextBlock>
 
-                    <CheckBox  Grid.Row="5" Checked="Legend_SectorsChecked" Unchecked="Legend_SectorsUnchecked" IsChecked="False" />
-                    <TextBlock Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center"
+                    <CheckBox  Grid.Row="5" Checked="Legend_SkillPointsChecked" Unchecked="Legend_SkillPointsUnchecked" />
+                    <Image     Grid.Row="5" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/skill_point.png" />
+                    <TextBlock Grid.Row="5">Skill Points</TextBlock>
+
+                    <CheckBox  Grid.Row="6" Checked="Legend_SectorsChecked" Unchecked="Legend_SectorsUnchecked" IsChecked="False" />
+                    <TextBlock Grid.Row="6" Grid.Column="1" HorizontalAlignment="Center"
                                FontFamily="/GuildWars2.ArenaNet.Mapper;component/Resources/menomonia-italic.ttf#MenomoniaItalic" FontSize="13" FontWeight="ExtraBold"
                                Foreground="Gray" Text="A">
                         <TextBlock.Effect>
                             <DropShadowEffect ShadowDepth="0" BlurRadius="30" />
                         </TextBlock.Effect>
                     </TextBlock>
-                    <TextBlock Grid.Row="5">Sectors</TextBlock>
+                    <TextBlock Grid.Row="6">Sectors</TextBlock>
 
-                    <CheckBox  Grid.Row="6" Checked="Legend_BountiesChecked" Unchecked="Legend_BountiesUnchecked" IsChecked="False" />
-                    <Image     Grid.Row="6" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/bounty.png" />
-                    <TextBlock Grid.Row="6">Guild Bounties</TextBlock>
+                    <CheckBox  Grid.Row="7" Checked="Legend_BountiesChecked" Unchecked="Legend_BountiesUnchecked" IsChecked="False" />
+                    <Image     Grid.Row="7" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/bounty.png" />
+                    <TextBlock Grid.Row="7">Guild Bounties</TextBlock>
 
-                    <CheckBox  Grid.Row="7" Checked="Legend_EventsChecked" Unchecked="Legend_EventsUnchecked" />
-                    <Image     Grid.Row="7" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/event_star.png" />
-                    <TextBlock Grid.Row="7">Events</TextBlock>
+                    <CheckBox  Grid.Row="8" Checked="Legend_EventsChecked" Unchecked="Legend_EventsUnchecked" />
+                    <Image     Grid.Row="8" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/event_star.png" />
+                    <TextBlock Grid.Row="8">Events</TextBlock>
 
-                    <CheckBox  Grid.Row="8" Checked="Legend_FollowPlayerChecked" Unchecked="Legend_FollowPlayerUnchecked" IsChecked="False" />
-                    <Image     Grid.Row="8" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/player_position.png" />
-                    <TextBlock Grid.Row="8">Follow Player</TextBlock>
+                    <CheckBox  Grid.Row="9" Checked="Legend_FollowPlayerChecked" Unchecked="Legend_FollowPlayerUnchecked" IsChecked="False" />
+                    <Image     Grid.Row="9" Source="/GuildWars2.ArenaNet.Mapper;component/Resources/player_position.png" />
+                    <TextBlock Grid.Row="9">Follow Player</TextBlock>
                 </Grid>
             </Border>
         </Grid>

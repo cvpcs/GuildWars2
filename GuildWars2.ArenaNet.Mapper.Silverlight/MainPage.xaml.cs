@@ -225,6 +225,9 @@ namespace GuildWars2.ArenaNet.Mapper
         private void Legend_VistasChecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowVistas(true); }
         private void Legend_VistasUnchecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowVistas(false); }
 
+        private void Legend_DungeonsChecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowDungeons(true); }
+        private void Legend_DungeonsUnchecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowDungeons(false); }
+
         private void Legend_RenownHeartsChecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowRenownHearts(true); }
         private void Legend_RenownHeartsUnchecked(object sender, RoutedEventArgs e) { m_MapLayerContainer.ShowRenownHearts(false); }
 

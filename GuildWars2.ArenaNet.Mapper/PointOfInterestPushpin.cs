@@ -11,6 +11,7 @@ namespace GuildWars2.ArenaNet.Mapper
     {
         private static IDictionary<PointOfInterestType, BitmapImage> IMAGES = new Dictionary<PointOfInterestType, BitmapImage>() {
                 { PointOfInterestType.Landmark, ResourceUtility.LoadBitmapImage("/Resources/poi.png") },
+                { PointOfInterestType.Unlock, ResourceUtility.LoadBitmapImage("/Resources/dungeon.png") },
                 { PointOfInterestType.Vista, ResourceUtility.LoadBitmapImage("/Resources/vista.png") },
                 { PointOfInterestType.Waypoint, ResourceUtility.LoadBitmapImage("/Resources/waypoint.png") }
             };
