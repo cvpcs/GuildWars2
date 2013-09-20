@@ -712,7 +712,7 @@ module GuildWars2.ArenaNet.Mapper {
         }
 
         public getContent(): string {
-            return "<div>" + this.lines.join() + "</div>";
+            return "<div>" + this.lines.join("") + "</div>";
         }
     }
 }

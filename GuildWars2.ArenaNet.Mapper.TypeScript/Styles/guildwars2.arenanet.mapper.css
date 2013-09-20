@@ -27,3 +27,11 @@
 .legend, .leaflet-control-layers-selector {
 	vertical-align: middle;
 }
+
+.leaflet-popup-content {
+    line-height: 1;
+}
+
+.leaflet-popup-content p {
+    margin: 2px 0px;
+}
