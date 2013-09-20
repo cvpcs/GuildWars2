@@ -1,5 +1,6 @@
 /// <reference path="typings/jquery/jquery.d.ts" />
 /// <reference path="typings/leaflet/leaflet.d.ts" />
+/// <reference path="typings/leaflet.polylineDecorator/leaflet.polylineDecorator.d.ts" />
 /// <reference path="typings/guildwars2.arenanet/guildwars2.arenanet.d.ts" />
 /// <reference path="guildwars2.syntaxerror.ts" />
 
@@ -385,7 +386,7 @@ module GuildWars2.ArenaNet.Mapper {
                             locs.push(that.unproject(new L.Point(p[0], p[1]), that.getMaxZoom()));
                         }
 
-                        b.addPath(locs, ArenaNetMap.BountPathColors[c]);
+                        b.addPath(locs, ArenaNetMap.BountPathColors[c], path.direction);
                         c = (c + 1) % ArenaNetMap.BountPathColors.length;
                     }
                 }
@@ -425,18 +426,9 @@ module GuildWars2.ArenaNet.Mapper {
         }
     }
 
-    class BountyMarker extends L.Marker {
+    class BountyLayerGroup extends L.LayerGroup {
         private static Icon: L.Icon = new L.Icon({ iconUrl: "Resources/bounty.png", iconSize: new L.Point(20, 20) });
 
-        constructor(latlng: L.LatLng, title?: string) {
-            super(latlng, {
-                icon: BountyMarker.Icon,
-                title: title
-            });
-        }
-    }
-
-    class BountyLayerGroup extends L.LayerGroup {
         private bountyName: string;
 
         constructor(name: string, layers?: L.ILayer[]) {
@@ -446,7 +438,10 @@ module GuildWars2.ArenaNet.Mapper {
         }
 
         public addSpawningPoint(loc: L.LatLng) {
-            var marker = new BountyMarker(loc, this.bountyName + " (Spawning Point)");
+            var marker = new L.Marker(loc, {
+                icon: BountyLayerGroup.Icon,
+                title: this.bountyName + " (Spawning Point)"
+            });
             marker.bindPopup(new PopupContentFactory()
                 .appendWikiLink(this.bountyName)
                 .appendDulfyLink(this.bountyName)
@@ -454,36 +449,51 @@ module GuildWars2.ArenaNet.Mapper {
             super.addLayer(marker);
         }
 
-        public addPath(polyPoints: L.LatLng[], color: string): void {
+        public addPath(polyPoints: L.LatLng[], color: string, direction: string): void {
             var poly = new L.Polygon(polyPoints, {
                 color: color,
                 weight: 3,
                 opacity: 0.8,
-                fill: false,
-                clickable: false
+                fill: false
             });
 
-            this.addLayer(poly);
+            poly.bindPopup(new PopupContentFactory()
+                .appendWikiLink(this.bountyName)
+                .appendDulfyLink(this.bountyName)
+                .getContent());
+            super.addLayer(poly);
 
-            var numPoints = 1;
-            while (numPoints * 10 < polyPoints.length)
-                numPoints *= 2;
+            var patterns: L.PolylineDecoratorPattern[] = [{
+                offset: 0,
+                repeat: 150,
+                symbol: new L.Symbol.Marker({
+                    markerOptions: {
+                        icon: BountyLayerGroup.Icon,
+                        title: this.bountyName + "(Path)"
+                    },
+                    rotate: false
+                })
+            }]
 
-            for (var i = 0; i < numPoints; i++) {
-                var j = Math.floor(i * (polyPoints.length / numPoints));
-
-                if (j < polyPoints.length) {
-                    var loc = polyPoints[j];
-
-                    var marker = new BountyMarker(loc, this.bountyName + " (Path)");
-                    marker.bindPopup(new PopupContentFactory()
-                        .appendWikiLink(this.bountyName)
-                        .appendDulfyLink(this.bountyName)
-                        .getContent());
-
-                    this.addLayer(marker);
-                }
+            if (direction != "invalid") {
+                patterns.push({
+                    offset: 75,
+                    repeat: 150,
+                    symbol: new L.Symbol.ArrowHead({
+                        pixelSize: 10,
+                        polygon: false,
+                        pathOptions: {
+                            color: color,
+                            weight: 3,
+                            opacity: 0.8,
+                            clickable: false
+                        }
+                    })
+                });
             }
+
+            var decorator = new L.PolylineDecorator(poly, { patterns: patterns });
+            super.addLayer(decorator);
         }
     }
 

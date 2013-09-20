@@ -28,10 +28,12 @@
     <Content Include="Resources\vista.png" />
     <Content Include="Resources\waypoint.png" />
     <TypeScriptCompile Include="Scripts\guildwars2.syntaxerror.ts" />
+    <Content Include="Scripts\leaflet.polylineDecorator.min.js" />
     <Content Include="Scripts\typings\guildwars2.arenanet\guildwars2.arenanet.d.ts" />
     <TypeScriptCompile Include="Scripts\guildwars2.arenanet.mapper.ts" />
     <Content Include="index.html" />
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\leaflet.polylineDecorator\leaflet.polylineDecorator.d.ts" />
     <Content Include="Scripts\typings\leaflet\leaflet.d.ts" />
     <Content Include="web.config" />
   </ItemGroup>
