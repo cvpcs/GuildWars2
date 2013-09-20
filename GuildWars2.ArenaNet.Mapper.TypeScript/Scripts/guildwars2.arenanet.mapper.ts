@@ -40,7 +40,8 @@ module GuildWars2.ArenaNet.Mapper {
             super(id, {
                 minZoom: 2,
                 maxZoom: 7,
-                crs: L.CRS.Simple
+                crs: L.CRS.Simple,
+                attributionControl: false
             });
 
             var loading = $("<div class=\"loading\"><div class=\"spinner circles\"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>");
@@ -474,7 +475,7 @@ module GuildWars2.ArenaNet.Mapper {
                 symbol: new L.Symbol.Marker({
                     markerOptions: {
                         icon: BountyLayerGroup.Icon,
-                        title: this.bountyName + "(Path)"
+                        title: this.bountyName + " (Path)"
                     },
                     rotate: false
                 })
