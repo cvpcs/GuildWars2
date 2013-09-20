@@ -43,6 +43,9 @@ module GuildWars2.ArenaNet.Mapper {
                 crs: L.CRS.Simple
             });
 
+            var loading = $("<div class=\"loading\"><div class=\"spinner circles\"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>");
+            loading.appendTo($('#' + id));
+
             ArenaNetMap.Instances[id] = this;
 
             new L.TileLayer("https://tiles.guildwars2.com/1/1/{z}/{x}/{y}.jpg", {
@@ -83,6 +86,8 @@ module GuildWars2.ArenaNet.Mapper {
             var eventDetailsRequest = $.get("https://api.guildwars2.com/v1/event_details.json");
             var championEventsRequest = $.get("http://wiki.guildwars2.com/wiki/List_of_champions");
 
+            ArenaNetMap.LoadBounties(id);
+
             $.when(eventNamesRequest, eventDetailsRequest, championEventsRequest, mapFloorRequest).done(function (eventNamesResponseData: any, eventDetailsResponseData: any, championEventsResponseData: any): void {
                 var eventNamesResponse = <GuildWars2.ArenaNet.API.EventNamesResponse>eventNamesResponseData[0];
                 var eventDetailsResponse = <GuildWars2.ArenaNet.API.EventDetailsResponse>eventDetailsResponseData[0];
@@ -102,15 +107,15 @@ module GuildWars2.ArenaNet.Mapper {
 
                 ArenaNetMap.LoadEventData(id, eventDetailsResponse.events, champList);
                 ArenaNetMap.LoadEventStates(id);
-            });
 
-            ArenaNetMap.LoadBounties(id);
+                setInterval(function () { ArenaNetMap.LoadEventStates(id); }, 30000);
+
+                loading.detach();
+            });
 
             this.on("moveend", function (e: L.LeafletEvent) {
                 ArenaNetMap.OnMapMoveEnd(id);
             });
-
-            setInterval(function () { ArenaNetMap.LoadEventStates(id); }, 30000);
         }
 
         private getMapByCenter(center: L.Point): number {
