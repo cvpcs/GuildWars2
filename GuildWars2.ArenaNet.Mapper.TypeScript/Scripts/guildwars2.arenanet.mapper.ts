@@ -602,7 +602,10 @@ module GuildWars2.ArenaNet.Mapper {
         };
 
         constructor(latlng: L.LatLng, poi: GuildWars2.ArenaNet.Model.PointOfInterest) {
-            super(latlng, { title: (poi.name != "" ? poi.name : undefined) });
+            super(latlng, {
+                title: (poi.name != "" ? poi.name : undefined),
+                clickable: (poi.name != "")
+            });
 
             if (PointOfInterestMarker.Icons[poi.type] != undefined)
                 super.setIcon(PointOfInterestMarker.Icons[poi.type]);
@@ -632,7 +635,10 @@ module GuildWars2.ArenaNet.Mapper {
         private static Icon: L.Icon = new L.Icon({ iconUrl: "Resources/skill_point.png", iconSize: new L.Point(20, 20) });
 
         constructor(latlng: L.LatLng) {
-            super(latlng, { icon: SkillChallengeMarker.Icon });
+            super(latlng, {
+                icon: SkillChallengeMarker.Icon,
+                clickable: false
+            });
         }
     }
 
