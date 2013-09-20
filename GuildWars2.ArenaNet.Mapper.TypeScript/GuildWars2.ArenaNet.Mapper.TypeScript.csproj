@@ -16,6 +16,7 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Resources\bounty.png" />
     <Content Include="Resources\dungeon.png" />
     <Content Include="Resources\event_boss.png" />
     <Content Include="Resources\event_boss_gray.png" />
@@ -26,10 +27,10 @@
     <Content Include="Resources\skill_point.png" />
     <Content Include="Resources\vista.png" />
     <Content Include="Resources\waypoint.png" />
+    <TypeScriptCompile Include="Scripts\guildwars2.syntaxerror.ts" />
     <Content Include="Scripts\typings\guildwars2.arenanet\guildwars2.arenanet.d.ts" />
     <TypeScriptCompile Include="Scripts\guildwars2.arenanet.mapper.ts" />
     <Content Include="index.html" />
-    <Content Include="Scripts\typings\guildwars2.syntaxerror\guildwars2.syntaxerror.d.ts" />
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
     <Content Include="Scripts\typings\leaflet\leaflet.d.ts" />
     <Content Include="web.config" />

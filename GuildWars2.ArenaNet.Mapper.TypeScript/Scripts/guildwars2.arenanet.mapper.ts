@@ -1,15 +1,18 @@
 /// <reference path="typings/jquery/jquery.d.ts" />
 /// <reference path="typings/leaflet/leaflet.d.ts" />
 /// <reference path="typings/guildwars2.arenanet/guildwars2.arenanet.d.ts" />
-/// <reference path="typings/guildwars2.syntaxerror/guildwars2.syntaxerror.d.ts" />
+/// <reference path="guildwars2.syntaxerror.ts" />
 
 module GuildWars2.ArenaNet.Mapper {
     export class ArenaNetMap extends L.Map {
         private static Instances: { [key: string]: ArenaNetMap } = {};
 
+        private static BountPathColors: string[] = [ "#0000ff", "#ffffff", "#ffff00", "#32cd32" ];
+
         private currentMapId: number = -1;
         private mapData: { [key: number]: GuildWars2.ArenaNet.Model.FloorMapDetails } = {};
 
+        private bounties: CustomLayerGroup = new CustomLayerGroup();
         private events: CustomLayerGroup = new CustomLayerGroup();
         private landmarks: CustomLayerGroup = new CustomLayerGroup();
         private sectors: CustomLayerGroup = new CustomLayerGroup();
@@ -19,6 +22,7 @@ module GuildWars2.ArenaNet.Mapper {
         private vistas: CustomLayerGroup = new CustomLayerGroup();
         private waypoints: CustomLayerGroup = new CustomLayerGroup();
 
+        private mapBounties: { [key: number]: CustomLayerGroup } = {};
         private mapEvents: { [key: number]: CustomLayerGroup } = {};
         private mapLandmarks: { [key: number]: CustomLayerGroup } = {};
         private mapSectors: { [key: number]: CustomLayerGroup } = {};
@@ -53,10 +57,14 @@ module GuildWars2.ArenaNet.Mapper {
             this.tasks.addTo(this);
             this.skillChallenges.addTo(this);
             this.sectors.addTo(this);
-            this.sectors.setVisibility(false);
+            this.bounties.addTo(this);
             this.events.addTo(this);
 
+            this.sectors.setVisibility(false);
+            this.bounties.setVisibility(false);
+
             new L.Control.Layers()
+                .addOverlay(this.bounties, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/bounty.png\" /> <span class=\"legend\">Bounties</span>")
                 .addOverlay(this.events, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/event_star.png\" /> <span class=\"legend\">Events</span>")
                 .addOverlay(this.landmarks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/poi.png\" /> <span class=\"legend\">Points of Interest</span>")
                 .addOverlay(this.sectors, "<span class=\"legend\" style=\"display: inline-block; width: 20px; height: 20px; font-family: menomonia; font-size: 10pt; font-weight: 900; text-align: center; color: #d3d3d3; text-shadow: -1px -1px 0px black;\"><em>A</em></span> <span class=\"legend\">Sectors</span>")
@@ -95,6 +103,8 @@ module GuildWars2.ArenaNet.Mapper {
                 ArenaNetMap.LoadEventStates(id);
             });
 
+            ArenaNetMap.LoadBounties(id);
+
             this.on("moveend", function (e: L.LeafletEvent) {
                 ArenaNetMap.OnMapMoveEnd(id);
             });
@@ -117,6 +127,7 @@ module GuildWars2.ArenaNet.Mapper {
         }
 
         private setMapVisibility(mid: number, visible: boolean): void {
+            if (this.mapBounties[mid] != undefined) this.mapBounties[mid].setVisibility(visible);
             if (this.mapEvents[mid] != undefined) this.mapEvents[mid].setVisibility(visible);
             if (this.mapLandmarks[mid] != undefined) this.mapLandmarks[mid].setVisibility(visible);
             if (this.mapSectors[mid] != undefined) this.mapSectors[mid].setVisibility(visible);
@@ -133,6 +144,7 @@ module GuildWars2.ArenaNet.Mapper {
         }
 
         private setAllMapLayerVisibility(visible: boolean): void {
+            this.setMapLayerVisibility(this.mapBounties, visible);
             this.setMapLayerVisibility(this.mapEvents, visible);
             this.setMapLayerVisibility(this.mapLandmarks, visible);
             this.setMapLayerVisibility(this.mapSectors, visible);
@@ -327,6 +339,52 @@ module GuildWars2.ArenaNet.Mapper {
             });
         }
 
+        private static LoadBounties(id: string): void {
+            if (ArenaNetMap.Instances[id] == undefined)
+                return;
+
+            var that = ArenaNetMap.Instances[id];
+
+            for (var i in GuildWars2.SyntaxError.Model.GuildBountyDefinitions.Bounties) {
+                var bounty = GuildWars2.SyntaxError.Model.GuildBountyDefinitions.Bounties[i];
+                var mid = bounty.map_id;
+
+                if (that.mapBounties[mid] == undefined) {
+                    that.mapBounties[mid] = new CustomLayerGroup();
+                    that.mapBounties[mid].setVisibility(false);
+                    that.bounties.addCustomLayer(that.mapBounties[mid]);
+                }
+
+                var b = new BountyLayerGroup(bounty.name);
+
+                if (bounty.spawns != undefined) {
+                    for (var j in bounty.spawns) {
+                        var p = bounty.spawns[j];
+                        b.addSpawningPoint(that.unproject(new L.Point(p[j][0], p[j][1]), that.getMaxZoom()));
+                    }
+                }
+
+                if (bounty.paths != undefined) {
+                    var c = 0;
+
+                    for (var j in bounty.paths) {
+                        var path = bounty.paths[j];
+                        var locs: L.LatLng[] = [];
+
+                        for (var k in path.points) {
+                            var p = path.points[k];
+                            locs.push(that.unproject(new L.Point(p[0], p[1]), that.getMaxZoom()));
+                        }
+
+                        b.addPath(locs, ArenaNetMap.BountPathColors[c]);
+                        c = (c + 1) % ArenaNetMap.BountPathColors.length;
+                    }
+                }
+
+                that.mapBounties[mid].addLayer(b);
+            }
+        }
+
         private static OnMapMoveEnd(id: string) {
             if (ArenaNetMap.Instances[id] == undefined)
                 return;
@@ -355,6 +413,68 @@ module GuildWars2.ArenaNet.Mapper {
 
         private static TranslateZ(z: number, map: GuildWars2.ArenaNet.Model.FloorMapDetails): number {
             return (1 - ((z - map.map_rect[0][1]) / (map.map_rect[1][1] - map.map_rect[0][1]))) * (map.continent_rect[1][1] - map.continent_rect[0][1]) + map.continent_rect[0][1];
+        }
+    }
+
+    class BountyMarker extends L.Marker {
+        private static Icon: L.Icon = new L.Icon({ iconUrl: "Resources/bounty.png", iconSize: new L.Point(20, 20) });
+
+        constructor(latlng: L.LatLng, title?: string) {
+            super(latlng, {
+                icon: BountyMarker.Icon,
+                title: title
+            });
+        }
+    }
+
+    class BountyLayerGroup extends L.LayerGroup {
+        private bountyName: string;
+
+        constructor(name: string, layers?: L.ILayer[]) {
+            super(layers);
+
+            this.bountyName = name;
+        }
+
+        public addSpawningPoint(loc: L.LatLng) {
+            var marker = new BountyMarker(loc, this.bountyName + " (Spawning Point)");
+            marker.bindPopup(new PopupContentFactory()
+                .appendWikiLink(this.bountyName)
+                .appendDulfyLink(this.bountyName)
+                .getContent());
+            super.addLayer(marker);
+        }
+
+        public addPath(polyPoints: L.LatLng[], color: string): void {
+            var poly = new L.Polygon(polyPoints, {
+                color: color,
+                weight: 3,
+                opacity: 0.8,
+                fill: false,
+                clickable: false
+            });
+
+            this.addLayer(poly);
+
+            var numPoints = 1;
+            while (numPoints * 10 < polyPoints.length)
+                numPoints *= 2;
+
+            for (var i = 0; i < numPoints; i++) {
+                var j = Math.floor(i * (polyPoints.length / numPoints));
+
+                if (j < polyPoints.length) {
+                    var loc = polyPoints[j];
+
+                    var marker = new BountyMarker(loc, this.bountyName + " (Path)");
+                    marker.bindPopup(new PopupContentFactory()
+                        .appendWikiLink(this.bountyName)
+                        .appendDulfyLink(this.bountyName)
+                        .getContent());
+
+                    this.addLayer(marker);
+                }
+            }
         }
     }
 
@@ -568,6 +688,13 @@ module GuildWars2.ArenaNet.Mapper {
 
         constructor() {
             this.lines = new Array< string >();
+        }
+
+        public appendDulfyLink(bountyName: string): PopupContentFactory {
+            if (PopupContentFactory.DulfyBountyLinks[bountyName] != undefined)
+                this.appendLink("Dulfy page", bountyName, PopupContentFactory.DulfyBountyLinks[bountyName]);
+
+            return this;
         }
 
         public appendLink(label: string, text: string, uri: string, target?: string): PopupContentFactory {
