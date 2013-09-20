@@ -1,4 +1,30 @@
+/// <reference path="typings/guildwars2.arenanet/guildwars2.arenanet.d.ts" />
+
 module GuildWars2.SyntaxError.Model {
+
+    export class ChatCode {
+        public static CreateMapLink(poi: GuildWars2.ArenaNet.Model.PointOfInterest): string {
+            return ChatCode.CreateIntCode("map", poi.poi_id);
+        }
+
+        private static CreateIntCode(headerType: string, id: number): string {
+            var header;
+
+            switch (headerType) {
+                case "map":
+                    header = String.fromCharCode(4);
+                    break;
+                default:
+                    return null;
+            }
+
+            return "[&" + btoa(header +
+                String.fromCharCode(id % 256) +
+                String.fromCharCode(Math.floor(id / 256) % 256) +
+                String.fromCharCode(Math.floor(id / 65536) % 256) +
+                String.fromCharCode(Math.floor(id / 16777216))) + "=]";
+        }
+    }
 
     export interface GuildBounty {
         name: string;

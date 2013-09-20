@@ -450,7 +450,7 @@ module GuildWars2.ArenaNet.Mapper {
             marker.bindPopup(new PopupContentFactory()
                 .appendWikiLink(this.bountyName)
                 .appendDulfyLink(this.bountyName)
-                .getContent());
+                .getContent(), { offset: new L.Point(0, -10) });
             super.addLayer(marker);
         }
 
@@ -580,7 +580,7 @@ module GuildWars2.ArenaNet.Mapper {
             if (event.name != "") {
                 super.bindPopup(new PopupContentFactory()
                     .appendWikiLink(event.name)
-                    .getContent());
+                    .getContent(), { offset: new L.Point(0, -10) });
             }
 
             if (event.flags.indexOf("group_event") < 0) {
@@ -626,9 +626,13 @@ module GuildWars2.ArenaNet.Mapper {
                 super.setIcon(PointOfInterestMarker.Icons[poi.type]);
 
             if (poi.name != "") {
-                super.bindPopup(new PopupContentFactory()
-                    .appendWikiLink(poi.name)
-                    .getContent(), { offset: new L.Point(0, -10) });
+                var popupFactory = new PopupContentFactory()
+                    .appendWikiLink(poi.name);
+
+                if (poi.type == "landmark" || poi.type == "waypoint")
+                    popupFactory.appendChatCode(GuildWars2.SyntaxError.Model.ChatCode.CreateMapLink(poi));
+
+                super.bindPopup(popupFactory.getContent(), { offset: new L.Point(0, -10) });
             }
         }
     }
@@ -701,6 +705,11 @@ module GuildWars2.ArenaNet.Mapper {
             this.lines = new Array< string >();
         }
 
+        public appendChatCode(code: string): PopupContentFactory {
+            this.lines.push("<p>Chat code: " + code + "</p>");
+            return this;
+        }
+
         public appendDulfyLink(bountyName: string): PopupContentFactory {
             if (PopupContentFactory.DulfyBountyLinks[bountyName] != undefined)
                 this.appendLink("Dulfy page", bountyName, PopupContentFactory.DulfyBountyLinks[bountyName]);
@@ -708,8 +717,7 @@ module GuildWars2.ArenaNet.Mapper {
             return this;
         }
 
-        public appendLink(label: string, text: string, uri: string, target?: string): PopupContentFactory {
-            if (target == undefined) target = "_blank";
+        public appendLink(label: string, text: string, uri: string, target: string = "_blank"): PopupContentFactory {
             this.lines.push("<p>" + label + ": <a href=\"" + uri + "\" target=\"" + target + "\">" + text + "</a></p>");
             return this;
         }
