@@ -1,5 +1,3 @@
-/// <reference path="typings/guildwars2.arenanet/guildwars2.arenanet.d.ts" />
-
 module GuildWars2.SyntaxError.Model {
 
     export class ChatCode {
