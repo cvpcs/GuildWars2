@@ -706,7 +706,7 @@ module GuildWars2.ArenaNet.Mapper {
         }
 
         public appendChatCode(code: string): PopupContentFactory {
-            this.lines.push("<p>Chat code: " + code + "</p>");
+            this.lines.push("<p>Chat code: <span onclick=\"javascript: GuildWars2.ArenaNet.Mapper.GlobalHandlers.Popup_ChatCodeClicked(this);\">" + code + "</span></p>");
             return this;
         }
 
@@ -743,5 +743,25 @@ module GuildWars2.ArenaNet.Mapper {
         public getContent(): string {
             return "<div>" + this.lines.join("") + "</div>";
         }
+    }
+
+    export class GlobalHandlers {
+
+        public static Popup_ChatCodeClicked(element: HTMLElement) {
+            if (document.selection) {
+                document.selection.clear();
+                var drange = document.selection.createRange();
+                drange.moveToElementText(element);
+                drange.select();
+            } else if (window.getSelection) {
+                window.getSelection().removeAllRanges();
+                var wrange = document.createRange();
+                wrange.selectNode(element);
+                window.getSelection().addRange(wrange);
+            }
+
+            return true;
+        }
+
     }
 }
