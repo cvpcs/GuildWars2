@@ -10,6 +10,7 @@ module GuildWars2.ArenaNet.Mapper {
         private currentMapId: number = -1;
         private mapData: { [key: number]: GuildWars2.ArenaNet.Model.FloorMapDetails } = {};
 
+        private events: CustomLayerGroup = new CustomLayerGroup();
         private landmarks: CustomLayerGroup = new CustomLayerGroup();
         private sectors: CustomLayerGroup = new CustomLayerGroup();
         private skillChallenges: CustomLayerGroup = new CustomLayerGroup();
@@ -18,6 +19,7 @@ module GuildWars2.ArenaNet.Mapper {
         private vistas: CustomLayerGroup = new CustomLayerGroup();
         private waypoints: CustomLayerGroup = new CustomLayerGroup();
 
+        private mapEvents: { [key: number]: CustomLayerGroup } = {};
         private mapLandmarks: { [key: number]: CustomLayerGroup } = {};
         private mapSectors: { [key: number]: CustomLayerGroup } = {};
         private mapSkillChallenges: { [key: number]: CustomLayerGroup } = {};
@@ -25,6 +27,9 @@ module GuildWars2.ArenaNet.Mapper {
         private mapUnlocks: { [key: number]: CustomLayerGroup } = {};
         private mapVistas: { [key: number]: CustomLayerGroup } = {};
         private mapWaypoints: { [key: number]: CustomLayerGroup } = {};
+
+        private eventMarkers: { [key: string]: EventMarker } = {};
+        private eventPolygons: { [key: string]: EventPolygon } = {};
 
         constructor(id: string) {
             super(id, {
@@ -49,8 +54,10 @@ module GuildWars2.ArenaNet.Mapper {
             this.skillChallenges.addTo(this);
             this.sectors.addTo(this);
             this.sectors.setVisibility(false);
+            this.events.addTo(this);
 
             new L.Control.Layers()
+                .addOverlay(this.events, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/event_star.png\" /> <span class=\"legend\">Events</span>")
                 .addOverlay(this.landmarks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/poi.png\" /> <span class=\"legend\">Points of Interest</span>")
                 .addOverlay(this.sectors, "<span class=\"legend\" style=\"display: inline-block; width: 20px; height: 20px; font-family: menomonia; font-size: 10pt; font-weight: 900; text-align: center; color: #d3d3d3; text-shadow: -1px -1px 0px black;\"><em>A</em></span> <span class=\"legend\">Sectors</span>")
                 .addOverlay(this.skillChallenges, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/skill_point.png\" /> <span class=\"legend\">Skill Points</span>")
@@ -60,15 +67,39 @@ module GuildWars2.ArenaNet.Mapper {
                 .addOverlay(this.waypoints, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/waypoint.png\" /> <span class=\"legend\">Waypoints</span>")
                 .addTo(this);
 
-            $.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2", function (response: GuildWars2.ArenaNet.Model.MapFloorResponse): void {
-                    ArenaNetMap.LoadFloorData(id, response); });
+            var mapFloorRequest = $.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2", function (response: GuildWars2.ArenaNet.API.MapFloorResponse): void {
+                ArenaNetMap.LoadFloorData(id, response);
+            });
+            var eventNamesRequest = $.get("https://api.guildwars2.com/v1/event_names.json");
+            var eventDetailsRequest = $.get("https://api.guildwars2.com/v1/event_details.json");
+            var championEventsRequest = $.get("http://wiki.guildwars2.com/wiki/List_of_champions");
 
-            $.get("https://api.guildwars2.com/v1/event_details.json", function (response: GuildWars2.ArenaNet.Model.EventDetailsResponse): void {
-                    ArenaNetMap.LoadEventData(id, response.events); });
+            $.when(eventNamesRequest, eventDetailsRequest, championEventsRequest, mapFloorRequest).done(function (eventNamesResponseData: any, eventDetailsResponseData: any, championEventsResponseData: any): void {
+                var eventNamesResponse = <GuildWars2.ArenaNet.API.EventNamesResponse>eventNamesResponseData[0];
+                var eventDetailsResponse = <GuildWars2.ArenaNet.API.EventDetailsResponse>eventDetailsResponseData[0];
+
+                // load champ list
+                var champList: string[] = [];
+                var tmpDOM = $.parseHTML(championEventsResponseData[0]);
+                var tmpChampNames: string[] = [];
+                var tmpRegExp = new RegExp("[^a-z0-9]", "g");
+                $('table > tbody > tr > td:nth-child(6) > a', tmpDOM).each(function (i: any, element: Element) {
+                    tmpChampNames.push(element.textContent.toLowerCase().replace(tmpRegExp, ""));
+                });
+                for (var i in eventNamesResponse) {
+                    if (tmpChampNames.indexOf(eventNamesResponse[i].name.toLowerCase().replace(tmpRegExp, "")) >= 0)
+                        champList.push(eventNamesResponse[i].id);
+                }
+
+                ArenaNetMap.LoadEventData(id, eventDetailsResponse.events, champList);
+                ArenaNetMap.LoadEventStates(id);
+            });
 
             this.on("moveend", function (e: L.LeafletEvent) {
                 ArenaNetMap.OnMapMoveEnd(id);
             });
+
+            setInterval(function () { ArenaNetMap.LoadEventStates(id); }, 30000);
         }
 
         private getMapByCenter(center: L.Point): number {
@@ -85,12 +116,24 @@ module GuildWars2.ArenaNet.Mapper {
             return -1;
         }
 
+        private setMapVisibility(mid: number, visible: boolean): void {
+            if (this.mapEvents[mid] != undefined) this.mapEvents[mid].setVisibility(visible);
+            if (this.mapLandmarks[mid] != undefined) this.mapLandmarks[mid].setVisibility(visible);
+            if (this.mapSectors[mid] != undefined) this.mapSectors[mid].setVisibility(visible);
+            if (this.mapSkillChallenges[mid] != undefined) this.mapSkillChallenges[mid].setVisibility(visible);
+            if (this.mapTasks[mid] != undefined) this.mapTasks[mid].setVisibility(visible);
+            if (this.mapUnlocks[mid] != undefined) this.mapUnlocks[mid].setVisibility(visible);
+            if (this.mapVistas[mid] != undefined) this.mapVistas[mid].setVisibility(visible);
+            if (this.mapWaypoints[mid] != undefined) this.mapWaypoints[mid].setVisibility(visible);
+        }
+
         private setMapLayerVisibility(layer: { [key: number]: CustomLayerGroup }, visible: boolean): void {
             for (var mid in layer)
                 layer[mid].setVisibility(visible);
         }
 
         private setAllMapLayerVisibility(visible: boolean): void {
+            this.setMapLayerVisibility(this.mapEvents, visible);
             this.setMapLayerVisibility(this.mapLandmarks, visible);
             this.setMapLayerVisibility(this.mapSectors, visible);
             this.setMapLayerVisibility(this.mapSkillChallenges, visible);
@@ -202,11 +245,86 @@ module GuildWars2.ArenaNet.Mapper {
             }
         }
 
-        private static LoadEventData(id: string, events: { [key: string]: GuildWars2.ArenaNet.Model.EventDetails }): void {
+        private static LoadEventData(id: string, events: { [key: string]: GuildWars2.ArenaNet.Model.EventDetails }, champions: string[]): void {
             if (ArenaNetMap.Instances[id] == undefined)
                 return;
 
             var that = ArenaNetMap.Instances[id];
+
+            for (var eid in events) {
+                var ev = events[eid];
+                var mid = ev.map_id;
+
+                if (ev.name.toLowerCase().indexOf("skill challenge: ") == 0 || that.mapData[mid] == undefined)
+                    continue;
+
+                var hasChamp = (champions.indexOf(eid) >= 0);
+                var map = that.mapData[mid];
+
+                if (that.mapEvents[mid] == undefined) {
+                    that.mapEvents[mid] = new CustomLayerGroup();
+                    that.mapEvents[mid].setVisibility(false);
+                    that.events.addCustomLayer(that.mapEvents[mid]);
+                }
+
+                var center = new L.Point(ArenaNetMap.TranslateX(ev.location.center[0], map), ArenaNetMap.TranslateZ(ev.location.center[1], map));
+
+                var eventLayer = new L.LayerGroup();
+
+                switch (ev.location.type) {
+                    case "poly":
+                        var polyPoints: L.LatLng[] = [];
+
+                        for (var i in ev.location.points) {
+                            polyPoints.push(that.unproject(new L.Point(
+                                ArenaNetMap.TranslateX(ev.location.points[i][0], map), ArenaNetMap.TranslateZ(ev.location.points[i][1], map)),
+                                that.getMaxZoom()));
+                        }
+
+                        that.eventPolygons[eid] = new EventPolygon(polyPoints, hasChamp);
+                        eventLayer.addLayer(that.eventPolygons[eid]);
+                        break;
+                    case "sphere":
+                    case "cylinder":
+                        var polyPoints: L.LatLng[] = [];
+                        var radius = ArenaNetMap.TranslateX(ev.location.center[0] + ev.location.radius, map) - center.x;
+
+                        for (var j = 0; j < 360; j += 10) {
+                            polyPoints.push(that.unproject(new L.Point(
+                                center.x + radius * Math.cos(j * (Math.PI / 180)), center.y + radius * Math.sin(j * (Math.PI / 180))),
+                                that.getMaxZoom()));
+                        }
+
+                        that.eventPolygons[eid] = new EventPolygon(polyPoints, hasChamp);
+                        eventLayer.addLayer(that.eventPolygons[eid]);
+                        break;
+                    default:
+                        break;
+                }
+
+                that.eventMarkers[eid] = new EventMarker(that.unproject(center, that.getMaxZoom()), ev);
+                eventLayer.addLayer(that.eventMarkers[eid]);
+                that.mapEvents[mid].addLayer(eventLayer);
+            }
+        }
+
+        private static LoadEventStates(id: string): void {
+            if (ArenaNetMap.Instances[id] == undefined)
+                return;
+
+            var that = ArenaNetMap.Instances[id];
+
+            $.get("https://api.guildwars2.com/v1/events.json?world_id=1007", function (response: GuildWars2.ArenaNet.API.EventsResponse): void {
+                for (var i in response.events) {
+                    var es = response.events[i];
+                    var eid = es.event_id;
+
+                    if (that.eventMarkers[eid] != undefined)
+                        that.eventMarkers[eid].setEventState(es.state);
+                    if (that.eventPolygons[eid] != undefined)
+                        that.eventPolygons[eid].setEventState(es.state);
+                }
+            });
         }
 
         private static OnMapMoveEnd(id: string) {
@@ -227,14 +345,16 @@ module GuildWars2.ArenaNet.Mapper {
                 return;
 
             that.setAllMapLayerVisibility(false);
-            that.mapLandmarks[mid].setVisibility(true);
-            that.mapSectors[mid].setVisibility(true);
-            that.mapSkillChallenges[mid].setVisibility(true);
-            that.mapTasks[mid].setVisibility(true);
-            that.mapUnlocks[mid].setVisibility(true);
-            that.mapVistas[mid].setVisibility(true);
-            that.mapWaypoints[mid].setVisibility(true);
+            that.setMapVisibility(mid, true);
             that.currentMapId = mid;
+        }
+
+        private static TranslateX(x: number, map: GuildWars2.ArenaNet.Model.FloorMapDetails): number {
+            return (x - map.map_rect[0][0]) / (map.map_rect[1][0] - map.map_rect[0][0]) * (map.continent_rect[1][0] - map.continent_rect[0][0]) + map.continent_rect[0][0];
+        }
+
+        private static TranslateZ(z: number, map: GuildWars2.ArenaNet.Model.FloorMapDetails): number {
+            return (1 - ((z - map.map_rect[0][1]) / (map.map_rect[1][1] - map.map_rect[0][1]))) * (map.continent_rect[1][1] - map.continent_rect[0][1]) + map.continent_rect[0][1];
         }
     }
 
@@ -282,6 +402,83 @@ module GuildWars2.ArenaNet.Mapper {
                         this.lgParent.removeLayer(this);
                     }
                 }
+            }
+        }
+    }
+
+    class EventPolygon extends L.Polygon {
+        constructor(latlngs: L.LatLng[], hasChampion: boolean) {
+            super(latlngs, {
+                color: (hasChampion ? "#00008b" : "#800000"),
+                weight: 2,
+                opacity: 0.5,
+                fillColor: (hasChampion ? "#0000ff" : "#ff0000"),
+                fillOpacity: 0.5,
+                clickable: false
+            });
+
+            this.setEventState(null);
+        }
+
+        public setEventState(state: string) {
+            switch (state) {
+                case "Active":
+                    this.setStyle({ opacity: 0.5, fillOpacity: 0.5 });
+                    break;
+                case "Preparation":
+                    this.setStyle({ opacity: 0.5, fillOpacity: 0.5 });
+                    break;
+                default:
+                    this.setStyle({ opacity: 0.0, fillOpacity: 0.0 });
+                    break;
+            }
+        }
+    }
+
+    class EventMarker extends L.Marker {
+        private static Icons: { [key: string]: L.Icon[] } = {
+            "none": [new L.Icon({ iconUrl: "Resources/event_star_gray.png", iconSize: new L.Point(20, 20) }),
+                new L.Icon({ iconUrl: "Resources/event_star.png", iconSize: new L.Point(20, 20) })],
+            "group_event": [new L.Icon({ iconUrl: "Resources/event_boss_gray.png", iconSize: new L.Point(20, 20) }),
+                new L.Icon({ iconUrl: "Resources/event_boss.png", iconSize: new L.Point(20, 20) })]
+        };
+
+        private preparationIcon: L.Icon;
+        private activeIcon: L.Icon;
+
+        constructor(latlng: L.LatLng, event: GuildWars2.ArenaNet.Model.EventDetails) {
+            super(latlng, { title: (event.name != "" ? event.name : undefined) });
+
+            if (event.name != "") {
+                super.bindPopup(new PopupContentFactory()
+                    .appendWikiLink(event.name)
+                    .getContent());
+            }
+
+            if (event.flags.indexOf("group_event") < 0) {
+                this.preparationIcon = EventMarker.Icons["none"][0];
+                this.activeIcon = EventMarker.Icons["none"][1];
+            } else {
+                this.preparationIcon = EventMarker.Icons["group_event"][0];
+                this.activeIcon = EventMarker.Icons["group_event"][1];
+            }
+
+            this.setEventState(null);
+        }
+
+        public setEventState(state: string) {
+            switch (state) {
+                case "Active":
+                    this.setIcon(this.activeIcon);
+                    this.setOpacity(1.0);
+                    break;
+                case "Preparation":
+                    this.setIcon(this.preparationIcon);
+                    this.setOpacity(1.0);
+                    break;
+                default:
+                    this.setOpacity(0.0);
+                    break;
             }
         }
     }
