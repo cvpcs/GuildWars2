@@ -281,8 +281,6 @@ module GuildWars2.ArenaNet.Mapper {
 
                 var center = new L.Point(ArenaNetMap.TranslateX(ev.location.center[0], map), ArenaNetMap.TranslateZ(ev.location.center[1], map));
 
-                var eventLayer = new L.LayerGroup();
-
                 switch (ev.location.type) {
                     case "poly":
                         var polyPoints: L.LatLng[] = [];
@@ -294,7 +292,6 @@ module GuildWars2.ArenaNet.Mapper {
                         }
 
                         that.eventPolygons[eid] = new EventPolygon(polyPoints, hasChamp);
-                        eventLayer.addLayer(that.eventPolygons[eid]);
                         break;
                     case "sphere":
                     case "cylinder":
@@ -308,15 +305,12 @@ module GuildWars2.ArenaNet.Mapper {
                         }
 
                         that.eventPolygons[eid] = new EventPolygon(polyPoints, hasChamp);
-                        eventLayer.addLayer(that.eventPolygons[eid]);
                         break;
                     default:
                         break;
                 }
 
                 that.eventMarkers[eid] = new EventMarker(that.unproject(center, that.getMaxZoom()), ev);
-                eventLayer.addLayer(that.eventMarkers[eid]);
-                that.mapEvents[mid].addLayer(eventLayer);
             }
         }
 
@@ -327,14 +321,29 @@ module GuildWars2.ArenaNet.Mapper {
             var that = ArenaNetMap.Instances[id];
 
             $.get("https://api.guildwars2.com/v1/events.json?world_id=1007", function (response: GuildWars2.ArenaNet.API.EventsResponse): void {
+                for (var mid in that.mapEvents)
+                    that.mapEvents[mid].clearLayers();
+
                 for (var i in response.events) {
                     var es = response.events[i];
                     var eid = es.event_id;
 
-                    if (that.eventMarkers[eid] != undefined)
-                        that.eventMarkers[eid].setEventState(es.state);
-                    if (that.eventPolygons[eid] != undefined)
-                        that.eventPolygons[eid].setEventState(es.state);
+                    var eventLayer = new L.LayerGroup();
+
+                    switch (es.state) {
+                        case "Active":
+                            if (that.eventPolygons[eid] != undefined)
+                                eventLayer.addLayer(that.eventPolygons[eid]);
+                        case "Preparation":
+                            if (that.eventMarkers[eid] != undefined) {
+                                that.eventMarkers[eid].setEventState(es.state);
+                                eventLayer.addLayer(that.eventMarkers[eid]);
+                                that.mapEvents[es.map_id].addLayer(eventLayer);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
             });
         }
@@ -536,22 +545,6 @@ module GuildWars2.ArenaNet.Mapper {
                 fillOpacity: 0.5,
                 clickable: false
             });
-
-            this.setEventState(null);
-        }
-
-        public setEventState(state: string) {
-            switch (state) {
-                case "Active":
-                    this.setStyle({ opacity: 0.5, fillOpacity: 0.5 });
-                    break;
-                case "Preparation":
-                    this.setStyle({ opacity: 0.5, fillOpacity: 0.5 });
-                    break;
-                default:
-                    this.setStyle({ opacity: 0.0, fillOpacity: 0.0 });
-                    break;
-            }
         }
     }
 
@@ -590,14 +583,11 @@ module GuildWars2.ArenaNet.Mapper {
             switch (state) {
                 case "Active":
                     this.setIcon(this.activeIcon);
-                    this.setOpacity(1.0);
                     break;
                 case "Preparation":
                     this.setIcon(this.preparationIcon);
-                    this.setOpacity(1.0);
                     break;
                 default:
-                    this.setOpacity(0.0);
                     break;
             }
         }
