@@ -375,7 +375,7 @@ module GuildWars2.ArenaNet.Mapper {
                 if (bounty.spawns != undefined) {
                     for (var j in bounty.spawns) {
                         var p = bounty.spawns[j];
-                        b.addSpawningPoint(that.unproject(new L.Point(p[j][0], p[j][1]), that.getMaxZoom()));
+                        b.addSpawningPoint(that.unproject(new L.Point(p[0], p[1]), that.getMaxZoom()));
                     }
                 }
 
