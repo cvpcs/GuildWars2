@@ -457,6 +457,7 @@ module GuildWars2.ArenaNet.Mapper {
             jqIcon.attr("width", 20);
             jqIcon.attr("height", 20);
             jqIcon.attr("src", ResourceBaseUri + "/fullscreen_enter.png");
+            jqIcon.attr("title", "Fill window");
 
             var that = this;
 
@@ -481,6 +482,7 @@ module GuildWars2.ArenaNet.Mapper {
 
                     jqMapContainer.attr("style", (that.oldStyle != undefined ? that.oldStyle : ""));
                     jqIcon.attr("src", ResourceBaseUri + "/fullscreen_enter.png");
+                    jqIcon.attr("title", "Fill window");
                     that.isFullscreen = false;
                 } else {
                     that.oldStyle = jqMapContainer.attr("style");
@@ -496,6 +498,7 @@ module GuildWars2.ArenaNet.Mapper {
                     jqMapContainer.detach().appendTo(jQuery('body'));
                     jqMapContainer.attr("style", that.oldStyle + "; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; z-index: 5; width: auto; height: auto;");
                     jqIcon.attr("src", ResourceBaseUri + "/fullscreen_exit.png");
+                    jqIcon.attr("title", "Exit fill window");
                     that.isFullscreen = true;
                 }
 
