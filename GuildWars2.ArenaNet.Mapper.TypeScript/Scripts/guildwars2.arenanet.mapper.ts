@@ -46,8 +46,8 @@ module GuildWars2.ArenaNet.Mapper {
                 attributionControl: false
             });
 
-            var loading = $("<div class=\"loading\"><div class=\"spinner circles\"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>");
-            loading.appendTo($("#" + id));
+            var loading = jQuery("<div class=\"loading\"><div class=\"spinner circles\"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>");
+            loading.appendTo(jQuery("#" + id));
 
             ArenaNetMap.Instances[id] = this;
 
@@ -98,39 +98,24 @@ module GuildWars2.ArenaNet.Mapper {
                 }
             }, this);
 
-            var mapFloorRequest = $.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2", function (response: GuildWars2.ArenaNet.API.MapFloorResponse): void {
-                ArenaNetMap.LoadFloorData(id, response);
+            jQuery.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2", function (mapFloorResponse: GuildWars2.ArenaNet.API.MapFloorResponse): void {
+                ArenaNetMap.LoadFloorData(id, mapFloorResponse);
+
+                jQuery.get("https://api.guildwars2.com/v1/event_details.json", function (eventDetailsResponse: GuildWars2.ArenaNet.API.EventDetailsResponse): void {
+
+                    jQuery.get("http://gomgods.com/gw2/mapper/champs", function (championEventsResponse: GuildWars2.SyntaxError.API.ChampionEventsResponse): void {
+                        ArenaNetMap.LoadEventData(id, eventDetailsResponse.events, championEventsResponse.champion_events);
+                        ArenaNetMap.LoadEventStates(id);
+
+                        setInterval(function () { ArenaNetMap.LoadEventStates(id); }, 30000);
+
+                        loading.detach();
+                    });
+
+                });
             });
-            var eventNamesRequest = $.get("https://api.guildwars2.com/v1/event_names.json");
-            var eventDetailsRequest = $.get("https://api.guildwars2.com/v1/event_details.json");
-            var championEventsRequest = $.get("http://wiki.guildwars2.com/wiki/List_of_champions");
 
             ArenaNetMap.LoadBounties(id);
-
-            $.when(eventNamesRequest, eventDetailsRequest, championEventsRequest, mapFloorRequest).done(function (eventNamesResponseData: any, eventDetailsResponseData: any, championEventsResponseData: any): void {
-                var eventNamesResponse = <GuildWars2.ArenaNet.API.EventNamesResponse>eventNamesResponseData[0];
-                var eventDetailsResponse = <GuildWars2.ArenaNet.API.EventDetailsResponse>eventDetailsResponseData[0];
-
-                // load champ list
-                var champList: string[] = [];
-                var tmpDOM = $.parseHTML(championEventsResponseData[0]);
-                var tmpChampNames: string[] = [];
-                var tmpRegExp = new RegExp("[^a-z0-9]", "g");
-                $("table > tbody > tr > td:nth-child(6) > a", tmpDOM).each(function (i: any, element: Element) {
-                    tmpChampNames.push(element.textContent.toLowerCase().replace(tmpRegExp, ""));
-                });
-                for (var i in eventNamesResponse) {
-                    if (tmpChampNames.indexOf(eventNamesResponse[i].name.toLowerCase().replace(tmpRegExp, "")) >= 0)
-                        champList.push(eventNamesResponse[i].id);
-                }
-
-                ArenaNetMap.LoadEventData(id, eventDetailsResponse.events, champList);
-                ArenaNetMap.LoadEventStates(id);
-
-                setInterval(function () { ArenaNetMap.LoadEventStates(id); }, 30000);
-
-                loading.detach();
-            });
 
             this.on("moveend", function (e: L.LeafletEvent) {
                 ArenaNetMap.OnMapMoveEnd(id);
@@ -347,7 +332,7 @@ module GuildWars2.ArenaNet.Mapper {
 
             var that = ArenaNetMap.Instances[id];
 
-            $.get("https://api.guildwars2.com/v1/events.json?world_id=1007", function (response: GuildWars2.ArenaNet.API.EventsResponse): void {
+            jQuery.get("https://api.guildwars2.com/v1/events.json?world_id=1007", function (response: GuildWars2.ArenaNet.API.EventsResponse): void {
                 for (var mid in that.mapEvents)
                     that.mapEvents[mid].clearLayers();
 
@@ -471,7 +456,7 @@ module GuildWars2.ArenaNet.Mapper {
             var that = this;
 
             L.DomEvent.addListener(icon, "click", L.DomEvent.stop);
-            $(icon).click(function () {
+            jQuery(icon).click(function () {
                 var map_container = map.getContainer();
 
                 if (that.isFullscreen) {
@@ -511,15 +496,15 @@ module GuildWars2.ArenaNet.Mapper {
             icon.height = 20;
             icon.src = "Resources/bounty.png";
             var list = <HTMLDivElement>L.DomUtil.create("div", "leaflet-control-bountypan-list", container);
-            $(list).hide();
+            jQuery(list).hide();
 
-            $(icon).mouseenter(function () {
-                $(icon).hide();
-                $(list).show();
+            jQuery(icon).mouseenter(function () {
+                jQuery(icon).hide();
+                jQuery(list).show();
             });
-            $(list).mouseleave(function () {
-                $(list).hide();
-                $(icon).show();
+            jQuery(list).mouseleave(function () {
+                jQuery(list).hide();
+                jQuery(icon).show();
             });
 
             for (var i in GuildWars2.SyntaxError.Model.GuildBountyDefinitions.Bounties) {
