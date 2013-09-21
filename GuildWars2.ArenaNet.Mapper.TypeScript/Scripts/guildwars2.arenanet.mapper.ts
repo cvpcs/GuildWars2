@@ -5,6 +5,8 @@
 /// <reference path="guildwars2.syntaxerror.ts" />
 
 module GuildWars2.ArenaNet.Mapper {
+    var ResourceBaseUri = "Resources";
+
     export class ArenaNetMap extends L.Map {
         private static Instances: { [key: string]: ArenaNetMap } = {};
 
@@ -71,15 +73,15 @@ module GuildWars2.ArenaNet.Mapper {
             this.bounties.setVisibility(false);
 
             new L.Control.Layers()
-                .addOverlay(this.bounties, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/bounty.png\" /> <span class=\"legend\">Bounties</span>")
-                .addOverlay(this.events, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/event_star.png\" /> <span class=\"legend\">Events</span>")
-                .addOverlay(this.landmarks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/poi.png\" /> <span class=\"legend\">Points of Interest</span>")
+                .addOverlay(this.bounties, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/bounty.png\" /> <span class=\"legend\">Bounties</span>")
+                .addOverlay(this.events, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/event_star.png\" /> <span class=\"legend\">Events</span>")
+                .addOverlay(this.landmarks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/poi.png\" /> <span class=\"legend\">Points of Interest</span>")
                 .addOverlay(this.sectors, "<span class=\"legend\" style=\"display: inline-block; width: 20px; height: 20px; font-family: menomonia; font-size: 10pt; font-weight: 900; text-align: center; color: #d3d3d3; text-shadow: -1px -1px 0px black;\"><em>A</em></span> <span class=\"legend\">Sectors</span>")
-                .addOverlay(this.skillChallenges, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/skill_point.png\" /> <span class=\"legend\">Skill Points</span>")
-                .addOverlay(this.tasks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/renown_heart.png\" /> <span class=\"legend\">Renown Hearts</span>")
-                .addOverlay(this.unlocks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/dungeon.png\" /> <span class=\"legend\">Dungeons</span>")
-                .addOverlay(this.vistas, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/vista.png\" /> <span class=\"legend\">Vistas</span>")
-                .addOverlay(this.waypoints, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/waypoint.png\" /> <span class=\"legend\">Waypoints</span>")
+                .addOverlay(this.skillChallenges, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/skill_point.png\" /> <span class=\"legend\">Skill Points</span>")
+                .addOverlay(this.tasks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/renown_heart.png\" /> <span class=\"legend\">Renown Hearts</span>")
+                .addOverlay(this.unlocks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/dungeon.png\" /> <span class=\"legend\">Dungeons</span>")
+                .addOverlay(this.vistas, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/vista.png\" /> <span class=\"legend\">Vistas</span>")
+                .addOverlay(this.waypoints, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/waypoint.png\" /> <span class=\"legend\">Waypoints</span>")
                 .addTo(this);
             new FullscreenControl().addTo(this);
 
@@ -440,6 +442,8 @@ module GuildWars2.ArenaNet.Mapper {
     class FullscreenControl extends L.Control {
         private isFullscreen: boolean = false;
         private oldStyle: string;
+        private oldParent: HTMLElement = null;
+        private oldSibling: HTMLElement = null;
 
         constructor() {
             super({ position: "bottomright" });
@@ -451,7 +455,7 @@ module GuildWars2.ArenaNet.Mapper {
             var icon = <HTMLImageElement>L.DomUtil.create("img", "leaflet-control-fullscreen-icon", container);
             icon.width = 20;
             icon.height = 20;
-            icon.src = "Resources/fullscreen_enter.png";
+            icon.src = ResourceBaseUri + "/fullscreen_enter.png";
 
             var that = this;
 
@@ -460,13 +464,36 @@ module GuildWars2.ArenaNet.Mapper {
                 var map_container = map.getContainer();
 
                 if (that.isFullscreen) {
+                    jQuery(map_container).detach();
+
+                    // Drupal-specific
+                    if (jQuery('#page').length > 0) jQuery('#page').show();
+
+                    if (that.oldSibling != null) {
+                        jQuery(map_container).insertAfter(jQuery(that.oldSibling));
+                        that.oldSibling = null;
+                    } else {
+                        jQuery(map_container).prependTo(jQuery(that.oldParent));
+                        that.oldParent = null;
+                    }
+
                     map_container.setAttribute("style", that.oldStyle);
-                    icon.src = "Resources/fullscreen_enter.png";
+                    icon.src = ResourceBaseUri + "/fullscreen_enter.png";
                     that.isFullscreen = false;
                 } else {
                     that.oldStyle = map_container.getAttribute("style");
+                    var prevSibling = jQuery(map_container).prev();
+                    if (prevSibling.length > 0)
+                        that.oldSibling = prevSibling[0];
+                    else
+                        that.oldParent = jQuery(map_container).parent()[0];
+
+                    // Drupal-specific
+                    if (jQuery('#page').length > 0) jQuery('#page').hide();
+
+                    jQuery(map_container).detach().appendTo(jQuery('body'));
                     map_container.setAttribute("style", that.oldStyle + "; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; z-index: 5; width: auto; height: auto;");
-                    icon.src = "Resources/fullscreen_exit.png";
+                    icon.src = ResourceBaseUri + "/fullscreen_exit.png";
                     that.isFullscreen = true;
                 }
 
@@ -494,7 +521,7 @@ module GuildWars2.ArenaNet.Mapper {
             var icon = <HTMLImageElement>L.DomUtil.create("img", "leaflet-control-bountypan-icon", container);
             icon.width = 20;
             icon.height = 20;
-            icon.src = "Resources/bounty.png";
+            icon.src = ResourceBaseUri + "/bounty.png";
             var list = <HTMLDivElement>L.DomUtil.create("div", "leaflet-control-bountypan-list", container);
             jQuery(list).hide();
 
@@ -521,7 +548,7 @@ module GuildWars2.ArenaNet.Mapper {
             var link = <HTMLAnchorElement>L.DomUtil.create("a", "leaflet-control-bountypan-link", container);
             link.href = "#";
             link.title = bounty.name;
-            link.text = bounty.name;
+            link.innerText = bounty.name;
 
             var that = this;
 
@@ -538,7 +565,7 @@ module GuildWars2.ArenaNet.Mapper {
     }
 
     class BountyLayerGroup extends L.LayerGroup {
-        private static Icon: L.Icon = new L.Icon({ iconUrl: "Resources/bounty.png", iconSize: new L.Point(20, 20) });
+        private static Icon: L.Icon = new L.Icon({ iconUrl: ResourceBaseUri + "/bounty.png", iconSize: new L.Point(20, 20) });
 
         private bountyName: string;
 
@@ -671,10 +698,10 @@ module GuildWars2.ArenaNet.Mapper {
 
     class EventMarker extends L.Marker {
         private static Icons: { [key: string]: L.Icon[] } = {
-            "none": [new L.Icon({ iconUrl: "Resources/event_star_gray.png", iconSize: new L.Point(20, 20) }),
-                new L.Icon({ iconUrl: "Resources/event_star.png", iconSize: new L.Point(20, 20) })],
-            "group_event": [new L.Icon({ iconUrl: "Resources/event_boss_gray.png", iconSize: new L.Point(20, 20) }),
-                new L.Icon({ iconUrl: "Resources/event_boss.png", iconSize: new L.Point(20, 20) })]
+            "none": [new L.Icon({ iconUrl: ResourceBaseUri + "/event_star_gray.png", iconSize: new L.Point(20, 20) }),
+                new L.Icon({ iconUrl: ResourceBaseUri + "/event_star.png", iconSize: new L.Point(20, 20) })],
+            "group_event": [new L.Icon({ iconUrl: ResourceBaseUri + "/event_boss_gray.png", iconSize: new L.Point(20, 20) }),
+                new L.Icon({ iconUrl: ResourceBaseUri + "/event_boss.png", iconSize: new L.Point(20, 20) })]
         };
 
         private preparationIcon: L.Icon;
@@ -716,10 +743,10 @@ module GuildWars2.ArenaNet.Mapper {
 
     class PointOfInterestMarker extends L.Marker {
         private static Icons: { [key: string]: L.Icon } = {
-            "landmark": new L.Icon({ iconUrl: "Resources/poi.png", iconSize: new L.Point(20, 20) }),
-            "unlock": new L.Icon({ iconUrl: "Resources/dungeon.png", iconSize: new L.Point(20, 20) }),
-            "vista": new L.Icon({ iconUrl: "Resources/vista.png", iconSize: new L.Point(20, 20) }),
-            "waypoint": new L.Icon({ iconUrl: "Resources/waypoint.png", iconSize: new L.Point(20, 20) })
+            "landmark": new L.Icon({ iconUrl: ResourceBaseUri + "/poi.png", iconSize: new L.Point(20, 20) }),
+            "unlock": new L.Icon({ iconUrl: ResourceBaseUri + "/dungeon.png", iconSize: new L.Point(20, 20) }),
+            "vista": new L.Icon({ iconUrl: ResourceBaseUri + "/vista.png", iconSize: new L.Point(20, 20) }),
+            "waypoint": new L.Icon({ iconUrl: ResourceBaseUri + "/waypoint.png", iconSize: new L.Point(20, 20) })
         };
 
         constructor(latlng: L.LatLng, poi: GuildWars2.ArenaNet.Model.PointOfInterest) {
@@ -757,7 +784,7 @@ module GuildWars2.ArenaNet.Mapper {
     }
 
     class SkillChallengeMarker extends L.Marker {
-        private static Icon: L.Icon = new L.Icon({ iconUrl: "Resources/skill_point.png", iconSize: new L.Point(20, 20) });
+        private static Icon: L.Icon = new L.Icon({ iconUrl: ResourceBaseUri + "/skill_point.png", iconSize: new L.Point(20, 20) });
 
         constructor(latlng: L.LatLng) {
             super(latlng, {
@@ -768,7 +795,7 @@ module GuildWars2.ArenaNet.Mapper {
     }
 
     class TaskMarker extends L.Marker {
-        private static Icon: L.Icon = new L.Icon({ iconUrl: "Resources/renown_heart.png", iconSize: new L.Point(20, 20) });
+        private static Icon: L.Icon = new L.Icon({ iconUrl: ResourceBaseUri + "/renown_heart.png", iconSize: new L.Point(20, 20) });
 
         constructor(latlng: L.LatLng, task: GuildWars2.ArenaNet.Model.Task) {
             super(latlng, {
