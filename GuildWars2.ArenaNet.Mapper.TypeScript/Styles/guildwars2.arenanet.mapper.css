@@ -1,15 +1,4 @@
-﻿body, html {
-	height: 98% !important;
-}
-
-#map {
-    /*
-	left: 0px;
-	top: 0px;
-	right: 0px;
-	bottom: 0px;
-	position: absolute;
-        */
+﻿#map {
     position: relative;
     width: 764px;
     height: 600px;
@@ -33,13 +22,20 @@
 	vertical-align: middle;
 }
 
+.leaflet-control-fullscreen,
 .leaflet-control-bountypan {
     border-radius: 5px;
-    background-color: rgb(248, 248, 249);
+    background-color: rgb(255, 255, 255);
     padding: 5px;
     line-height: 1;
 }
 
+.leaflet-control-fullscreen:hover,
+.leaflet-control-bountypan:hover {
+    background-color: rgb(244, 244, 244);
+}
+
+.leaflet-control-fullscreen-icon,
 .leaflet-control-bountypan-icon {
     display: block;
 }

@@ -81,6 +81,7 @@ module GuildWars2.ArenaNet.Mapper {
                 .addOverlay(this.vistas, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/vista.png\" /> <span class=\"legend\">Vistas</span>")
                 .addOverlay(this.waypoints, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/waypoint.png\" /> <span class=\"legend\">Waypoints</span>")
                 .addTo(this);
+            new FullscreenControl().addTo(this);
 
             super.on("overlayadd", function (event: any) {
                 var map = <ArenaNetMap>this;
@@ -448,6 +449,46 @@ module GuildWars2.ArenaNet.Mapper {
 
         private static TranslateZ(z: number, map: GuildWars2.ArenaNet.Model.FloorMapDetails): number {
             return (1 - ((z - map.map_rect[0][1]) / (map.map_rect[1][1] - map.map_rect[0][1]))) * (map.continent_rect[1][1] - map.continent_rect[0][1]) + map.continent_rect[0][1];
+        }
+    }
+
+    class FullscreenControl extends L.Control {
+        private isFullscreen: boolean = false;
+        private oldStyle: string;
+
+        constructor() {
+            super({ position: "bottomright" });
+        }
+
+        public onAdd(map: L.Map): HTMLElement {
+            var container = L.DomUtil.create("div", "leaflet-control-fullscreen");
+
+            var icon = <HTMLImageElement>L.DomUtil.create("img", "leaflet-control-fullscreen-icon", container);
+            icon.width = 20;
+            icon.height = 20;
+            icon.src = "Resources/fullscreen_enter.png";
+
+            var that = this;
+
+            L.DomEvent.addListener(icon, "click", L.DomEvent.stop);
+            $(icon).click(function () {
+                var map_container = map.getContainer();
+
+                if (that.isFullscreen) {
+                    map_container.setAttribute("style", that.oldStyle);
+                    icon.src = "Resources/fullscreen_enter.png";
+                    that.isFullscreen = false;
+                } else {
+                    that.oldStyle = map_container.getAttribute("style");
+                    map_container.setAttribute("style", that.oldStyle + "; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; z-index: 5; width: auto; height: auto;");
+                    icon.src = "Resources/fullscreen_exit.png";
+                    that.isFullscreen = true;
+                }
+
+                map.invalidateSize();
+            });
+
+            return container;
         }
     }
 
