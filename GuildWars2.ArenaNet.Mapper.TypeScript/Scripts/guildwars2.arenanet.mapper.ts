@@ -13,6 +13,8 @@ module GuildWars2.ArenaNet.Mapper {
         private currentMapId: number = -1;
         private mapData: { [key: number]: GuildWars2.ArenaNet.Model.FloorMapDetails } = {};
 
+        private bountyPanControl: BountyPanControl = new BountyPanControl();
+
         private bounties: CustomLayerGroup = new CustomLayerGroup();
         private events: CustomLayerGroup = new CustomLayerGroup();
         private landmarks: CustomLayerGroup = new CustomLayerGroup();
@@ -45,7 +47,7 @@ module GuildWars2.ArenaNet.Mapper {
             });
 
             var loading = $("<div class=\"loading\"><div class=\"spinner circles\"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>");
-            loading.appendTo($('#' + id));
+            loading.appendTo($("#" + id));
 
             ArenaNetMap.Instances[id] = this;
 
@@ -80,6 +82,21 @@ module GuildWars2.ArenaNet.Mapper {
                 .addOverlay(this.waypoints, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"Resources/waypoint.png\" /> <span class=\"legend\">Waypoints</span>")
                 .addTo(this);
 
+            super.on("overlayadd", function (event: any) {
+                var map = <ArenaNetMap>this;
+
+                if ((<L.LeafletLayerEvent>event).layer == map.bounties) {
+                    map.bountyPanControl.addTo(map);
+                }
+            }, this);
+            super.on("overlayremove", function (event: any) {
+                var map = <ArenaNetMap>this;
+
+                if ((<L.LeafletLayerEvent>event).layer == map.bounties) {
+                    map.bountyPanControl.removeFrom(map);
+                }
+            }, this);
+
             var mapFloorRequest = $.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2", function (response: GuildWars2.ArenaNet.API.MapFloorResponse): void {
                 ArenaNetMap.LoadFloorData(id, response);
             });
@@ -98,7 +115,7 @@ module GuildWars2.ArenaNet.Mapper {
                 var tmpDOM = $.parseHTML(championEventsResponseData[0]);
                 var tmpChampNames: string[] = [];
                 var tmpRegExp = new RegExp("[^a-z0-9]", "g");
-                $('table > tbody > tr > td:nth-child(6) > a', tmpDOM).each(function (i: any, element: Element) {
+                $("table > tbody > tr > td:nth-child(6) > a", tmpDOM).each(function (i: any, element: Element) {
                     tmpChampNames.push(element.textContent.toLowerCase().replace(tmpRegExp, ""));
                 });
                 for (var i in eventNamesResponse) {
@@ -262,6 +279,8 @@ module GuildWars2.ArenaNet.Mapper {
                     }
                 }
             }
+
+            that.bountyPanControl.setMapData(that.mapData);
         }
 
         private static LoadEventData(id: string, events: { [key: string]: GuildWars2.ArenaNet.Model.EventDetails }, champions: string[]): void {
@@ -429,6 +448,66 @@ module GuildWars2.ArenaNet.Mapper {
 
         private static TranslateZ(z: number, map: GuildWars2.ArenaNet.Model.FloorMapDetails): number {
             return (1 - ((z - map.map_rect[0][1]) / (map.map_rect[1][1] - map.map_rect[0][1]))) * (map.continent_rect[1][1] - map.continent_rect[0][1]) + map.continent_rect[0][1];
+        }
+    }
+
+    class BountyPanControl extends L.Control {
+        private mapData: { [key: number]: GuildWars2.ArenaNet.Model.FloorMapDetails } = {};
+
+        constructor() {
+            super({ position: "bottomright" });
+        }
+
+        public setMapData(mapData: { [key: number]: GuildWars2.ArenaNet.Model.FloorMapDetails }) {
+            this.mapData = mapData;
+        }
+
+        public onAdd(map: L.Map): HTMLElement {
+            var container = L.DomUtil.create("div", "leaflet-control-bountypan");
+
+            var icon = <HTMLImageElement>L.DomUtil.create("img", "leaflet-control-bountypan-icon", container);
+            icon.width = 20;
+            icon.height = 20;
+            icon.src = "Resources/bounty.png";
+            var list = <HTMLDivElement>L.DomUtil.create("div", "leaflet-control-bountypan-list", container);
+            $(list).hide();
+
+            $(icon).mouseenter(function () {
+                $(icon).hide();
+                $(list).show();
+            });
+            $(list).mouseleave(function () {
+                $(list).hide();
+                $(icon).show();
+            });
+
+            for (var i in GuildWars2.SyntaxError.Model.GuildBountyDefinitions.Bounties) {
+                var bounty = GuildWars2.SyntaxError.Model.GuildBountyDefinitions.Bounties[i];
+
+                this.addButton(bounty, map, list);
+                L.DomUtil.create("br", null, list);
+            }
+
+            return container;
+        }
+
+        private addButton(bounty: GuildWars2.SyntaxError.Model.GuildBounty, map: L.Map, container: HTMLElement) {
+            var link = <HTMLAnchorElement>L.DomUtil.create("a", "leaflet-control-bountypan-link", container);
+            link.href = "#";
+            link.title = bounty.name;
+            link.text = bounty.name;
+
+            var that = this;
+
+            L.DomEvent.addListener(link, "click", L.DomEvent.stop);
+            L.DomEvent.addListener(link, "click", function () {
+                if (that.mapData[bounty.map_id] != undefined) {
+                    var m = that.mapData[bounty.map_id];
+                    map.fitBounds(new L.LatLngBounds(
+                        map.unproject(new L.Point(m.continent_rect[0][0], m.continent_rect[1][1]), map.getMaxZoom()),
+                        map.unproject(new L.Point(m.continent_rect[1][0], m.continent_rect[0][1]), map.getMaxZoom())));
+                }
+            });
         }
     }
 

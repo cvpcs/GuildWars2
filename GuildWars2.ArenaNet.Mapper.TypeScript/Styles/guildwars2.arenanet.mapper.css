@@ -3,11 +3,16 @@
 }
 
 #map {
+    /*
 	left: 0px;
 	top: 0px;
 	right: 0px;
 	bottom: 0px;
 	position: absolute;
+        */
+    position: relative;
+    width: 764px;
+    height: 600px;
 }
 
 .leaflet-container {
@@ -26,6 +31,23 @@
 
 .legend, .leaflet-control-layers-selector {
 	vertical-align: middle;
+}
+
+.leaflet-control-bountypan {
+    border-radius: 5px;
+    background-color: rgb(248, 248, 249);
+    padding: 5px;
+    line-height: 1;
+}
+
+.leaflet-control-bountypan-icon {
+    display: block;
+}
+
+.leaflet-control-bountypan-list {
+    line-height: 1.5;
+    font-family: menomonia;
+    padding: 0px 5px;
 }
 
 .leaflet-popup-content {
