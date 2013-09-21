@@ -453,47 +453,49 @@ module GuildWars2.ArenaNet.Mapper {
             var container = L.DomUtil.create("div", "leaflet-control-fullscreen");
 
             var icon = <HTMLImageElement>L.DomUtil.create("img", "leaflet-control-fullscreen-icon", container);
-            icon.width = 20;
-            icon.height = 20;
-            icon.src = ResourceBaseUri + "/fullscreen_enter.png";
+            var jqIcon = jQuery(icon);
+            jqIcon.attr("width", 20);
+            jqIcon.attr("height", 20);
+            jqIcon.attr("src", ResourceBaseUri + "/fullscreen_enter.png");
 
             var that = this;
 
             L.DomEvent.addListener(icon, "click", L.DomEvent.stop);
-            jQuery(icon).click(function () {
-                var map_container = map.getContainer();
+            jqIcon.click(function () {
+                var mapContainer = map.getContainer();
+                var jqMapContainer = jQuery(mapContainer);
 
                 if (that.isFullscreen) {
-                    jQuery(map_container).detach();
+                    jqMapContainer.detach();
 
                     // Drupal-specific
                     if (jQuery('#page').length > 0) jQuery('#page').show();
 
                     if (that.oldSibling != null) {
-                        jQuery(map_container).insertAfter(jQuery(that.oldSibling));
+                        jqMapContainer.insertAfter(jQuery(that.oldSibling));
                         that.oldSibling = null;
                     } else {
-                        jQuery(map_container).prependTo(jQuery(that.oldParent));
+                        jqMapContainer.prependTo(jQuery(that.oldParent));
                         that.oldParent = null;
                     }
 
-                    map_container.setAttribute("style", that.oldStyle);
-                    icon.src = ResourceBaseUri + "/fullscreen_enter.png";
+                    jqMapContainer.attr("style", (that.oldStyle != undefined ? that.oldStyle : ""));
+                    jqIcon.attr("src", ResourceBaseUri + "/fullscreen_enter.png");
                     that.isFullscreen = false;
                 } else {
-                    that.oldStyle = map_container.getAttribute("style");
-                    var prevSibling = jQuery(map_container).prev();
+                    that.oldStyle = jqMapContainer.attr("style");
+                    var prevSibling = jqMapContainer.prev();
                     if (prevSibling.length > 0)
                         that.oldSibling = prevSibling[0];
                     else
-                        that.oldParent = jQuery(map_container).parent()[0];
+                        that.oldParent = jqMapContainer.parent()[0];
 
                     // Drupal-specific
                     if (jQuery('#page').length > 0) jQuery('#page').hide();
 
-                    jQuery(map_container).detach().appendTo(jQuery('body'));
-                    map_container.setAttribute("style", that.oldStyle + "; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; z-index: 5; width: auto; height: auto;");
-                    icon.src = ResourceBaseUri + "/fullscreen_exit.png";
+                    jqMapContainer.detach().appendTo(jQuery('body'));
+                    jqMapContainer.attr("style", that.oldStyle + "; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; z-index: 5; width: auto; height: auto;");
+                    jqIcon.attr("src", ResourceBaseUri + "/fullscreen_exit.png");
                     that.isFullscreen = true;
                 }
 
@@ -519,19 +521,22 @@ module GuildWars2.ArenaNet.Mapper {
             var container = L.DomUtil.create("div", "leaflet-control-bountypan");
 
             var icon = <HTMLImageElement>L.DomUtil.create("img", "leaflet-control-bountypan-icon", container);
-            icon.width = 20;
-            icon.height = 20;
-            icon.src = ResourceBaseUri + "/bounty.png";
-            var list = <HTMLDivElement>L.DomUtil.create("div", "leaflet-control-bountypan-list", container);
-            jQuery(list).hide();
+            var jqIcon = jQuery(icon);
+            jqIcon.attr("width", 20);
+            jqIcon.attr("height", 20);
+            jqIcon.attr("src", ResourceBaseUri + "/bounty.png");
 
-            jQuery(icon).mouseenter(function () {
-                jQuery(icon).hide();
-                jQuery(list).show();
+            var list = <HTMLDivElement>L.DomUtil.create("div", "leaflet-control-bountypan-list", container);
+            var jqList = jQuery(list);
+            jqList.hide();
+
+            jqIcon.mouseenter(function () {
+                jqIcon.hide();
+                jqList.show();
             });
-            jQuery(list).mouseleave(function () {
-                jQuery(list).hide();
-                jQuery(icon).show();
+            jqList.mouseleave(function () {
+                jqList.hide();
+                jqIcon.show();
             });
 
             for (var i in GuildWars2.SyntaxError.Model.GuildBountyDefinitions.Bounties) {
@@ -546,9 +551,10 @@ module GuildWars2.ArenaNet.Mapper {
 
         private addButton(bounty: GuildWars2.SyntaxError.Model.GuildBounty, map: L.Map, container: HTMLElement) {
             var link = <HTMLAnchorElement>L.DomUtil.create("a", "leaflet-control-bountypan-link", container);
-            link.href = "#";
-            link.title = bounty.name;
-            link.innerText = bounty.name;
+            var jqLink = jQuery(link);
+            jqLink.attr("href", "#");
+            jqLink.attr("title", bounty.name);
+            jqLink.text(bounty.name);
 
             var that = this;
 
