@@ -17,18 +17,29 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Resources\bounty.png" />
+    <Content Include="Resources\commander.png" />
     <Content Include="Resources\dungeon.png" />
+    <Content Include="Resources\elementalist.png" />
+    <Content Include="Resources\engineer.png" />
     <Content Include="Resources\event_boss.png" />
     <Content Include="Resources\event_boss_gray.png" />
     <Content Include="Resources\event_star.png" />
     <Content Include="Resources\event_star_gray.png" />
+    <Content Include="Resources\guardian.png" />
+    <Content Include="Resources\mesmer.png" />
+    <Content Include="Resources\necromancer.png" />
+    <Content Include="Resources\player_position.png" />
     <Content Include="Resources\poi.png" />
+    <Content Include="Resources\ranger.png" />
     <Content Include="Resources\renown_heart.png" />
     <Content Include="Resources\skill_point.png" />
+    <Content Include="Resources\thief.png" />
     <Content Include="Resources\vista.png" />
+    <Content Include="Resources\warrior.png" />
     <Content Include="Resources\waypoint.png" />
     <TypeScriptCompile Include="Scripts\guildwars2.syntaxerror.ts" />
     <Content Include="Scripts\leaflet.polylineDecorator.min.js" />
+    <TypeScriptCompile Include="Scripts\typings\guildwars2.arenanet.mumblelink\guildwars2.arenanet.mumblelink.d.ts" />
     <Content Include="Scripts\typings\guildwars2.arenanet\guildwars2.arenanet.d.ts" />
     <TypeScriptCompile Include="Scripts\guildwars2.arenanet.mapper.ts" />
     <Content Include="index.html" />
