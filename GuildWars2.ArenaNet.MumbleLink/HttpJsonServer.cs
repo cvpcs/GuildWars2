@@ -112,6 +112,10 @@ namespace GuildWars2.ArenaNet.MumbleLink
                     byte[] buf = Encoding.UTF8.GetBytes(str);
 
                     HttpListenerResponse response = ctx.Response;
+
+                    response.AppendHeader("Access-Control-Allow-Origin", "*");
+                    response.AppendHeader("Cache-Control", "no-cache");
+
                     response.ContentType = "application/json";
                     response.ContentLength64 = buf.Length;
 
