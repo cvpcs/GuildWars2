@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 
 namespace GuildWars2.ArenaNet.MumbleLink
 {
     public class MumbleLink : IDisposable
     {
+        private static DataContractJsonSerializer p_IdentitySerializer = new DataContractJsonSerializer(typeof(LinkIdentity));
+
         private uint m_LastTick = 0;
         private bool m_Disposed = false;
 
@@ -17,6 +22,29 @@ namespace GuildWars2.ArenaNet.MumbleLink
             get
             {
                 return (LinkedMem)Marshal.PtrToStructure(m_LinkedMem, typeof(LinkedMem));
+            }
+        }
+
+        private LinkIdentity Identity
+        {
+            get
+            {
+                LinkIdentity ident = null;
+
+                try
+                {
+                    MemoryStream stream = new MemoryStream();
+                    StreamWriter writer = new StreamWriter(stream);
+                    writer.Write(Link.identity);
+                    writer.Flush();
+                    stream.Position = 0;
+                    ident = p_IdentitySerializer.ReadObject(stream) as LinkIdentity;
+                    writer.Close();
+                }
+                catch (Exception e)
+                { }
+
+                return ident;
             }
         }
 
@@ -40,7 +68,16 @@ namespace GuildWars2.ArenaNet.MumbleLink
         { get { return Link.name; } }
 
         public string PlayerName
-        { get { return Link.identity; } }
+        { get { return Identity.Name; } }
+
+        public bool PlayerIsCommander
+        { get { return Identity.Commander; } }
+
+        public int PlayerTeamColorId
+        { get { return Identity.TeamColorId; } }
+
+        public int PlayerProfession
+        { get { return Identity.Profession; } }
 
         public int Server
         { get { return Link.context[18]; } }
@@ -191,6 +228,28 @@ namespace GuildWars2.ArenaNet.MumbleLink
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 2048)]
             public string description;
+        }
+
+        [DataContract]
+        private class LinkIdentity
+        {
+            [DataMember(Name = "name")]
+            public string Name { get; set; }
+
+            [DataMember(Name = "profession")]
+            public int Profession { get; set; }
+
+            [DataMember(Name = "map_id")]
+            public int MapId { get; set; }
+
+            [DataMember(Name = "world_id")]
+            public int WorldId { get; set; }
+
+            [DataMember(Name = "team_color_id")]
+            public int TeamColorId { get; set; }
+
+            [DataMember(Name = "commander")]
+            public bool Commander { get; set; }
         }
     }
 }

@@ -24,7 +24,6 @@ namespace GuildWars2.ArenaNet.MumbleLink
 
         private static string GetJson()
         {
-            bool lockTaken = false;
             string data = string.Empty;
             MumbleData linkData = new MumbleData();
 
@@ -34,6 +33,8 @@ namespace GuildWars2.ArenaNet.MumbleLink
                 {
                     linkData.GameName = MUMBLE.GameName;
                     linkData.PlayerName = MUMBLE.PlayerName;
+                    linkData.PlayerIsCommander = MUMBLE.PlayerIsCommander;
+                    linkData.PlayerTeamColorId = MUMBLE.PlayerTeamColorId;
                     linkData.Server = MUMBLE.Server;
                     linkData.Map = MUMBLE.Map;
                     linkData.PositionX = MUMBLE.PositionX;

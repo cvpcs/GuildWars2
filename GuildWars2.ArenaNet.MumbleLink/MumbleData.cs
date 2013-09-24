@@ -15,6 +15,12 @@ namespace GuildWars2.ArenaNet.MumbleLink
         [DataMember(Name = "player_name")]
         public string PlayerName { get; set; }
 
+        [DataMember(Name = "player_is_commander")]
+        public bool PlayerIsCommander { get; set; }
+
+        [DataMember(Name = "player_team_color_id")]
+        public int PlayerTeamColorId { get; set; }
+
         [DataMember(Name = "server")]
         public int Server { get; set; }
 
