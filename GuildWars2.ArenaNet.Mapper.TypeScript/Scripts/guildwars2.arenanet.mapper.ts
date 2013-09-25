@@ -17,6 +17,7 @@ module GuildWars2.ArenaNet.Mapper {
         private mapData: { [key: number]: GuildWars2.ArenaNet.Model.FloorMapDetails } = {};
 
         private bountyPanControl: BountyPanControl = new BountyPanControl();
+        private playerPositionControl: PlayerPositionControl = new PlayerPositionControl();
 
         private playerPosition: PlayerPositionLayer = null;
 
@@ -89,19 +90,24 @@ module GuildWars2.ArenaNet.Mapper {
                 .addOverlay(this.vistas, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/vista.png\" /> <span class=\"legend\">Vistas</span>")
                 .addOverlay(this.waypoints, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/waypoint.png\" /> <span class=\"legend\">Waypoints</span>")
                 .addTo(this);
+
             new FullscreenControl().addTo(this);
+            this.bountyPanControl.addTo(this);
+            this.bountyPanControl.hide();
+            this.playerPositionControl.addTo(this);
+            this.playerPositionControl.hide();
 
             super.on("overlayadd", function (event: any) {
                 var map = <ArenaNetMap>this;
 
                 if ((<L.LeafletLayerEvent>event).layer == map.bounties)
-                    map.bountyPanControl.addTo(map);
+                    map.bountyPanControl.show();
             }, this);
             super.on("overlayremove", function (event: any) {
                 var map = <ArenaNetMap>this;
 
                 if ((<L.LeafletLayerEvent>event).layer == map.bounties)
-                    map.bountyPanControl.removeFrom(map);
+                    map.bountyPanControl.hide();
             }, this);
 
             jQuery.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2", function (mapFloorResponse: GuildWars2.ArenaNet.API.MapFloorResponse): void {
@@ -427,6 +433,7 @@ module GuildWars2.ArenaNet.Mapper {
                 error: function () {
                     if (that.playerPosition != null) {
                         that.removeLayer(that.playerPosition);
+                        that.playerPositionControl.hide();
                         that.playerPosition = null;
                     }
                 },
@@ -441,6 +448,7 @@ module GuildWars2.ArenaNet.Mapper {
                         if (that.playerPosition == null) {
                             that.playerPosition = new PlayerPositionLayer(loc, data.player_name, data.player_is_commander);
                             that.addLayer(that.playerPosition);
+                            that.playerPositionControl.show();
                         } else {
                             that.playerPosition.setLatLng(loc);
                             that.playerPosition.setRotation(data.rot_player);
@@ -555,8 +563,62 @@ module GuildWars2.ArenaNet.Mapper {
         }
     }
 
+    class PlayerPositionControl extends L.Control {
+        private mapContainer: HTMLElement;
+
+        public followPlayer: boolean = false;
+        public reportPosition: boolean = false;
+
+        constructor() {
+            super({ position: "bottomright" });
+        }
+
+        public onAdd(map: L.Map): HTMLElement {
+            var container = L.DomUtil.create("div", "leaflet-control-playerposition");
+
+            var icon = <HTMLImageElement>L.DomUtil.create("img", "leaflet-control-playerposition-icon", container);
+            var jqIcon = jQuery(icon);
+            jqIcon.attr("width", 24);
+            jqIcon.attr("height", 24);
+            jqIcon.attr("src", ResourceBaseUri + "/player_position.png");
+
+            var div = <HTMLDivElement>L.DomUtil.create("div", "leaflet-control-playerposition-legend", container);
+            var jqDiv = jQuery(div);
+            jqDiv.hide();
+
+            jqIcon.mouseenter(function () {
+                jqIcon.hide();
+                jqDiv.show();
+            });
+            jqDiv.mouseleave(function () {
+                jqDiv.hide();
+                jqIcon.show();
+            });
+
+            var that = this;
+
+            var jqCbFollowPlayer = jQuery("<input type=\"checkbox\" class=\"legend\" />");
+            jqCbFollowPlayer.click(function () { that.followPlayer = jqCbFollowPlayer.is(":checked"); });
+            var jqCbReportPosition = jQuery("<input type=\"checkbox\" class=\"legend\" />");
+            jqCbReportPosition.click(function () { that.reportPosition = jqCbReportPosition.is(":checked"); });
+
+            jqDiv.append(jqCbFollowPlayer);
+            jqDiv.append(" <span class=\"legend\">Follow player</span><br />");
+            jqDiv.append(jqCbReportPosition);
+            jqDiv.append(" <span class=\"legend\">Report position</span>");
+
+            this.mapContainer = container;
+
+            return container;
+        }
+
+        public show(): void { jQuery(this.mapContainer).show(); }
+        public hide(): void { jQuery(this.mapContainer).hide(); }
+    }
+
     class BountyPanControl extends L.Control {
         private mapData: { [key: number]: GuildWars2.ArenaNet.Model.FloorMapDetails } = {};
+        private mapContainer: HTMLElement;
 
         constructor() {
             super({ position: "bottomright" });
@@ -595,8 +657,13 @@ module GuildWars2.ArenaNet.Mapper {
                 L.DomUtil.create("br", null, list);
             }
 
+            this.mapContainer = container;
+
             return container;
         }
+
+        public show() { jQuery(this.mapContainer).show(); }
+        public hide() { jQuery(this.mapContainer).hide(); }
 
         private addButton(bounty: GuildWars2.SyntaxError.Model.GuildBounty, map: L.Map, container: HTMLElement) {
             var link = <HTMLAnchorElement>L.DomUtil.create("a", "leaflet-control-bountypan-link", container);
