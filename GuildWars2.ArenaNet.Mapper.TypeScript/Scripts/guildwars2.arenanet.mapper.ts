@@ -18,6 +18,8 @@ module GuildWars2.ArenaNet.Mapper {
 
         private bountyPanControl: BountyPanControl = new BountyPanControl();
 
+        private playerPosition: PlayerPositionLayer = null;
+
         private bounties: CustomLayerGroup = new CustomLayerGroup();
         private events: CustomLayerGroup = new CustomLayerGroup();
         private landmarks: CustomLayerGroup = new CustomLayerGroup();
@@ -92,16 +94,14 @@ module GuildWars2.ArenaNet.Mapper {
             super.on("overlayadd", function (event: any) {
                 var map = <ArenaNetMap>this;
 
-                if ((<L.LeafletLayerEvent>event).layer == map.bounties) {
+                if ((<L.LeafletLayerEvent>event).layer == map.bounties)
                     map.bountyPanControl.addTo(map);
-                }
             }, this);
             super.on("overlayremove", function (event: any) {
                 var map = <ArenaNetMap>this;
 
-                if ((<L.LeafletLayerEvent>event).layer == map.bounties) {
+                if ((<L.LeafletLayerEvent>event).layer == map.bounties)
                     map.bountyPanControl.removeFrom(map);
-                }
             }, this);
 
             jQuery.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2", function (mapFloorResponse: GuildWars2.ArenaNet.API.MapFloorResponse): void {
@@ -115,7 +115,7 @@ module GuildWars2.ArenaNet.Mapper {
 
                         setInterval(function () { ArenaNetMap.LoadEventStates(id); }, 30000);
 
-                        setTimeout(function () { ArenaNetMap.LoadPlayerData(id); }, 5000);
+                        setTimeout(function () { ArenaNetMap.LoadPlayerPositionData(id); }, 5000);
 
                         loading.detach();
                     });
@@ -414,7 +414,7 @@ module GuildWars2.ArenaNet.Mapper {
             }
         }
 
-        private static LoadPlayerData(id: string) {
+        private static LoadPlayerPositionData(id: string) {
             if (ArenaNetMap.Instances[id] == undefined)
                 return;
 
@@ -423,7 +423,13 @@ module GuildWars2.ArenaNet.Mapper {
             var timeout = 5000;
 
             jQuery.ajax("http://localhost:38139", {
-                complete: function () { setTimeout(function () { ArenaNetMap.LoadPlayerData(id); }, timeout); },
+                complete: function () { setTimeout(function () { ArenaNetMap.LoadPlayerPositionData(id); }, timeout); },
+                error: function () {
+                    if (that.playerPosition != null) {
+                        that.removeLayer(that.playerPosition);
+                        that.playerPosition = null;
+                    }
+                },
                 success: function (data: GuildWars2.ArenaNet.MumbleLink.MumbleData) {
                     if (data.data_available && that.mapData[data.map] != undefined) {
                         var map = that.mapData[data.map];
@@ -432,12 +438,19 @@ module GuildWars2.ArenaNet.Mapper {
                             ArenaNetMap.TranslateX(data.pos_x * 39.3700787, map),
                             ArenaNetMap.TranslateZ(data.pos_z * 39.3700787, map)), that.getMaxZoom());
 
-                        timeout = 500;
-                    } else {
-                        timeout = 1000;
+                        if (that.playerPosition == null) {
+                            that.playerPosition = new PlayerPositionLayer(loc, data.player_name, data.player_is_commander);
+                            that.addLayer(that.playerPosition);
+                        } else {
+                            that.playerPosition.setLatLng(loc);
+                            that.playerPosition.setRotation(data.rot_player);
+                            that.playerPosition.setCommander(data.player_is_commander);
+                        }
                     }
+
+                    timeout = 250;
                 },
-                timeout: 500
+                timeout: 250
             });
         }
 
@@ -780,6 +793,68 @@ module GuildWars2.ArenaNet.Mapper {
                 default:
                     break;
             }
+        }
+    }
+
+    class PlayerPositionLayer extends L.LayerGroup {
+        private static CommanderIcon: L.Icon = new L.Icon({ iconUrl: ResourceBaseUri + "/commander.png", iconSize: new L.Point(32, 32) });
+
+        private commander: boolean;
+
+        private commanderMarker: L.Marker;
+        private positionMarker: L.Marker;
+
+        constructor(latlng: L.LatLng, name: string, commander: boolean) {
+            super();
+
+            this.commanderMarker = new L.Marker(latlng, {
+                icon: PlayerPositionLayer.CommanderIcon,
+                clickable: false,
+                zIndexOffset: 998
+            });
+
+            this.positionMarker = new L.Marker(latlng, {
+                title: name,
+                icon: this.createRotatedIcon(0),
+                clickable: false,
+                zIndexOffset: 999
+            });
+
+            this.commander = commander;
+            if (commander)
+                this.addLayer(this.commanderMarker);
+
+            this.addLayer(this.positionMarker);
+        }
+
+        public setLatLng(latlng: L.LatLng): void {
+            this.commanderMarker.setLatLng(latlng);
+            this.commanderMarker.update();
+            this.positionMarker.setLatLng(latlng);
+            this.positionMarker.update();
+        }
+
+        public setCommander(commander: boolean): void {
+            if (this.commander != commander) {
+                if (commander)
+                    this.addLayer(this.commanderMarker);
+                else
+                    this.removeLayer(this.commanderMarker);
+
+                this.commander = commander;
+            }
+        }
+
+        public setRotation(rotation: number): void {
+            this.positionMarker.setIcon(this.createRotatedIcon(rotation));
+        }
+
+        private createRotatedIcon(rotation: number): L.Icon {
+            return new L.DivIcon({
+                iconSize: new L.Point(32, 32),
+                className: "leaflet-player-marker",
+                html: "<img width=\"32\" height=\"32\" style=\"transform: rotate(" + rotation + "deg);\" src=\"" + ResourceBaseUri + "/player_position.png\" />"
+            });
         }
     }
 
