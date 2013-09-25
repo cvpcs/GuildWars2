@@ -445,15 +445,26 @@ module GuildWars2.ArenaNet.Mapper {
                             ArenaNetMap.TranslateX(data.pos_x * 39.3700787, map),
                             ArenaNetMap.TranslateZ(data.pos_z * 39.3700787, map)), that.getMaxZoom());
 
+                        var locChanged = false;
+
                         if (that.playerPosition == null) {
                             that.playerPosition = new PlayerPositionLayer(loc, data.player_name, data.player_is_commander);
                             that.addLayer(that.playerPosition);
                             that.playerPositionControl.show();
+
+                            locChanged = true;
                         } else {
-                            that.playerPosition.setLatLng(loc);
                             that.playerPosition.setRotation(data.rot_player);
                             that.playerPosition.setCommander(data.player_is_commander);
+
+                            if (!loc.equals(that.playerPosition.getLatLng())) {
+                                that.playerPosition.setLatLng(loc);
+                                locChanged = true;
+                            }
                         }
+
+                        if (locChanged && that.playerPositionControl.followPlayer)
+                            that.panTo(loc);
                     }
 
                     timeout = 250;
@@ -894,6 +905,7 @@ module GuildWars2.ArenaNet.Mapper {
             this.addLayer(this.positionMarker);
         }
 
+        public getLatLng(): L.LatLng { return this.positionMarker.getLatLng(); }
         public setLatLng(latlng: L.LatLng): void {
             this.commanderMarker.setLatLng(latlng);
             this.commanderMarker.update();
