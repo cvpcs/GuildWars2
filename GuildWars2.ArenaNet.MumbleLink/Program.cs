@@ -34,6 +34,7 @@ namespace GuildWars2.ArenaNet.MumbleLink
                     linkData.GameName = MUMBLE.GameName;
                     linkData.PlayerName = MUMBLE.PlayerName;
                     linkData.PlayerIsCommander = MUMBLE.PlayerIsCommander;
+                    linkData.PlayerProfession = MUMBLE.PlayerProfession;
                     linkData.PlayerTeamColorId = MUMBLE.PlayerTeamColorId;
                     linkData.Server = MUMBLE.Server;
                     linkData.Map = MUMBLE.Map;

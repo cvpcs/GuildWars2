@@ -6,6 +6,7 @@ declare module GuildWars2.ArenaNet.MumbleLink {
 
         player_name?: string;
         player_is_commander?: boolean;
+        player_profession?: number;
         player_team_color_id?: number;
 
         server?: number;
