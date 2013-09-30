@@ -116,6 +116,8 @@ namespace GuildWars2.ArenaNet.MumbleLink
                     response.AppendHeader("Access-Control-Allow-Origin", "*");
                     response.AppendHeader("Cache-Control", "no-cache");
 
+                    response.KeepAlive = false;
+
                     response.ContentType = "application/json";
                     response.ContentLength64 = buf.Length;
 
