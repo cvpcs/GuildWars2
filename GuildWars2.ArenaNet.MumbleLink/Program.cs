@@ -17,7 +17,7 @@ namespace GuildWars2.ArenaNet.MumbleLink
             JSON_SERVER.Start();
 
             Console.WriteLine("Player position server is running. Press any key to exit this program.");
-            SpinWait.SpinUntil(() => Console.KeyAvailable);
+            Console.ReadKey();
 
             JSON_SERVER.Stop();
         }
