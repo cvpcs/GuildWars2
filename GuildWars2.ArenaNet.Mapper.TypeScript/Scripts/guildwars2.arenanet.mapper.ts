@@ -117,6 +117,7 @@ module GuildWars2.ArenaNet.Mapper {
                         ArenaNetMap.LoadEventStates(id);
 
                         setInterval(function () { ArenaNetMap.LoadEventStates(id); }, 30000);
+                        setInterval(function () { ArenaNetMap.UploadPlayerPositionData(id); }, 5000);
 
                         setTimeout(function () { ArenaNetMap.LoadPlayerPositionData(id); }, 5000);
 
@@ -417,6 +418,31 @@ module GuildWars2.ArenaNet.Mapper {
             }
         }
 
+        private static UploadPlayerPositionData(id: string) {
+            if (ArenaNetMap.Instances[id] == undefined)
+                return;
+
+            var that = ArenaNetMap.Instances[id];
+
+            // only upload if we have data and are allowed to
+            if (that.playerPosition != null && that.playerPositionControl.reportPosition) {
+                var playerLatLng = that.playerPosition.getLatLng();
+                var playerData = that.playerPosition.getLastData();
+
+                jQuery.post("http://gomgods.com/gw2/mapper/players/save", {
+                    server: playerData.server,
+                    map: playerData.map,
+                    position_x: playerData.pos_x,
+                    position_z: playerData.pos_z,
+                    position_lat: playerLatLng.lat,
+                    position_lng: playerLatLng.lng,
+                    player_is_commander: (playerData.player_is_commander ? 1 : 0),
+                    player_profession: playerData.player_profession,
+                    player_name: playerData.player_name
+                });
+            }
+        }
+
         private static LoadPlayerPositionData(id: string) {
             if (ArenaNetMap.Instances[id] == undefined)
                 return;
@@ -459,6 +485,8 @@ module GuildWars2.ArenaNet.Mapper {
                                 locChanged = true;
                             }
                         }
+
+                        that.playerPosition.setLastData(data);
 
                         if (locChanged && that.playerPositionControl.followPlayer)
                             that.panTo(loc);
@@ -879,6 +907,8 @@ module GuildWars2.ArenaNet.Mapper {
         private commanderMarker: L.Marker;
         private positionMarker: L.Marker;
 
+        private lastData: GuildWars2.ArenaNet.MumbleLink.MumbleData;
+
         constructor(latlng: L.LatLng, name: string, commander: boolean) {
             super();
 
@@ -924,6 +954,9 @@ module GuildWars2.ArenaNet.Mapper {
         public setRotation(rotation: number): void {
             this.positionMarker.setIcon(this.createRotatedIcon(rotation));
         }
+
+        public getLastData(): GuildWars2.ArenaNet.MumbleLink.MumbleData { return this.lastData; }
+        public setLastData(data: GuildWars2.ArenaNet.MumbleLink.MumbleData) { this.lastData = data; }
 
         private createRotatedIcon(rotation: number): L.Icon {
             return new L.DivIcon({
