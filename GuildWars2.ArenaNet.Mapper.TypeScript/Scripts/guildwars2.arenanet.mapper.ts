@@ -24,7 +24,6 @@ module GuildWars2.ArenaNet.Mapper {
         private bounties: CustomLayerGroup = new CustomLayerGroup();
         private events: CustomLayerGroup = new CustomLayerGroup();
         private landmarks: CustomLayerGroup = new CustomLayerGroup();
-        private players: CustomLayerGroup = new CustomLayerGroup();
         private sectors: CustomLayerGroup = new CustomLayerGroup();
         private skillChallenges: CustomLayerGroup = new CustomLayerGroup();
         private tasks: CustomLayerGroup = new CustomLayerGroup();
@@ -73,7 +72,6 @@ module GuildWars2.ArenaNet.Mapper {
             this.sectors.addTo(this);
             this.bounties.addTo(this);
             this.events.addTo(this);
-            this.players.addTo(this);
 
             this.sectors.setVisibility(false);
             this.bounties.setVisibility(false);
@@ -82,7 +80,6 @@ module GuildWars2.ArenaNet.Mapper {
                 .addOverlay(this.bounties, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/bounty.png\" /> <span class=\"legend\">Bounties</span>")
                 .addOverlay(this.events, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/event_star.png\" /> <span class=\"legend\">Events</span>")
                 .addOverlay(this.landmarks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/poi.png\" /> <span class=\"legend\">Points of Interest</span>")
-                .addOverlay(this.players, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/commander.png\" /> <span class=\"legend\">Players</span>")
                 .addOverlay(this.sectors, "<span class=\"legend\" style=\"display: inline-block; width: 20px; height: 20px; font-family: menomonia; font-size: 10pt; font-weight: 900; text-align: center; color: #d3d3d3; text-shadow: -1px -1px 0px black;\"><em>A</em></span> <span class=\"legend\">Sectors</span>")
                 .addOverlay(this.skillChallenges, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/skill_point.png\" /> <span class=\"legend\">Skill Points</span>")
                 .addOverlay(this.tasks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/renown_heart.png\" /> <span class=\"legend\">Renown Hearts</span>")
