@@ -118,8 +118,20 @@ namespace GuildWars2.ArenaNet.MumbleLink
 
                     response.KeepAlive = false;
 
-                    response.ContentType = "application/json";
-                    response.ContentLength64 = buf.Length;
+                    string callback = request.QueryString["callback"];
+                    if (string.IsNullOrEmpty(callback))
+                    {
+                        response.ContentType = "application/json";
+                        response.ContentLength64 = buf.Length;
+                    }
+                    else
+                    {
+                        str = string.Format("if ({0} != undefined) {{ {0}({1}) }};", callback, str);
+                        buf = Encoding.UTF8.GetBytes(str);
+
+                        response.ContentType = "application/javascript";
+                        response.ContentLength64 = buf.Length;
+                    }
 
                     Stream output = response.OutputStream;
                     output.Write(buf, 0, buf.Length);
