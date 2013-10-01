@@ -6,7 +6,8 @@
 /// <reference path="guildwars2.syntaxerror.ts" />
 
 module GuildWars2.ArenaNet.Mapper {
-    var ResourceBaseUri = "Resources";
+    var ResourceBaseUri: string = "Resources";
+    var MapperJQuery: JQueryStatic = jQuery;
 
     export class ArenaNetMap extends L.Map {
         private static Instances: { [key: string]: ArenaNetMap } = {};
@@ -52,8 +53,8 @@ module GuildWars2.ArenaNet.Mapper {
                 attributionControl: false
             });
 
-            var loading = jQuery("<div class=\"loading\"><div class=\"spinner circles\"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>");
-            loading.appendTo(jQuery("#" + id));
+            var loading = MapperJQuery("<div class=\"loading\"><div class=\"spinner circles\"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>");
+            loading.appendTo(MapperJQuery("#" + id));
 
             ArenaNetMap.Instances[id] = this;
 
@@ -107,24 +108,25 @@ module GuildWars2.ArenaNet.Mapper {
                     map.bountyPanControl.hide();
             }, this);
 
-            jQuery.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2", function (mapFloorResponse: GuildWars2.ArenaNet.API.MapFloorResponse): void {
+            var mapFloorRequest = MapperJQuery.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2");
+            var eventDetailsRequest = MapperJQuery.get("https://api.guildwars2.com/v1/event_details.json");
+            var championEventsRequest = MapperJQuery.get("http://gomgods.com/gw2/mapper/champs");
+
+            MapperJQuery.when(mapFloorRequest, eventDetailsRequest, championEventsRequest).done(function (mapFloorResponseData: any, eventDetailsResponseData: any, championEventsResponseData: any): void {
+                var mapFloorResponse: GuildWars2.ArenaNet.API.MapFloorResponse = mapFloorResponseData[0];
+                var eventDetailsResponse: GuildWars2.ArenaNet.API.EventDetailsResponse = eventDetailsResponseData[0];
+                var championEventsResponse: GuildWars2.SyntaxError.API.ChampionEventsResponse = championEventsResponseData[0];
+
                 ArenaNetMap.LoadFloorData(id, mapFloorResponse);
+                ArenaNetMap.LoadEventData(id, eventDetailsResponse.events, championEventsResponse.champion_events);
+                ArenaNetMap.LoadEventStates(id);
 
-                jQuery.get("https://api.guildwars2.com/v1/event_details.json", function (eventDetailsResponse: GuildWars2.ArenaNet.API.EventDetailsResponse): void {
+                setInterval(function () { ArenaNetMap.LoadEventStates(id); }, 30000);
+                setInterval(function () { ArenaNetMap.UploadPlayerPositionData(id); }, 5000);
 
-                    jQuery.get("http://gomgods.com/gw2/mapper/champs", function (championEventsResponse: GuildWars2.SyntaxError.API.ChampionEventsResponse): void {
-                        ArenaNetMap.LoadEventData(id, eventDetailsResponse.events, championEventsResponse.champion_events);
-                        ArenaNetMap.LoadEventStates(id);
+                setTimeout(function () { ArenaNetMap.LoadPlayerPositionData(id); }, 5000);
 
-                        setInterval(function () { ArenaNetMap.LoadEventStates(id); }, 30000);
-                        setInterval(function () { ArenaNetMap.UploadPlayerPositionData(id); }, 5000);
-
-                        setTimeout(function () { ArenaNetMap.LoadPlayerPositionData(id); }, 5000);
-
-                        loading.detach();
-                    });
-
-                });
+                loading.detach();
             });
 
             ArenaNetMap.LoadBounties(id);
@@ -344,7 +346,7 @@ module GuildWars2.ArenaNet.Mapper {
 
             var that = ArenaNetMap.Instances[id];
 
-            jQuery.get("https://api.guildwars2.com/v1/events.json?world_id=1007", function (response: GuildWars2.ArenaNet.API.EventsResponse): void {
+            MapperJQuery.get("https://api.guildwars2.com/v1/events.json?world_id=1007", function (response: GuildWars2.ArenaNet.API.EventsResponse): void {
                 for (var mid in that.mapEvents)
                     that.mapEvents[mid].clearLayers();
 
@@ -429,7 +431,7 @@ module GuildWars2.ArenaNet.Mapper {
                 var playerLatLng = that.playerPosition.getLatLng();
                 var playerData = that.playerPosition.getLastData();
 
-                jQuery.post("http://gomgods.com/gw2/mapper/players/save", {
+                MapperJQuery.post("http://gomgods.com/gw2/mapper/players/save", {
                     server: playerData.server,
                     map: playerData.map,
                     position_x: playerData.pos_x,
@@ -451,8 +453,9 @@ module GuildWars2.ArenaNet.Mapper {
 
             var timeout = 5000;
 
-            jQuery.ajax("http://localhost:38139", {
+            MapperJQuery.ajax("http://localhost:38139", {
                 complete: function () { setTimeout(function () { ArenaNetMap.LoadPlayerPositionData(id); }, timeout); },
+                dataType: "jsonp",
                 error: function () {
                     if (that.playerPosition != null) {
                         that.removeLayer(that.playerPosition);
@@ -543,7 +546,7 @@ module GuildWars2.ArenaNet.Mapper {
             var container = L.DomUtil.create("div", "leaflet-control-fullscreen");
 
             var icon = <HTMLImageElement>L.DomUtil.create("img", "leaflet-control-fullscreen-icon", container);
-            var jqIcon = jQuery(icon);
+            var jqIcon = MapperJQuery(icon);
             jqIcon.attr("width", 20);
             jqIcon.attr("height", 20);
             jqIcon.attr("src", ResourceBaseUri + "/fullscreen_enter.png");
@@ -554,19 +557,19 @@ module GuildWars2.ArenaNet.Mapper {
             L.DomEvent.addListener(icon, "click", L.DomEvent.stop);
             jqIcon.click(function () {
                 var mapContainer = map.getContainer();
-                var jqMapContainer = jQuery(mapContainer);
+                var jqMapContainer = MapperJQuery(mapContainer);
 
                 if (that.isFullscreen) {
                     jqMapContainer.detach();
 
                     // Drupal-specific
-                    if (jQuery('#page').length > 0) jQuery('#page').show();
+                    if (MapperJQuery('#page').length > 0) MapperJQuery('#page').show();
 
                     if (that.oldSibling != null) {
-                        jqMapContainer.insertAfter(jQuery(that.oldSibling));
+                        jqMapContainer.insertAfter(MapperJQuery(that.oldSibling));
                         that.oldSibling = null;
                     } else {
-                        jqMapContainer.prependTo(jQuery(that.oldParent));
+                        jqMapContainer.prependTo(MapperJQuery(that.oldParent));
                         that.oldParent = null;
                     }
 
@@ -583,9 +586,9 @@ module GuildWars2.ArenaNet.Mapper {
                         that.oldParent = jqMapContainer.parent()[0];
 
                     // Drupal-specific
-                    if (jQuery('#page').length > 0) jQuery('#page').hide();
+                    if (MapperJQuery('#page').length > 0) MapperJQuery('#page').hide();
 
-                    jqMapContainer.detach().appendTo(jQuery('body'));
+                    jqMapContainer.detach().appendTo(MapperJQuery('body'));
                     jqMapContainer.attr("style", that.oldStyle + "; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; z-index: 5; width: auto; height: auto;");
                     jqIcon.attr("src", ResourceBaseUri + "/fullscreen_exit.png");
                     jqIcon.attr("title", "Exit fill window");
@@ -613,13 +616,13 @@ module GuildWars2.ArenaNet.Mapper {
             var container = L.DomUtil.create("div", "leaflet-control-playerposition");
 
             var icon = <HTMLImageElement>L.DomUtil.create("img", "leaflet-control-playerposition-icon", container);
-            var jqIcon = jQuery(icon);
+            var jqIcon = MapperJQuery(icon);
             jqIcon.attr("width", 24);
             jqIcon.attr("height", 24);
             jqIcon.attr("src", ResourceBaseUri + "/player_position.png");
 
             var div = <HTMLDivElement>L.DomUtil.create("div", "leaflet-control-playerposition-legend", container);
-            var jqDiv = jQuery(div);
+            var jqDiv = MapperJQuery(div);
             jqDiv.hide();
 
             jqIcon.mouseenter(function () {
@@ -633,9 +636,9 @@ module GuildWars2.ArenaNet.Mapper {
 
             var that = this;
 
-            var jqCbFollowPlayer = jQuery("<input type=\"checkbox\" class=\"legend\" />");
+            var jqCbFollowPlayer = MapperJQuery("<input type=\"checkbox\" class=\"legend\" />");
             jqCbFollowPlayer.click(function () { that.followPlayer = jqCbFollowPlayer.is(":checked"); });
-            var jqCbReportPosition = jQuery("<input type=\"checkbox\" class=\"legend\" />");
+            var jqCbReportPosition = MapperJQuery("<input type=\"checkbox\" class=\"legend\" />");
             jqCbReportPosition.click(function () { that.reportPosition = jqCbReportPosition.is(":checked"); });
 
             jqDiv.append(jqCbFollowPlayer);
@@ -648,8 +651,8 @@ module GuildWars2.ArenaNet.Mapper {
             return container;
         }
 
-        public show(): void { jQuery(this.mapContainer).show(); }
-        public hide(): void { jQuery(this.mapContainer).hide(); }
+        public show(): void { MapperJQuery(this.mapContainer).show(); }
+        public hide(): void { MapperJQuery(this.mapContainer).hide(); }
     }
 
     class BountyPanControl extends L.Control {
@@ -668,13 +671,13 @@ module GuildWars2.ArenaNet.Mapper {
             var container = L.DomUtil.create("div", "leaflet-control-bountypan");
 
             var icon = <HTMLImageElement>L.DomUtil.create("img", "leaflet-control-bountypan-icon", container);
-            var jqIcon = jQuery(icon);
+            var jqIcon = MapperJQuery(icon);
             jqIcon.attr("width", 20);
             jqIcon.attr("height", 20);
             jqIcon.attr("src", ResourceBaseUri + "/bounty.png");
 
             var list = <HTMLDivElement>L.DomUtil.create("div", "leaflet-control-bountypan-list", container);
-            var jqList = jQuery(list);
+            var jqList = MapperJQuery(list);
             jqList.hide();
 
             jqIcon.mouseenter(function () {
@@ -698,12 +701,12 @@ module GuildWars2.ArenaNet.Mapper {
             return container;
         }
 
-        public show() { jQuery(this.mapContainer).show(); }
-        public hide() { jQuery(this.mapContainer).hide(); }
+        public show() { MapperJQuery(this.mapContainer).show(); }
+        public hide() { MapperJQuery(this.mapContainer).hide(); }
 
         private addButton(bounty: GuildWars2.SyntaxError.Model.GuildBounty, map: L.Map, container: HTMLElement) {
             var link = <HTMLAnchorElement>L.DomUtil.create("a", "leaflet-control-bountypan-link", container);
-            var jqLink = jQuery(link);
+            var jqLink = MapperJQuery(link);
             jqLink.attr("href", "#");
             jqLink.attr("title", bounty.name);
             jqLink.text(bounty.name);
