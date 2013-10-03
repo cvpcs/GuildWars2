@@ -606,7 +606,7 @@ module GuildWars2.ArenaNet.Mapper {
         private mapContainer: HTMLElement;
 
         public followPlayer: boolean = false;
-        public reportPosition: boolean = false;
+        public reportPosition: boolean = true;
 
         constructor() {
             super({ position: "bottomright" });
