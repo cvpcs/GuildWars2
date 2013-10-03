@@ -638,13 +638,18 @@ module GuildWars2.ArenaNet.Mapper {
 
             var jqCbFollowPlayer = MapperJQuery("<input type=\"checkbox\" class=\"legend\" />");
             jqCbFollowPlayer.click(function () { that.followPlayer = jqCbFollowPlayer.is(":checked"); });
-            var jqCbReportPosition = MapperJQuery("<input type=\"checkbox\" class=\"legend\" />");
+            var jqCbReportPosition = MapperJQuery("<input type=\"checkbox\" class=\"legend\" checked=\"checked\" />");
             jqCbReportPosition.click(function () { that.reportPosition = jqCbReportPosition.is(":checked"); });
 
-            jqDiv.append(jqCbFollowPlayer);
-            jqDiv.append(" <span class=\"legend\">Follow player</span><br />");
-            jqDiv.append(jqCbReportPosition);
-            jqDiv.append(" <span class=\"legend\">Report position</span>");
+            MapperJQuery("<label />")
+                .append(jqCbFollowPlayer)
+                .append(" <span class=\"legend\">Follow player</span>")
+                .appendTo(jqDiv);
+
+            MapperJQuery("<label />")
+                .append(jqCbReportPosition)
+                .append(" <span class=\"legend\">Report position</span>")
+                .appendTo(jqDiv);
 
             this.mapContainer = container;
 
