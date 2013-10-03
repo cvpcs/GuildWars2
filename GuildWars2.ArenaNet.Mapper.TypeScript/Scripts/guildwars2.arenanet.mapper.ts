@@ -10,8 +10,6 @@ module GuildWars2.ArenaNet.Mapper {
     var MapperJQuery: JQueryStatic = jQuery;
 
     export class ArenaNetMap extends L.Map {
-        private static Instances: { [key: string]: ArenaNetMap } = {};
-
         private static BountPathColors: string[] = [ "#0000ff", "#ffffff", "#ffff00", "#32cd32" ];
 
         private currentMapId: number = -1;
@@ -61,11 +59,9 @@ module GuildWars2.ArenaNet.Mapper {
             var eventDetailsRequest = MapperJQuery.get("https://api.guildwars2.com/v1/event_details.json");
             var championEventsRequest = MapperJQuery.get("http://gomgods.com/gw2/mapper/champs");
 
-            ArenaNetMap.Instances[id] = this;
-
             new L.TileLayer("https://tiles.guildwars2.com/1/1/{z}/{x}/{y}.jpg", {
-                minZoom: this.getMinZoom(),
-                maxZoom: this.getMaxZoom(),
+                minZoom: super.getMinZoom(),
+                maxZoom: super.getMaxZoom(),
                 continuousWorld: true
             }).addTo(this);
 
@@ -106,6 +102,7 @@ module GuildWars2.ArenaNet.Mapper {
                 if ((<L.LeafletLayerEvent>event).layer == map.bounties)
                     map.bountyPanControl.show();
             }, this);
+
             super.on("overlayremove", function (event: any) {
                 var map = <ArenaNetMap>this;
 
@@ -113,11 +110,13 @@ module GuildWars2.ArenaNet.Mapper {
                     map.bountyPanControl.hide();
             }, this);
 
-            ArenaNetMap.LoadBounties(id);
+            super.on("moveend", function (e: L.LeafletEvent) {
+                this.onMapMoveEnd(id);
+            }, this);
 
-            this.on("moveend", function (e: L.LeafletEvent) {
-                ArenaNetMap.OnMapMoveEnd(id);
-            });
+            this.loadBounties();
+
+            var that = this;
 
             // deal with our AJAX queries now
             MapperJQuery.when(mapFloorRequest, eventDetailsRequest, championEventsRequest).done(function (mapFloorResponseData: any, eventDetailsResponseData: any, championEventsResponseData: any): void {
@@ -125,14 +124,14 @@ module GuildWars2.ArenaNet.Mapper {
                 var eventDetailsResponse: GuildWars2.ArenaNet.API.EventDetailsResponse = eventDetailsResponseData[0];
                 var championEventsResponse: GuildWars2.SyntaxError.API.ChampionEventsResponse = championEventsResponseData[0];
 
-                ArenaNetMap.LoadFloorData(id, mapFloorResponse);
-                ArenaNetMap.LoadEventData(id, eventDetailsResponse.events, championEventsResponse.champion_events);
-                ArenaNetMap.LoadEventStates(id);
+                that.loadFloorData(mapFloorResponse);
+                that.loadEventData(eventDetailsResponse.events, championEventsResponse.champion_events);
+                that.loadEventStates();
 
-                setInterval(function () { ArenaNetMap.LoadEventStates(id); }, 30000);
-                setInterval(function () { ArenaNetMap.UploadPlayerPositionData(id); }, 5000);
+                setInterval(function (): void { that.loadEventStates(); }, 30000);
+                setInterval(function (): void { that.uploadPlayerPositionData(); }, 5000);
 
-                setTimeout(function () { ArenaNetMap.LoadPlayerPositionData(id); }, 5000);
+                setTimeout(function (): void { that.loadPlayerPositionData(); }, 5000);
 
                 loading.detach();
             });
@@ -181,19 +180,14 @@ module GuildWars2.ArenaNet.Mapper {
             this.setMapLayerVisibility(this.mapWaypoints, visible);
         }
 
-        private static LoadFloorData(id: string, floor: GuildWars2.ArenaNet.Model.Floor): void {
-            if (ArenaNetMap.Instances[id] == undefined)
-                return;
-
-            var that = ArenaNetMap.Instances[id];
-
-            that.setMaxBounds(new L.LatLngBounds(
-                that.unproject(new L.Point(0 - (floor.texture_dims[1] * 0.5), floor.texture_dims[1] * 1.5), that.getMaxZoom()),
-                that.unproject(new L.Point(floor.texture_dims[0] * 1.5, 0 - (floor.texture_dims[0] * 0.5)), that.getMaxZoom())
+        private loadFloorData(floor: GuildWars2.ArenaNet.Model.Floor): void {
+            super.setMaxBounds(new L.LatLngBounds(
+                super.unproject(new L.Point(0 - (floor.texture_dims[1] * 0.5), floor.texture_dims[1] * 1.5), super.getMaxZoom()),
+                super.unproject(new L.Point(floor.texture_dims[0] * 1.5, 0 - (floor.texture_dims[0] * 0.5)), super.getMaxZoom())
                 ));
 
-            that.setView(that.unproject(new L.Point(floor.texture_dims[0] / 2, floor.texture_dims[1] / 2), that.getMaxZoom()),
-                that.getMinZoom());
+            super.setView(super.unproject(new L.Point(floor.texture_dims[0] / 2, floor.texture_dims[1] / 2), super.getMaxZoom()),
+                super.getMinZoom());
 
             for (var i in floor.regions) {
                 var region = floor.regions[i];
@@ -201,60 +195,60 @@ module GuildWars2.ArenaNet.Mapper {
                     var mid = <number>j;
                     var map = region.maps[mid];
 
-                    that.mapData[mid] = map;
+                    this.mapData[mid] = map;
 
-                    if (that.mapLandmarks[mid] == undefined) {
-                        that.mapLandmarks[mid] = new CustomLayerGroup();
-                        that.mapLandmarks[mid].setVisibility(false);
-                        that.landmarks.addCustomLayer(that.mapLandmarks[mid]);
+                    if (this.mapLandmarks[mid] == undefined) {
+                        this.mapLandmarks[mid] = new CustomLayerGroup();
+                        this.mapLandmarks[mid].setVisibility(false);
+                        this.landmarks.addCustomLayer(this.mapLandmarks[mid]);
                     }
-                    if (that.mapSectors[mid] == undefined) {
-                        that.mapSectors[mid] = new CustomLayerGroup();
-                        that.mapSectors[mid].setVisibility(false);
-                        that.sectors.addCustomLayer(that.mapSectors[mid]);
+                    if (this.mapSectors[mid] == undefined) {
+                        this.mapSectors[mid] = new CustomLayerGroup();
+                        this.mapSectors[mid].setVisibility(false);
+                        this.sectors.addCustomLayer(this.mapSectors[mid]);
                     }
-                    if (that.mapSkillChallenges[mid] == undefined) {
-                        that.mapSkillChallenges[mid] = new CustomLayerGroup();
-                        that.mapSkillChallenges[mid].setVisibility(false);
-                        that.skillChallenges.addCustomLayer(that.mapSkillChallenges[mid]);
+                    if (this.mapSkillChallenges[mid] == undefined) {
+                        this.mapSkillChallenges[mid] = new CustomLayerGroup();
+                        this.mapSkillChallenges[mid].setVisibility(false);
+                        this.skillChallenges.addCustomLayer(this.mapSkillChallenges[mid]);
                     }
-                    if (that.mapTasks[mid] == undefined) {
-                        that.mapTasks[mid] = new CustomLayerGroup();
-                        that.mapTasks[mid].setVisibility(false);
-                        that.tasks.addCustomLayer(that.mapTasks[mid]);
+                    if (this.mapTasks[mid] == undefined) {
+                        this.mapTasks[mid] = new CustomLayerGroup();
+                        this.mapTasks[mid].setVisibility(false);
+                        this.tasks.addCustomLayer(this.mapTasks[mid]);
                     }
-                    if (that.mapUnlocks[mid] == undefined) {
-                        that.mapUnlocks[mid] = new CustomLayerGroup();
-                        that.mapUnlocks[mid].setVisibility(false);
-                        that.unlocks.addCustomLayer(that.mapUnlocks[mid]);
+                    if (this.mapUnlocks[mid] == undefined) {
+                        this.mapUnlocks[mid] = new CustomLayerGroup();
+                        this.mapUnlocks[mid].setVisibility(false);
+                        this.unlocks.addCustomLayer(this.mapUnlocks[mid]);
                     }
-                    if (that.mapVistas[mid] == undefined) {
-                        that.mapVistas[mid] = new CustomLayerGroup();
-                        that.mapVistas[mid].setVisibility(false);
-                        that.vistas.addCustomLayer(that.mapVistas[mid]);
+                    if (this.mapVistas[mid] == undefined) {
+                        this.mapVistas[mid] = new CustomLayerGroup();
+                        this.mapVistas[mid].setVisibility(false);
+                        this.vistas.addCustomLayer(this.mapVistas[mid]);
                     }
-                    if (that.mapWaypoints[mid] == undefined) {
-                        that.mapWaypoints[mid] = new CustomLayerGroup();
-                        that.mapWaypoints[mid].setVisibility(false);
-                        that.waypoints.addCustomLayer(that.mapWaypoints[mid]);
+                    if (this.mapWaypoints[mid] == undefined) {
+                        this.mapWaypoints[mid] = new CustomLayerGroup();
+                        this.mapWaypoints[mid].setVisibility(false);
+                        this.waypoints.addCustomLayer(this.mapWaypoints[mid]);
                     }
 
                     for (var k in map.points_of_interest) {
                         var poi = map.points_of_interest[k];
-                        var poiMarker = new PointOfInterestMarker(that.unproject(new L.Point(poi.coord[0], poi.coord[1]), that.getMaxZoom()), poi);
+                        var poiMarker = new PointOfInterestMarker(super.unproject(new L.Point(poi.coord[0], poi.coord[1]), super.getMaxZoom()), poi);
 
                         switch (poi.type) {
                             case "landmark":
-                                that.mapLandmarks[mid].addLayer(poiMarker);
+                                this.mapLandmarks[mid].addLayer(poiMarker);
                                 break;
                             case "unlock":
-                                that.mapUnlocks[mid].addLayer(poiMarker);
+                                this.mapUnlocks[mid].addLayer(poiMarker);
                                 break;
                             case "vista":
-                                that.mapVistas[mid].addLayer(poiMarker);
+                                this.mapVistas[mid].addLayer(poiMarker);
                                 break;
                             case "waypoint":
-                                that.mapWaypoints[mid].addLayer(poiMarker);
+                                this.mapWaypoints[mid].addLayer(poiMarker);
                                 break;
                             default:
                                 break;
@@ -263,48 +257,43 @@ module GuildWars2.ArenaNet.Mapper {
 
                     for (var k in map.sectors) {
                         var sector = map.sectors[k];
-                        var sectorMarker = new SectorMarker(that.unproject(new L.Point(sector.coord[0], sector.coord[1]), that.getMaxZoom()), sector);
-                        that.mapSectors[mid].addLayer(sectorMarker);
+                        var sectorMarker = new SectorMarker(super.unproject(new L.Point(sector.coord[0], sector.coord[1]), super.getMaxZoom()), sector);
+                        this.mapSectors[mid].addLayer(sectorMarker);
                     }
 
                     for (var k in map.skill_challenges) {
                         var skillChallenge = map.skill_challenges[k];
-                        var skillChallengeMarker = new SkillChallengeMarker(that.unproject(new L.Point(skillChallenge.coord[0], skillChallenge.coord[1]),
-                            that.getMaxZoom()));
-                        that.mapSkillChallenges[mid].addLayer(skillChallengeMarker);
+                        var skillChallengeMarker = new SkillChallengeMarker(super.unproject(new L.Point(skillChallenge.coord[0], skillChallenge.coord[1]),
+                            super.getMaxZoom()));
+                        this.mapSkillChallenges[mid].addLayer(skillChallengeMarker);
                     }
 
                     for (var k in map.tasks) {
                         var task = map.tasks[k];
-                        var taskMarker = new TaskMarker(that.unproject(new L.Point(task.coord[0], task.coord[1]), that.getMaxZoom()), task);
-                        that.mapTasks[mid].addLayer(taskMarker);
+                        var taskMarker = new TaskMarker(super.unproject(new L.Point(task.coord[0], task.coord[1]), super.getMaxZoom()), task);
+                        this.mapTasks[mid].addLayer(taskMarker);
                     }
                 }
             }
 
-            that.bountyPanControl.setMapData(that.mapData);
+            this.bountyPanControl.setMapData(this.mapData);
         }
 
-        private static LoadEventData(id: string, events: { [key: string]: GuildWars2.ArenaNet.Model.EventDetails }, champions: string[]): void {
-            if (ArenaNetMap.Instances[id] == undefined)
-                return;
-
-            var that = ArenaNetMap.Instances[id];
-
+        private loadEventData(events: { [key: string]: GuildWars2.ArenaNet.Model.EventDetails }, champions: string[]): void {
             for (var eid in events) {
                 var ev = events[eid];
                 var mid = ev.map_id;
 
-                if (ev.name.toLowerCase().indexOf("skill challenge: ") == 0 || that.mapData[mid] == undefined)
+                if (ev.name.toLowerCase().indexOf("skill challenge: ") == 0 || this.mapData[mid] == undefined)
                     continue;
 
                 var hasChamp = (champions.indexOf(eid) >= 0);
-                var map = that.mapData[mid];
+                var map = this.mapData[mid];
 
-                if (that.mapEvents[mid] == undefined) {
-                    that.mapEvents[mid] = new CustomLayerGroup();
-                    that.mapEvents[mid].setVisibility(false);
-                    that.events.addCustomLayer(that.mapEvents[mid]);
+                if (this.mapEvents[mid] == undefined) {
+                    this.mapEvents[mid] = new CustomLayerGroup();
+                    this.mapEvents[mid].setVisibility(false);
+                    this.events.addCustomLayer(this.mapEvents[mid]);
                 }
 
                 var center = new L.Point(ArenaNetMap.TranslateX(ev.location.center[0], map), ArenaNetMap.TranslateZ(ev.location.center[1], map));
@@ -314,12 +303,12 @@ module GuildWars2.ArenaNet.Mapper {
                         var polyPoints: L.LatLng[] = [];
 
                         for (var i in ev.location.points) {
-                            polyPoints.push(that.unproject(new L.Point(
+                            polyPoints.push(super.unproject(new L.Point(
                                 ArenaNetMap.TranslateX(ev.location.points[i][0], map), ArenaNetMap.TranslateZ(ev.location.points[i][1], map)),
-                                that.getMaxZoom()));
+                                super.getMaxZoom()));
                         }
 
-                        that.eventPolygons[eid] = new EventPolygon(polyPoints, hasChamp);
+                        this.eventPolygons[eid] = new EventPolygon(polyPoints, hasChamp);
                         break;
                     case "sphere":
                     case "cylinder":
@@ -327,26 +316,23 @@ module GuildWars2.ArenaNet.Mapper {
                         var radius = ArenaNetMap.TranslateX(ev.location.center[0] + ev.location.radius, map) - center.x;
 
                         for (var j = 0; j < 360; j += 10) {
-                            polyPoints.push(that.unproject(new L.Point(
+                            polyPoints.push(super.unproject(new L.Point(
                                 center.x + radius * Math.cos(j * (Math.PI / 180)), center.y + radius * Math.sin(j * (Math.PI / 180))),
-                                that.getMaxZoom()));
+                                super.getMaxZoom()));
                         }
 
-                        that.eventPolygons[eid] = new EventPolygon(polyPoints, hasChamp);
+                        this.eventPolygons[eid] = new EventPolygon(polyPoints, hasChamp);
                         break;
                     default:
                         break;
                 }
 
-                that.eventMarkers[eid] = new EventMarker(that.unproject(center, that.getMaxZoom()), ev);
+                this.eventMarkers[eid] = new EventMarker(super.unproject(center, super.getMaxZoom()), ev);
             }
         }
 
-        private static LoadEventStates(id: string): void {
-            if (ArenaNetMap.Instances[id] == undefined)
-                return;
-
-            var that = ArenaNetMap.Instances[id];
+        private loadEventStates(): void {
+            var that = this;
 
             MapperJQuery.get("https://api.guildwars2.com/v1/events.json?world_id=1007", function (response: GuildWars2.ArenaNet.API.EventsResponse): void {
                 for (var mid in that.mapEvents)
@@ -376,20 +362,15 @@ module GuildWars2.ArenaNet.Mapper {
             });
         }
 
-        private static LoadBounties(id: string): void {
-            if (ArenaNetMap.Instances[id] == undefined)
-                return;
-
-            var that = ArenaNetMap.Instances[id];
-
+        private loadBounties(): void {
             for (var i in GuildWars2.SyntaxError.Model.GuildBountyDefinitions.Bounties) {
                 var bounty = GuildWars2.SyntaxError.Model.GuildBountyDefinitions.Bounties[i];
                 var mid = bounty.map_id;
 
-                if (that.mapBounties[mid] == undefined) {
-                    that.mapBounties[mid] = new CustomLayerGroup();
-                    that.mapBounties[mid].setVisibility(false);
-                    that.bounties.addCustomLayer(that.mapBounties[mid]);
+                if (this.mapBounties[mid] == undefined) {
+                    this.mapBounties[mid] = new CustomLayerGroup();
+                    this.mapBounties[mid].setVisibility(false);
+                    this.bounties.addCustomLayer(this.mapBounties[mid]);
                 }
 
                 var b = new BountyLayerGroup(bounty.name);
@@ -397,7 +378,7 @@ module GuildWars2.ArenaNet.Mapper {
                 if (bounty.spawns != undefined) {
                     for (var j in bounty.spawns) {
                         var p = bounty.spawns[j];
-                        b.addSpawningPoint(that.unproject(new L.Point(p[0], p[1]), that.getMaxZoom()));
+                        b.addSpawningPoint(super.unproject(new L.Point(p[0], p[1]), super.getMaxZoom()));
                     }
                 }
 
@@ -410,7 +391,7 @@ module GuildWars2.ArenaNet.Mapper {
 
                         for (var k in path.points) {
                             var p = path.points[k];
-                            locs.push(that.unproject(new L.Point(p[0], p[1]), that.getMaxZoom()));
+                            locs.push(super.unproject(new L.Point(p[0], p[1]), super.getMaxZoom()));
                         }
 
                         b.addPath(locs, ArenaNetMap.BountPathColors[c], path.direction);
@@ -418,20 +399,15 @@ module GuildWars2.ArenaNet.Mapper {
                     }
                 }
 
-                that.mapBounties[mid].addLayer(b);
+                this.mapBounties[mid].addLayer(b);
             }
         }
 
-        private static UploadPlayerPositionData(id: string) {
-            if (ArenaNetMap.Instances[id] == undefined)
-                return;
-
-            var that = ArenaNetMap.Instances[id];
-
+        private uploadPlayerPositionData(): void {
             // only upload if we have data and are allowed to
-            if (that.playerPosition != null && that.playerPositionControl.reportPosition) {
-                var playerLatLng = that.playerPosition.getLatLng();
-                var playerData = that.playerPosition.getLastData();
+            if (this.playerPosition != null && this.playerPositionControl.reportPosition) {
+                var playerLatLng = this.playerPosition.getLatLng();
+                var playerData = this.playerPosition.getLastData();
 
                 MapperJQuery.post("http://gomgods.com/gw2/mapper/players/save", {
                     server: playerData.server,
@@ -447,25 +423,21 @@ module GuildWars2.ArenaNet.Mapper {
             }
         }
 
-        private static LoadPlayerPositionData(id: string) {
-            if (ArenaNetMap.Instances[id] == undefined)
-                return;
-
-            var that = ArenaNetMap.Instances[id];
-
+        private loadPlayerPositionData(): void {
             var timeout = 5000;
+            var that = this;
 
             MapperJQuery.ajax("http://localhost:38139", {
-                complete: function () { setTimeout(function () { ArenaNetMap.LoadPlayerPositionData(id); }, timeout); },
+                complete: function (): void { setTimeout(function () { that.loadPlayerPositionData(); }, timeout); },
                 dataType: "jsonp",
-                error: function () {
+                error: function (): void {
                     if (that.playerPosition != null) {
                         that.removeLayer(that.playerPosition);
                         that.playerPositionControl.hide();
                         that.playerPosition = null;
                     }
                 },
-                success: function (data: GuildWars2.ArenaNet.MumbleLink.MumbleData) {
+                success: function (data: GuildWars2.ArenaNet.MumbleLink.MumbleData): void {
                     if (data.data_available && that.mapData[data.map] != undefined) {
                         var map = that.mapData[data.map];
 
@@ -503,26 +475,21 @@ module GuildWars2.ArenaNet.Mapper {
             });
         }
 
-        private static OnMapMoveEnd(id: string) {
-            if (ArenaNetMap.Instances[id] == undefined)
-                return;
+        private onMapMoveEnd(): void {
+            var mid = this.getMapByCenter(super.project(super.getCenter(), super.getMaxZoom()));
 
-            var that = ArenaNetMap.Instances[id];
-
-            var mid = that.getMapByCenter(that.project(that.getCenter(), that.getMaxZoom()));
-
-            if (that.getZoom() < 3 || mid < 0) {
-                that.currentMapId = -1;
-                that.setAllMapLayerVisibility(false);
+            if (super.getZoom() < 3 || mid < 0) {
+                this.currentMapId = -1;
+                this.setAllMapLayerVisibility(false);
                 return;
             }
 
-            if (that.currentMapId == mid)
+            if (this.currentMapId == mid)
                 return;
 
-            that.setAllMapLayerVisibility(false);
-            that.setMapVisibility(mid, true);
-            that.currentMapId = mid;
+            this.setAllMapLayerVisibility(false);
+            this.setMapVisibility(mid, true);
+            this.currentMapId = mid;
         }
 
         private static TranslateX(x: number, map: GuildWars2.ArenaNet.Model.FloorMapDetails): number {
