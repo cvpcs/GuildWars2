@@ -56,6 +56,11 @@ module GuildWars2.ArenaNet.Mapper {
             var loading = MapperJQuery("<div class=\"loading\"><div class=\"spinner circles\"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>");
             loading.appendTo(MapperJQuery("#" + id));
 
+            // start loading ajax queries right away
+            var mapFloorRequest = MapperJQuery.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2");
+            var eventDetailsRequest = MapperJQuery.get("https://api.guildwars2.com/v1/event_details.json");
+            var championEventsRequest = MapperJQuery.get("http://gomgods.com/gw2/mapper/champs");
+
             ArenaNetMap.Instances[id] = this;
 
             new L.TileLayer("https://tiles.guildwars2.com/1/1/{z}/{x}/{y}.jpg", {
@@ -108,10 +113,13 @@ module GuildWars2.ArenaNet.Mapper {
                     map.bountyPanControl.hide();
             }, this);
 
-            var mapFloorRequest = MapperJQuery.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2");
-            var eventDetailsRequest = MapperJQuery.get("https://api.guildwars2.com/v1/event_details.json");
-            var championEventsRequest = MapperJQuery.get("http://gomgods.com/gw2/mapper/champs");
+            ArenaNetMap.LoadBounties(id);
 
+            this.on("moveend", function (e: L.LeafletEvent) {
+                ArenaNetMap.OnMapMoveEnd(id);
+            });
+
+            // deal with our AJAX queries now
             MapperJQuery.when(mapFloorRequest, eventDetailsRequest, championEventsRequest).done(function (mapFloorResponseData: any, eventDetailsResponseData: any, championEventsResponseData: any): void {
                 var mapFloorResponse: GuildWars2.ArenaNet.API.MapFloorResponse = mapFloorResponseData[0];
                 var eventDetailsResponse: GuildWars2.ArenaNet.API.EventDetailsResponse = eventDetailsResponseData[0];
@@ -127,12 +135,6 @@ module GuildWars2.ArenaNet.Mapper {
                 setTimeout(function () { ArenaNetMap.LoadPlayerPositionData(id); }, 5000);
 
                 loading.detach();
-            });
-
-            ArenaNetMap.LoadBounties(id);
-
-            this.on("moveend", function (e: L.LeafletEvent) {
-                ArenaNetMap.OnMapMoveEnd(id);
             });
         }
 
