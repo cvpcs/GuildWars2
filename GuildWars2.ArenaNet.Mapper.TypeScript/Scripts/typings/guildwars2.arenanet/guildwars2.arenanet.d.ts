@@ -15,6 +15,8 @@ declare module GuildWars2.ArenaNet {
 
         export interface MapNamesResponse extends Array<GuildWars2.ArenaNet.Model.Map> { }
 
+        export interface WorldNamesResponse extends Array<GuildWars2.ArenaNet.Model.World> { }
+
     }
 
     export module Model {
@@ -105,6 +107,8 @@ declare module GuildWars2.ArenaNet {
             objective: string;
             level: number;
         }
+
+        export interface World extends NamedModel<number> { }
 
     }
 }

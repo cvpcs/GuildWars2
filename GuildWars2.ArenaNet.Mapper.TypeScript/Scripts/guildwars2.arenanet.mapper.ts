@@ -16,7 +16,9 @@ module GuildWars2.ArenaNet.Mapper {
         private mapData: { [key: number]: GuildWars2.ArenaNet.Model.FloorMapDetails } = {};
 
         private bountyPanControl: BountyPanControl = new BountyPanControl();
+        private fullscreenControl: FullscreenControl = new FullscreenControl();
         private playerPositionControl: PlayerPositionControl = new PlayerPositionControl();
+        private worldSelectionControl: WorldSelectionControl = new WorldSelectionControl();
 
         private playerPosition: PlayerPositionLayer = null;
 
@@ -58,6 +60,7 @@ module GuildWars2.ArenaNet.Mapper {
             var mapFloorRequest = MapperJQuery.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2");
             var eventDetailsRequest = MapperJQuery.get("https://api.guildwars2.com/v1/event_details.json");
             var championEventsRequest = MapperJQuery.get("http://gomgods.com/gw2/mapper/champs");
+            var worldNamesRequest = MapperJQuery.get("https://api.guildwars2.com/v1/world_names.json");
 
             new L.TileLayer("https://tiles.guildwars2.com/1/1/{z}/{x}/{y}.jpg", {
                 minZoom: super.getMinZoom(),
@@ -90,10 +93,12 @@ module GuildWars2.ArenaNet.Mapper {
                 .addOverlay(this.waypoints, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/waypoint.png\" /> <span class=\"legend\">Waypoints</span>")
                 .addTo(this);
 
-            new FullscreenControl().addTo(this);
+            this.fullscreenControl.addTo(this);
+            this.worldSelectionControl.addTo(this);
             this.bountyPanControl.addTo(this);
-            this.bountyPanControl.hide();
             this.playerPositionControl.addTo(this);
+
+            this.bountyPanControl.hide();
             this.playerPositionControl.hide();
 
             super.on("overlayadd", function (event: any) {
@@ -119,16 +124,27 @@ module GuildWars2.ArenaNet.Mapper {
             var that = this;
 
             // deal with our AJAX queries now
-            MapperJQuery.when(mapFloorRequest, eventDetailsRequest, championEventsRequest).done(function (mapFloorResponseData: any, eventDetailsResponseData: any, championEventsResponseData: any): void {
-                var mapFloorResponse: GuildWars2.ArenaNet.API.MapFloorResponse = mapFloorResponseData[0];
-                var eventDetailsResponse: GuildWars2.ArenaNet.API.EventDetailsResponse = eventDetailsResponseData[0];
-                var championEventsResponse: GuildWars2.SyntaxError.API.ChampionEventsResponse = championEventsResponseData[0];
+            MapperJQuery.when(mapFloorRequest, eventDetailsRequest, championEventsRequest, worldNamesRequest).done(function (a: any, b: any, c: any, d: any): void {
+                var mapFloorResponse: GuildWars2.ArenaNet.API.MapFloorResponse = a[0];
+                var eventDetailsResponse: GuildWars2.ArenaNet.API.EventDetailsResponse = b[0];
+                var championEventsResponse: GuildWars2.SyntaxError.API.ChampionEventsResponse = c[0];
+                var worldNamesResponse: GuildWars2.ArenaNet.API.WorldNamesResponse = d[0];
+
+                that.worldSelectionControl.setWorlds(worldNamesResponse);
 
                 that.loadFloorData(mapFloorResponse);
                 that.loadEventData(eventDetailsResponse.events, championEventsResponse.champion_events);
-                that.loadEventStates();
 
+                that.loadEventStates();
                 setInterval(function (): void { that.loadEventStates(); }, 30000);
+                that.worldSelectionControl.worldChanged(function (worldId: number): void {
+                    that.loadEventStates();
+
+                    if (that.playerPosition != null) {
+                        that.playerPosition.setOpacity(worldId == that.playerPosition.getLastData().server ? 1.0 : 0.7);
+                    }
+                });
+
                 setInterval(function (): void { that.uploadPlayerPositionData(); }, 5000);
 
                 that.loadPlayerPositionData();
@@ -334,7 +350,7 @@ module GuildWars2.ArenaNet.Mapper {
         private loadEventStates(): void {
             var that = this;
 
-            MapperJQuery.get("https://api.guildwars2.com/v1/events.json?world_id=1007", function (response: GuildWars2.ArenaNet.API.EventsResponse): void {
+            MapperJQuery.get("https://api.guildwars2.com/v1/events.json?world_id=" + this.worldSelectionControl.currentWorldId, function (response: GuildWars2.ArenaNet.API.EventsResponse): void {
                 for (var mid in that.mapEvents)
                     that.mapEvents[mid].clearLayers();
 
@@ -451,6 +467,7 @@ module GuildWars2.ArenaNet.Mapper {
                             that.playerPosition = new PlayerPositionLayer(loc, data.player_name, data.player_is_commander);
                             that.addLayer(that.playerPosition);
                             that.playerPositionControl.show();
+                            that.playerPosition.setOpacity(that.worldSelectionControl.currentWorldId == data.server ? 1.0 : 0.7);
 
                             locChanged = true;
                         } else {
@@ -523,7 +540,7 @@ module GuildWars2.ArenaNet.Mapper {
 
             var that = this;
 
-            L.DomEvent.addListener(icon, "click", L.DomEvent.stop);
+            L.DomEvent.disableClickPropagation(icon);
             jqIcon.click(function () {
                 var mapContainer = map.getContainer();
                 var jqMapContainer = MapperJQuery(mapContainer);
@@ -591,6 +608,8 @@ module GuildWars2.ArenaNet.Mapper {
             jqIcon.attr("src", ResourceBaseUri + "/player_position.png");
 
             var div = <HTMLDivElement>L.DomUtil.create("div", "leaflet-control-playerposition-legend", container);
+            L.DomEvent.disableClickPropagation(div);
+
             var jqDiv = MapperJQuery(div);
             jqDiv.hide();
 
@@ -651,6 +670,8 @@ module GuildWars2.ArenaNet.Mapper {
             jqIcon.attr("src", ResourceBaseUri + "/bounty.png");
 
             var list = <HTMLDivElement>L.DomUtil.create("div", "leaflet-control-bountypan-list", container);
+            L.DomEvent.disableClickPropagation(list);
+
             var jqList = MapperJQuery(list);
             jqList.hide();
 
@@ -687,7 +708,6 @@ module GuildWars2.ArenaNet.Mapper {
 
             var that = this;
 
-            L.DomEvent.addListener(link, "click", L.DomEvent.stop);
             L.DomEvent.addListener(link, "click", function () {
                 if (that.mapData[bounty.map_id] != undefined) {
                     var m = that.mapData[bounty.map_id];
@@ -932,6 +952,11 @@ module GuildWars2.ArenaNet.Mapper {
             this.positionMarker.setIcon(this.createRotatedIcon(rotation));
         }
 
+        public setOpacity(opacity: number): void {
+            this.positionMarker.setOpacity(opacity);
+            this.commanderMarker.setOpacity(opacity);
+        }
+
         public getLastData(): GuildWars2.ArenaNet.MumbleLink.MumbleData { return this.lastData; }
         public setLastData(data: GuildWars2.ArenaNet.MumbleLink.MumbleData) { this.lastData = data; }
 
@@ -1009,6 +1034,84 @@ module GuildWars2.ArenaNet.Mapper {
             super.bindPopup(new PopupContentFactory()
                 .appendWikiLink(task.objective)
                 .getContent(), { offset: new L.Point(0, -10) });
+        }
+    }
+
+    class WorldSelectionControl extends L.Control {
+        private mapContainer: HTMLElement;
+        private worldChangedHandler: { (worldId: number): void };
+
+        public currentWorldId: number = 1007;
+
+        constructor() {
+            super({ position: "bottomright" });
+        }
+
+        public onAdd(map: L.Map): HTMLElement {
+            var container = L.DomUtil.create("div", "leaflet-control-worldselect");
+
+            var icon = <HTMLImageElement>L.DomUtil.create("img", "leaflet-control-worldselect-icon", container);
+            var jqIcon = MapperJQuery(icon);
+            jqIcon.attr("width", 24);
+            jqIcon.attr("height", 24);
+            jqIcon.attr("src", ResourceBaseUri + "/map_complete.png");
+
+            var list = <HTMLDivElement>L.DomUtil.create("div", "leaflet-control-worldselect-list", container);
+            L.DomEvent.disableClickPropagation(list);
+            L.DomEvent.addListener(list, "mousewheel", L.DomEvent.stopPropagation);
+
+            var jqList = MapperJQuery(list);
+            jqList.hide();
+
+            jqIcon.mouseenter(function (): void {
+                jqIcon.hide();
+                jqList.show();
+            });
+            jqList.mouseleave(function (): void {
+                jqList.hide();
+                jqIcon.show();
+            });
+
+            var that = this;
+
+            jqList.append("Viewing data for server:<br />");
+            var jqSelect = MapperJQuery("<select size=\"10\"><option value=\"1007\" selected=\"selected\">Gate of Madness</option></select>");
+            jqSelect.appendTo(jqList);
+            jqSelect.change(function (): void {
+                var oldWorldId = that.currentWorldId;
+                that.currentWorldId = <number>MapperJQuery("option:selected", jqSelect).val();
+                if (oldWorldId != that.currentWorldId && that.worldChangedHandler != undefined)
+                    that.worldChangedHandler(that.currentWorldId);
+            });
+
+            this.mapContainer = container;
+
+            return container;
+        }
+
+        public worldChanged(handler: { (worldId: number): void }): void {
+            this.worldChangedHandler = handler;
+        }
+
+        public setWorlds(worlds: GuildWars2.ArenaNet.Model.World[]): void {
+            var jqSelect = MapperJQuery("div.leaflet-control-worldselect-list select", this.mapContainer);
+            jqSelect.empty();
+
+            worlds.sort(function (a: GuildWars2.ArenaNet.Model.World, b: GuildWars2.ArenaNet.Model.World): number {
+                return a.name.localeCompare(b.name);
+            });
+
+            for (var i in worlds) {
+                var world = worlds[i];
+
+                // ignore EU worlds since we can't guest to them anyway
+                if (world.id >= 2000)
+                    continue;
+
+                jqSelect.append("<option value=\"" + world.id + "\"" +
+                    (world.id == this.currentWorldId ? " selected=\"selected\">" : ">") +
+                    world.name + "</option>");
+            }
         }
     }
 
