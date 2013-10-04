@@ -131,7 +131,7 @@ module GuildWars2.ArenaNet.Mapper {
                 setInterval(function (): void { that.loadEventStates(); }, 30000);
                 setInterval(function (): void { that.uploadPlayerPositionData(); }, 5000);
 
-                setTimeout(function (): void { that.loadPlayerPositionData(); }, 5000);
+                that.loadPlayerPositionData();
 
                 loading.detach();
             });
