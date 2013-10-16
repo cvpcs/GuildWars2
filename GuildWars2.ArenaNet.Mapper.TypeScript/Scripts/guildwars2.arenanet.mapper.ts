@@ -25,6 +25,7 @@ module GuildWars2.ArenaNet.Mapper {
         private bounties: CustomLayerGroup = new CustomLayerGroup();
         private events: CustomLayerGroup = new CustomLayerGroup();
         private landmarks: CustomLayerGroup = new CustomLayerGroup();
+        private nodes: CustomLayerGroup = new CustomLayerGroup();
         private sectors: CustomLayerGroup = new CustomLayerGroup();
         private skillChallenges: CustomLayerGroup = new CustomLayerGroup();
         private tasks: CustomLayerGroup = new CustomLayerGroup();
@@ -35,6 +36,7 @@ module GuildWars2.ArenaNet.Mapper {
         private mapBounties: { [key: number]: CustomLayerGroup } = {};
         private mapEvents: { [key: number]: CustomLayerGroup } = {};
         private mapLandmarks: { [key: number]: CustomLayerGroup } = {};
+        private mapNodes: { [key: number]: CustomLayerGroup } = {};
         private mapSectors: { [key: number]: CustomLayerGroup } = {};
         private mapSkillChallenges: { [key: number]: CustomLayerGroup } = {};
         private mapTasks: { [key: number]: CustomLayerGroup } = {};
@@ -74,6 +76,7 @@ module GuildWars2.ArenaNet.Mapper {
             this.unlocks.addTo(this);
             this.tasks.addTo(this);
             this.skillChallenges.addTo(this);
+            this.nodes.addTo(this);
             this.sectors.addTo(this);
             this.bounties.addTo(this);
             this.events.addTo(this);
@@ -85,6 +88,7 @@ module GuildWars2.ArenaNet.Mapper {
                 .addOverlay(this.bounties, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/bounty.png\" /> <span class=\"legend\">Bounties</span>")
                 .addOverlay(this.events, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/event_star.png\" /> <span class=\"legend\">Events</span>")
                 .addOverlay(this.landmarks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/poi.png\" /> <span class=\"legend\">Points of Interest</span>")
+                .addOverlay(this.nodes, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/harvesting.png\" /> <span class=\"legend\">Tier 6 Nodes</span>")
                 .addOverlay(this.sectors, "<span class=\"legend\" style=\"display: inline-block; width: 20px; height: 20px; font-family: menomonia; font-size: 10pt; font-weight: 900; text-align: center; color: #d3d3d3; text-shadow: -1px -1px 0px black;\"><em>A</em></span> <span class=\"legend\">Sectors</span>")
                 .addOverlay(this.skillChallenges, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/skill_point.png\" /> <span class=\"legend\">Skill Points</span>")
                 .addOverlay(this.tasks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/renown_heart.png\" /> <span class=\"legend\">Renown Hearts</span>")
@@ -136,9 +140,13 @@ module GuildWars2.ArenaNet.Mapper {
                 that.loadEventData(eventDetailsResponse.events, championEventsResponse.champion_events);
 
                 that.loadEventStates();
+                that.loadNodes();
+
                 setInterval(function (): void { that.loadEventStates(); }, 30000);
+
                 that.worldSelectionControl.worldChanged(function (worldId: number): void {
                     that.loadEventStates();
+                    that.loadNodes();
 
                     if (that.playerPosition != null) {
                         that.playerPosition.setOpacity(worldId == that.playerPosition.getLastData().server ? 1.0 : 0.7);
@@ -171,6 +179,7 @@ module GuildWars2.ArenaNet.Mapper {
             if (this.mapBounties[mid] != undefined) this.mapBounties[mid].setVisibility(visible);
             if (this.mapEvents[mid] != undefined) this.mapEvents[mid].setVisibility(visible);
             if (this.mapLandmarks[mid] != undefined) this.mapLandmarks[mid].setVisibility(visible);
+            if (this.mapNodes[mid] != undefined) this.mapNodes[mid].setVisibility(visible);
             if (this.mapSectors[mid] != undefined) this.mapSectors[mid].setVisibility(visible);
             if (this.mapSkillChallenges[mid] != undefined) this.mapSkillChallenges[mid].setVisibility(visible);
             if (this.mapTasks[mid] != undefined) this.mapTasks[mid].setVisibility(visible);
@@ -188,6 +197,7 @@ module GuildWars2.ArenaNet.Mapper {
             this.setMapLayerVisibility(this.mapBounties, visible);
             this.setMapLayerVisibility(this.mapEvents, visible);
             this.setMapLayerVisibility(this.mapLandmarks, visible);
+            this.setMapLayerVisibility(this.mapNodes, visible);
             this.setMapLayerVisibility(this.mapSectors, visible);
             this.setMapLayerVisibility(this.mapSkillChallenges, visible);
             this.setMapLayerVisibility(this.mapTasks, visible);
@@ -373,6 +383,42 @@ module GuildWars2.ArenaNet.Mapper {
                             break;
                         default:
                             break;
+                    }
+                }
+            });
+        }
+
+        private loadNodes(): void {
+            var that = this;
+
+            MapperJQuery.get("http://gomgods.com/gw2/mapper/nodes?world_id=" + this.worldSelectionControl.currentWorldId, function (response: GuildWars2.SyntaxError.API.NodesResponse): void {
+                for (var mid in that.mapNodes)
+                    that.mapNodes[mid].clearLayers();
+
+                for (var mid in response.maps) {
+                    var node_map = response.maps[mid];
+                    var map = that.mapData[mid];
+
+                    if (map == undefined)
+                        continue;
+
+                    if (that.mapNodes[mid] == undefined) {
+                        that.mapNodes[mid] = new CustomLayerGroup();
+                        that.mapNodes[mid].setVisibility(false);
+                        that.nodes.addCustomLayer(that.mapNodes[mid]);
+                    }
+
+                    var rw = (map.map_rect[1][0] - map.map_rect[0][0]) / node_map.width;
+                    var rh = (map.map_rect[1][1] - map.map_rect[0][1]) / node_map.height;
+
+                    for (var i in node_map.nodes) {
+                        var node = node_map.nodes[i];
+
+                        var ax = (node.x * rw) + map.map_rect[0][0];
+                        var ay = (node.y * rh) + map.map_rect[0][1];
+
+                        that.mapNodes[mid].addLayer(new NodeMarker(that.unproject(new L.Point(
+                            ArenaNetMap.TranslateX(ax, map), ArenaNetMap.TranslateZ(-ay, map)), that.getMaxZoom()), node));
                     }
                 }
             });
@@ -892,6 +938,31 @@ module GuildWars2.ArenaNet.Mapper {
                     break;
                 default:
                     break;
+            }
+        }
+    }
+
+    class NodeMarker extends L.Marker {
+        private static Icons: { [key: string]: L.Icon } = {
+            "harvesting": new L.Icon({ iconUrl: ResourceBaseUri + "/harvesting.png", iconSize: new L.Point(20, 20) }),
+            "logging": new L.Icon({ iconUrl: ResourceBaseUri + "/logging.png", iconSize: new L.Point(20, 20) }),
+            "mining": new L.Icon({ iconUrl: ResourceBaseUri + "/mining.png", iconSize: new L.Point(20, 20) })
+        };
+
+        constructor(latlng: L.LatLng, node: GuildWars2.SyntaxError.Model.Node) {
+            super(latlng, {
+                title: (node.name != "" ? node.name : undefined),
+                clickable: (node.name != "")
+            });
+
+            if (NodeMarker.Icons[node.type] != undefined)
+                super.setIcon(NodeMarker.Icons[node.type]);
+
+            if (node.name != "") {
+                var popupFactory = new PopupContentFactory()
+                    .appendWikiLink(node.name);
+
+                super.bindPopup(popupFactory.getContent(), { offset: new L.Point(0, -10) });
             }
         }
     }

@@ -26,8 +26,11 @@
     <Content Include="Resources\event_star.png" />
     <Content Include="Resources\event_star_gray.png" />
     <Content Include="Resources\guardian.png" />
+    <Content Include="Resources\harvesting.png" />
+    <Content Include="Resources\logging.png" />
     <Content Include="Resources\map_complete.png" />
     <Content Include="Resources\mesmer.png" />
+    <Content Include="Resources\mining.png" />
     <Content Include="Resources\necromancer.png" />
     <Content Include="Resources\player_position.png" />
     <Content Include="Resources\poi.png" />

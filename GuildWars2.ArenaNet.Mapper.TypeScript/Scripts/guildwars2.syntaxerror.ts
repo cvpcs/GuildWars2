@@ -6,6 +6,10 @@ module GuildWars2.SyntaxError {
             champion_events: string[];
         }
 
+        export interface NodesResponse {
+            maps: { [key: number]: GuildWars2.SyntaxError.Model.NodeMap };
+        }
+
     }
 
     export module Model {
@@ -594,6 +598,19 @@ module GuildWars2.SyntaxError {
         export class GuildBountyPath {
             direction: string; /* invalid, clockwise, counterclockwise */
             points: number[][];
+        }
+
+        export interface NodeMap {
+            width: number;
+            height: number;
+            nodes: Node[];
+        }
+
+        export interface Node {
+            x: number;
+            y: number;
+            name: string;
+            type: string; /* "harvesting", "logging", "mining" */
         }
 
     }
