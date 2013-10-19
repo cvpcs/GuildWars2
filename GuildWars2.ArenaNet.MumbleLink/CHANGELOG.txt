@@ -1,0 +1,6 @@
+﻿Guild Wars 2 Mumble Link
+Changelog
+
+== v1.0 =======================================================================
+
+Initial release
