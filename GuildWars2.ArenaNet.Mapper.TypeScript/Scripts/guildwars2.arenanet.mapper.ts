@@ -638,7 +638,7 @@ module GuildWars2.ArenaNet.Mapper {
         private mapContainer: HTMLElement;
 
         public followPlayer: boolean = false;
-        public reportPosition: boolean = true;
+        public reportPosition: boolean = false;
 
         constructor() {
             super({ position: "bottomright" });
@@ -672,7 +672,7 @@ module GuildWars2.ArenaNet.Mapper {
 
             var jqCbFollowPlayer = MapperJQuery("<input type=\"checkbox\" class=\"legend\" />");
             jqCbFollowPlayer.click(function () { that.followPlayer = jqCbFollowPlayer.is(":checked"); });
-            var jqCbReportPosition = MapperJQuery("<input type=\"checkbox\" class=\"legend\" checked=\"checked\" />");
+            var jqCbReportPosition = MapperJQuery("<input type=\"checkbox\" class=\"legend\" />");
             jqCbReportPosition.click(function () { that.reportPosition = jqCbReportPosition.is(":checked"); });
 
             MapperJQuery("<label />")
