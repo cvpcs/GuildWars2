@@ -66,6 +66,10 @@
     padding: 0px 5px;
 }
 
+.leaflet-control-worldselect-list {
+    padding-bottom: 5px;
+}
+
 .leaflet-popup-content {
     line-height: 1;
 }
