@@ -5,10 +5,14 @@ using System.Net;
 using System.Text;
 using System.Threading;
 
+using log4net;
+
 namespace GuildWars2.GoMGoDS.APIServer
 {
     public class HttpJsonServer : IDisposable
     {
+        private static ILog LOGGER = LogManager.GetLogger(typeof(HttpJsonServer));
+        
         private readonly HttpListener m_Listener;
         private readonly Thread m_ListenerThread;
         private readonly Thread[] m_WorkerThreads;
@@ -38,6 +42,8 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         public void RegisterPath(string path, RequestHandler handler)
         {
+            LOGGER.DebugFormat("Registering path {0}", path);
+
             if (m_RequestHandlers.ContainsKey(path))
                 throw new InvalidOperationException(string.Format("Request path [{0}] is already registered to this JSON server!", path));
 
@@ -46,6 +52,8 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         public void Start()
         {
+            LOGGER.Debug("Starting server");
+
             m_Listener.Start();
             m_ListenerThread.Start();
 
@@ -63,6 +71,8 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         public void Stop()
         {
+            LOGGER.Debug("Stopping server");
+
             m_Stop.Set();
 
             m_ListenerThread.Join();
@@ -117,6 +127,8 @@ namespace GuildWars2.GoMGoDS.APIServer
                 HttpListenerRequest request = ctx.Request;
                 HttpListenerResponse response = ctx.Response;
 
+                LOGGER.DebugFormat("Handling request for {0}", request.Url.AbsolutePath);
+
                 if (m_RequestHandlers.ContainsKey(request.Url.AbsolutePath))
                 {
                     string str = m_RequestHandlers[request.Url.AbsolutePath]();
@@ -133,6 +145,7 @@ namespace GuildWars2.GoMGoDS.APIServer
                 else
                 {
                     response.StatusCode = (int)HttpStatusCode.NotFound;
+                    response.Close();
                 }
             }
         }

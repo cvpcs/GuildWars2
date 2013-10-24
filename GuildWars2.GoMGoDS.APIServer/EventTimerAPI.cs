@@ -13,10 +13,14 @@ using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
 using GuildWars2.SyntaxError.Model;
 
+using log4net;
+
 namespace GuildWars2.GoMGoDS.APIServer
 {
     public class EventTimerAPI : IAPI
     {
+        private static ILog LOGGER = LogManager.GetLogger(typeof(EventTimerAPI));
+
         private static TimeSpan p_PollRate = new TimeSpan(0, 0, 30);
         private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(EventTimerData));
 
@@ -33,6 +37,8 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         public void Start(IDbConnection dbConn)
         {
+            LOGGER.Debug("Starting API");
+
             m_DbConn = dbConn;
             m_TimerData = new EventTimerData();
 
@@ -52,6 +58,8 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         public void Stop()
         {
+            LOGGER.Debug("Stopping API");
+
             // stop timer
             m_Timer.Stop();
 
@@ -79,6 +87,10 @@ namespace GuildWars2.GoMGoDS.APIServer
                 data = reader.ReadToEnd();
                 reader.Close();
             }
+            catch (Exception e)
+            {
+                LOGGER.Error("Exception thrown when attempting to serialize JSON", e);
+            }
             finally
             {
                 if (lockTaken)
@@ -90,6 +102,8 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         private void LoadDatabase()
         {
+            LOGGER.Debug("Loading timer data from the database");
+
             IDbCommand cmd = m_DbConn.CreateCommand();
             IDbTransaction trns = m_DbConn.BeginTransaction();
 
@@ -115,36 +129,50 @@ namespace GuildWars2.GoMGoDS.APIServer
 
                 trns.Commit();
             }
-            catch
+            catch (Exception e)
             {
+                LOGGER.Error("Exception thrown when attempting to create tables", e);
+
                 try
                 {
                     trns.Rollback();
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    LOGGER.Error("Exception thrown when attempting to roll back table creation", ex);
+                }
             }
 
             cmd = m_DbConn.CreateCommand();
 
             int build = 0;
+            long timestamp;
+
             try
             {
                 cmd.CommandText = "SELECT value FROM eventtimerapi_prop WHERE key = @key";
-                cmd.Parameters["key"] = "build";
-                if (!int.TryParse(cmd.ExecuteScalar().ToString(), out build))
+                cmd.AddParameter("@key", "build");
+                if (!int.TryParse((string)cmd.ExecuteScalar(), out build))
                     build = 0;
             }
-            catch { }
+            catch (Exception e)
+            {
+                LOGGER.Error("Exception thrown when attempting to select build number", e);
+            }
+
             ResetTimers(build);
 
             try
             {
-                cmd.Parameters["key"] = "timestamp";
-                long timestamp;
-                if (long.TryParse(cmd.ExecuteScalar().ToString(), out timestamp))
+                cmd.Parameters.Clear();
+                cmd.AddParameter("@key", "timestamp");
+                if (long.TryParse((string)cmd.ExecuteScalar(), out timestamp))
                     m_TimerData.Timestamp = timestamp;
             }
-            catch { }
+            catch (Exception e)
+            {
+                LOGGER.Error("Exception thrown when attempting to select timestamp", e);
+            }
 
             try
             {
@@ -169,11 +197,16 @@ namespace GuildWars2.GoMGoDS.APIServer
                     }
                 }
             }
-            catch { }
+            catch (Exception e)
+            {
+                LOGGER.Error("Exception thrown when attempting to select event data", e);
+            }
         }
 
         private void SaveDatabase()
         {
+            LOGGER.Debug("Saving timer data to the database");
+
             IDbCommand cmd = m_DbConn.CreateCommand();
             IDbTransaction trns = m_DbConn.BeginTransaction();
 
@@ -183,42 +216,47 @@ namespace GuildWars2.GoMGoDS.APIServer
             try
             {
                 cmd.CommandText = @"INSERT OR REPLACE INTO eventtimerapi_prop (key, value) VALUES ('build', @build), ('timestamp', @timestamp)";
-                cmd.Parameters["build"] = m_TimerData.Build.ToString();
-                cmd.Parameters["timestamp"] = m_TimerData.Timestamp.ToString();
+                cmd.AddParameter("@build", m_TimerData.Build.ToString());
+                cmd.AddParameter("@timestamp", m_TimerData.Timestamp.ToString());
                 cmd.ExecuteNonQuery();
-                cmd.Parameters.Clear();
 
                 cmd.CommandText = @"INSERT OR REPLACE INTO eventtimerapi_events (id, name, mincountdown, maxcountdown, stageid, stagename, stagetype, timestamp)
                                         VALUES (@id, @name, @mincountdown, @maxcountdown, @stageid, @stagename, @stagetype, @timestamp)";
                 
                 foreach (MetaEventStatus status in m_TimerData.Events)
                 {
-                    cmd.Parameters["id"] = status.Id;
-                    cmd.Parameters["name"] = status.Name;
-                    cmd.Parameters["mincountdown"] = status.MinCountdown;
-                    cmd.Parameters["maxcountdown"] = status.MaxCountdown;
-                    cmd.Parameters["stageid"] = status.StageId;
-                    cmd.Parameters["stagename"] = status.StageName;
-                    cmd.Parameters["stagetype"] = status.StageType;
-                    cmd.Parameters["timestamp"] = status.Timestamp;
+                    cmd.Parameters.Clear();
+                    cmd.AddParameter("@id", status.Id);
+                    cmd.AddParameter("@name", status.Name);
+                    cmd.AddParameter("@mincountdown", status.MinCountdown);
+                    cmd.AddParameter("@maxcountdown", status.MaxCountdown);
+                    cmd.AddParameter("@stageid", status.StageId);
+                    cmd.AddParameter("@stagename", status.StageName);
+                    cmd.AddParameter("@stagetype", status.StageType);
+                    cmd.AddParameter("@timestamp", status.Timestamp);
                     cmd.ExecuteNonQuery();
                 }
 
                 trns.Commit();
             }
-            catch
+            catch (Exception e)
             {
+                LOGGER.Error("Exception thrown when attempting to save timer data to the database", e);
+
                 try
                 {
                     trns.Rollback();
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    LOGGER.Error("Exception thrown when attempting to roll back timer data save", ex);
+                }
             }
         }
 
         private void ResetTimers(int buildId)
         {
-            //LogLine("Resetting Timers for build {0}, acquiring lock...", buildId);
+            LOGGER.Debug("Resetting timer data");
 
             bool lockTaken = false;
             try
@@ -250,7 +288,10 @@ namespace GuildWars2.GoMGoDS.APIServer
                     m_StatusListMap[status.Id] = i;
                 }
             }
-            catch { }
+            catch(Exception e)
+            {
+                LOGGER.Error("Exception thrown when attempting to reset timer data", e);
+            }
             finally
             {
                 if (lockTaken)
@@ -263,6 +304,8 @@ namespace GuildWars2.GoMGoDS.APIServer
             // attempt to set the sync, if another of us is running, just exit
             if (Interlocked.CompareExchange(ref m_TimerSync, 1, 0) != 0)
                 return;
+
+            LOGGER.Debug("Worker thread process beginning");
 
             // wrap in a try-catch so we can release our interlock if something fails
             try
@@ -341,7 +384,10 @@ namespace GuildWars2.GoMGoDS.APIServer
 
                         SaveDatabase();
                     }
-                    catch { }
+                    catch (Exception exi)
+                    {
+                        LOGGER.Error("Exception thrown when saving database in worker thread", exi);
+                    }
                     finally
                     {
                         if (lockTaken)
@@ -353,8 +399,10 @@ namespace GuildWars2.GoMGoDS.APIServer
             }
             catch (Exception ex)
             {
-                // log an exception so it can be fixed
+                LOGGER.Error("Exception thrown in worker thread", ex);
             }
+
+            LOGGER.Debug("Worker thread process completed");
 
             // reset sync to 0
             Interlocked.Exchange(ref m_TimerSync, 0);

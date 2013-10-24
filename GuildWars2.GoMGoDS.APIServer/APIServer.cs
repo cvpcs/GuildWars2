@@ -11,10 +11,13 @@ using System.Threading.Tasks;
 
 using Mono.Data.Sqlite;
 
+using log4net;
+
 namespace GuildWars2.GoMGoDS.APIServer
 {
     public partial class APIServer : ServiceBase
     {
+        private static ILog LOGGER = LogManager.GetLogger(typeof(APIServer));
 
         private IDictionary<string, IAPI> m_APIs = new Dictionary<string, IAPI>();
         private HttpJsonServer m_JsonServer = new HttpJsonServer(uint.Parse(ConfigurationManager.AppSettings["port"]));
@@ -29,7 +32,9 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         protected override void OnStart(string[] args)
         {
-            m_DbConn = new SqliteConnection(string.Format("Data Source=file:{0}", ConfigurationManager.AppSettings["sqlite_db"]));
+            LOGGER.Debug("Starting service");
+
+            m_DbConn = new SqliteConnection(string.Format("Data Source={0}", ConfigurationManager.AppSettings["sqlite_db"]));
             m_DbConn.Open();
 
             foreach (string path in m_APIs.Keys)
@@ -46,6 +51,8 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         protected override void OnStop()
         {
+            LOGGER.Debug("Stopping service");
+
             m_JsonServer.Stop();
 
             foreach (IAPI api in m_APIs.Values)
