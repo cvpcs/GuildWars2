@@ -5,9 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Threading;
-using System.Timers;
-using TimeoutException = System.TimeoutException;
-using Timer = System.Timers.Timer;
 
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
@@ -17,27 +14,32 @@ using log4net;
 
 namespace GuildWars2.GoMGoDS.APIServer
 {
-    public class EventTimerAPI : IAPI
+    public class EventTimerAPI : TimerAPI
     {
         private static ILog LOGGER = LogManager.GetLogger(typeof(EventTimerAPI));
 
         private static TimeSpan p_PollRate = new TimeSpan(0, 0, 30);
         private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(EventTimerData));
 
-        private Timer m_Timer;
-        private int m_TimerSync;
-
-        private EventTimerData m_TimerData = null;
-        private SpinLock m_TimerDataLock = new SpinLock();
-        private IDictionary<string, int> m_StatusListMap = null;
+        private EventTimerData m_TimerData;
+        private SpinLock m_TimerDataLock;
+        private IDictionary<string, int> m_StatusListMap;
 
         private IDbConnection m_DbConn;
 
-        public HttpJsonServer.RequestHandler RequestHandler { get { return GetJson; } }
+        public override HttpJsonServer.RequestHandler RequestHandler { get { return GetJson; } }
 
-        public void Start(IDbConnection dbConn)
+        public EventTimerAPI()
+            : base(p_PollRate)
         {
-            LOGGER.Debug("Starting API");
+            m_TimerData = null;
+            m_TimerDataLock = new SpinLock();
+            m_StatusListMap = null;
+        }
+
+        protected override void Setup(IDbConnection dbConn)
+        {
+            LOGGER.Debug("Setting up API");
 
             m_DbConn = dbConn;
             m_TimerData = new EventTimerData();
@@ -48,27 +50,105 @@ namespace GuildWars2.GoMGoDS.APIServer
             int buildId = (build != null ? build.BuildId : -1);
             if (m_TimerData == null || m_TimerData.Build != buildId)
                 ResetTimers(buildId);
-
-            // start the timer
-            m_TimerSync = 0;
-            m_Timer = new Timer(p_PollRate.TotalMilliseconds);
-            m_Timer.Elapsed += WorkerThread;
-            m_Timer.Start();
         }
 
-        public void Stop()
+        protected override void Cleanup()
         {
-            LOGGER.Debug("Stopping API");
-
-            // stop timer
-            m_Timer.Stop();
-
-            // wait for any existing threads to complete
-            SpinWait.SpinUntil(() => Interlocked.CompareExchange(ref m_TimerSync, -1, 0) == 0);
+            LOGGER.Debug("Cleaning up API");
 
             // zero out our maps
             m_StatusListMap = null;
             m_TimerData = null;
+        }
+
+        protected override void Run()
+        {
+            // check if build has changed, reset timers if it has
+            BuildResponse build = new BuildRequest().Execute();
+            if (build != null && build.BuildId != m_TimerData.Build)
+                ResetTimers(build.BuildId);
+
+            // get data
+            EventsResponse response = new EventsRequest(1007).Execute();
+            if (response == null)
+                throw new TimeoutException("Request timed out when attempting to retrieve event data.");
+
+            long timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+
+            IList<EventState> metaEvents = response.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)).ToList();
+
+            IDictionary<int, MetaEventStatus> changedStatuses = new Dictionary<int, MetaEventStatus>();
+
+            // discover meta-event states
+            foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
+            {
+                int stageId = meta.GetStageId(metaEvents, m_TimerData.Events[m_StatusListMap[meta.Id]].StageId);
+
+                // stock state
+                MetaEventStatus status = new MetaEventStatus()
+                {
+                    Id = meta.Id,
+                    Name = meta.Name,
+                    MinCountdown = meta.MinSpawn,
+                    MaxCountdown = meta.MaxSpawn,
+                    StageId = stageId,
+                    StageType = null,
+                    StageName = null,
+                    Timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds
+                };
+
+                // we're in a stage
+                if (stageId >= 0)
+                {
+                    MetaEventStage stage = meta.Stages[stageId];
+
+                    if (stage.Countdown > 0 && stage.Countdown != uint.MaxValue)
+                    {
+                        status.Countdown = stage.Countdown;
+                    }
+                    else
+                    {
+                        status.Countdown = 0;
+                    }
+
+                    status.StageName = stage.Name;
+                    status.StageTypeEnum = stage.Type;
+                }
+
+                // has the status changed?
+                MetaEventStatus oldStatus = m_TimerData.Events[m_StatusListMap[meta.Id]];
+                if (oldStatus.StageId != status.StageId)
+                {
+                    changedStatuses[m_StatusListMap[meta.Id]] = status;
+                }
+            }
+
+            if (changedStatuses.Count > 0)
+            {
+                bool lockTaken = false;
+                try
+                {
+                    m_TimerDataLock.Enter(ref lockTaken);
+
+                    m_TimerData.Timestamp = timestamp;
+
+                    foreach (KeyValuePair<int, MetaEventStatus> status in changedStatuses)
+                        m_TimerData.Events[status.Key] = status.Value;
+
+                    SaveDatabase();
+                }
+                catch (Exception exi)
+                {
+                    LOGGER.Error("Exception thrown when saving database in worker thread", exi);
+                }
+                finally
+                {
+                    if (lockTaken)
+                    {
+                        m_TimerDataLock.Exit();
+                    }
+                }
+            }
         }
 
         private string GetJson()
@@ -297,115 +377,6 @@ namespace GuildWars2.GoMGoDS.APIServer
                 if (lockTaken)
                     m_TimerDataLock.Exit();
             }
-        }
-
-        private void WorkerThread(object sender, ElapsedEventArgs e)
-        {
-            // attempt to set the sync, if another of us is running, just exit
-            if (Interlocked.CompareExchange(ref m_TimerSync, 1, 0) != 0)
-                return;
-
-            LOGGER.Debug("Worker thread process beginning");
-
-            // wrap in a try-catch so we can release our interlock if something fails
-            try
-            {
-                // check if build has changed, reset timers if it has
-                BuildResponse build = new BuildRequest().Execute();
-                if (build != null && build.BuildId != m_TimerData.Build)
-                    ResetTimers(build.BuildId);
-
-                // get data
-                EventsResponse response = new EventsRequest(1007).Execute();
-                if (response == null)
-                    throw new TimeoutException("Request timed out when attempting to retrieve event data.");
-
-                long timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
-
-                IList<EventState> metaEvents = response.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)).ToList();
-
-                IDictionary<int, MetaEventStatus> changedStatuses = new Dictionary<int, MetaEventStatus>();
-
-                // discover meta-event states
-                foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
-                {
-                    int stageId = meta.GetStageId(metaEvents, m_TimerData.Events[m_StatusListMap[meta.Id]].StageId);
-
-                    // stock state
-                    MetaEventStatus status = new MetaEventStatus()
-                    {
-                        Id = meta.Id,
-                        Name = meta.Name,
-                        MinCountdown = meta.MinSpawn,
-                        MaxCountdown = meta.MaxSpawn,
-                        StageId = stageId,
-                        StageType = null,
-                        StageName = null,
-                        Timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds
-                    };
-
-                    // we're in a stage
-                    if (stageId >= 0)
-                    {
-                        MetaEventStage stage = meta.Stages[stageId];
-
-                        if (stage.Countdown > 0 && stage.Countdown != uint.MaxValue)
-                        {
-                            status.Countdown = stage.Countdown;
-                        }
-                        else
-                        {
-                            status.Countdown = 0;
-                        }
-
-                        status.StageName = stage.Name;
-                        status.StageTypeEnum = stage.Type;
-                    }
-
-                    // has the status changed?
-                    MetaEventStatus oldStatus = m_TimerData.Events[m_StatusListMap[meta.Id]];
-                    if (oldStatus.StageId != status.StageId)
-                    {
-                        changedStatuses[m_StatusListMap[meta.Id]] = status;
-                    }
-                }
-
-                if (changedStatuses.Count > 0)
-                {
-                    bool lockTaken = false;
-                    try
-                    {
-                        m_TimerDataLock.Enter(ref lockTaken);
-
-                        m_TimerData.Timestamp = timestamp;
-
-                        foreach (KeyValuePair<int, MetaEventStatus> status in changedStatuses)
-                            m_TimerData.Events[status.Key] = status.Value;
-
-                        SaveDatabase();
-                    }
-                    catch (Exception exi)
-                    {
-                        LOGGER.Error("Exception thrown when saving database in worker thread", exi);
-                    }
-                    finally
-                    {
-                        if (lockTaken)
-                        {
-                            m_TimerDataLock.Exit();
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LOGGER.Error("Exception thrown in worker thread", ex);
-            }
-
-            LOGGER.Debug("Worker thread process completed");
-
-            // reset sync to 0
-            Interlocked.Exchange(ref m_TimerSync, 0);
         }
     }
 }
