@@ -21,51 +21,28 @@ namespace GuildWars2.GoMGoDS.APIServer
         private static TimeSpan p_PollRate = new TimeSpan(0, 0, 30);
         private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(EventTimerData));
 
-        private EventTimerData m_TimerData;
-        private SpinLock m_TimerDataLock;
-        private IDictionary<string, int> m_StatusListMap;
-
         private IDbConnection m_DbConn;
 
         public override HttpJsonServer.RequestHandler RequestHandler { get { return GetJson; } }
 
         public EventTimerAPI()
             : base(p_PollRate)
-        {
-            m_TimerData = null;
-            m_TimerDataLock = new SpinLock();
-            m_StatusListMap = null;
-        }
+        { }
 
         protected override void Setup(IDbConnection dbConn)
         {
-            LOGGER.Debug("Setting up API");
-
             m_DbConn = dbConn;
-            m_TimerData = new EventTimerData();
-
-            LoadDatabase();
-
-            BuildResponse build = new BuildRequest().Execute();
-            int buildId = (build != null ? build.BuildId : -1);
-            if (m_TimerData == null || m_TimerData.Build != buildId)
-                ResetTimers(buildId);
+            DbCreateTables();
         }
 
         protected override void Cleanup()
-        {
-            LOGGER.Debug("Cleaning up API");
-
-            // zero out our maps
-            m_StatusListMap = null;
-            m_TimerData = null;
-        }
+        { }
 
         protected override void Run()
         {
             // check if build has changed, reset timers if it has
             BuildResponse build = new BuildRequest().Execute();
-            if (build != null && build.BuildId != m_TimerData.Build)
+            if (build != null && build.BuildId != DbGetProperty<int>("build"))
                 ResetTimers(build.BuildId);
 
             // get data
@@ -77,12 +54,13 @@ namespace GuildWars2.GoMGoDS.APIServer
 
             IList<EventState> metaEvents = response.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)).ToList();
 
-            IDictionary<int, MetaEventStatus> changedStatuses = new Dictionary<int, MetaEventStatus>();
+            IList<MetaEventStatus> changedStatuses = new List<MetaEventStatus>();
 
             // discover meta-event states
             foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
             {
-                int stageId = meta.GetStageId(metaEvents, m_TimerData.Events[m_StatusListMap[meta.Id]].StageId);
+                MetaEventStatus oldStatus = DbGetMetaEventStatus(meta.Id);
+                int stageId = meta.GetStageId(metaEvents, oldStatus.StageId);
 
                 // stock state
                 MetaEventStatus status = new MetaEventStatus()
@@ -116,36 +94,36 @@ namespace GuildWars2.GoMGoDS.APIServer
                 }
 
                 // has the status changed?
-                MetaEventStatus oldStatus = m_TimerData.Events[m_StatusListMap[meta.Id]];
                 if (oldStatus.StageId != status.StageId)
                 {
-                    changedStatuses[m_StatusListMap[meta.Id]] = status;
+                    changedStatuses.Add(status);
                 }
             }
 
             if (changedStatuses.Count > 0)
             {
-                bool lockTaken = false;
+                IDbTransaction tx = m_DbConn.BeginTransaction();
+
                 try
                 {
-                    m_TimerDataLock.Enter(ref lockTaken);
+                    DbSetProperty<long>("timestamp", timestamp, tx);
 
-                    m_TimerData.Timestamp = timestamp;
+                    foreach (MetaEventStatus status in changedStatuses)
+                        DbSetMetaEventStatus(status, tx);
 
-                    foreach (KeyValuePair<int, MetaEventStatus> status in changedStatuses)
-                        m_TimerData.Events[status.Key] = status.Value;
-
-                    SaveDatabase();
+                    tx.Commit();
                 }
-                catch (Exception exi)
+                catch (Exception e)
                 {
-                    LOGGER.Error("Exception thrown when saving database in worker thread", exi);
-                }
-                finally
-                {
-                    if (lockTaken)
+                    LOGGER.Error("Exception thrown when attempting to update event status", e);
+
+                    try
                     {
-                        m_TimerDataLock.Exit();
+                        tx.Rollback();
+                    }
+                    catch (Exception ex)
+                    {
+                        LOGGER.Error("Exception thrown when attempting to roll back event status update", ex);
                     }
                 }
             }
@@ -153,14 +131,21 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         private string GetJson()
         {
-            bool lockTaken = false;
             string data = string.Empty;
+            EventTimerData timerData = new EventTimerData()
+                {
+                    Build = DbGetProperty<int>("build"),
+                    Timestamp = DbGetProperty<long>("timestamp"),
+                    Events = new List<MetaEventStatus>()
+                };
+
+            foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
+                timerData.Events.Add(DbGetMetaEventStatus(meta.Id));
+
             try
             {
-                m_TimerDataLock.Enter(ref lockTaken);
-
                 MemoryStream stream = new MemoryStream();
-                p_Serializer.WriteObject(stream, m_TimerData);
+                p_Serializer.WriteObject(stream, timerData);
                 stream.Flush();
                 stream.Position = 0;
                 StreamReader reader = new StreamReader(stream);
@@ -171,19 +156,57 @@ namespace GuildWars2.GoMGoDS.APIServer
             {
                 LOGGER.Error("Exception thrown when attempting to serialize JSON", e);
             }
-            finally
-            {
-                if (lockTaken)
-                    m_TimerDataLock.Exit();
-            }
 
             return data;
         }
 
-        private void LoadDatabase()
+        private void ResetTimers(int build)
         {
-            LOGGER.Debug("Loading timer data from the database");
+            LOGGER.Debug("Resetting timer data");
 
+            long timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+
+            IDbTransaction tx = m_DbConn.BeginTransaction();
+
+            try
+            {
+                DbSetProperty<int>("build", build, tx);
+                DbSetProperty<long>("timestamp", timestamp, tx);
+
+                foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
+                {
+                    DbSetMetaEventStatus(new MetaEventStatus()
+                    {
+                        Id = meta.Id,
+                        Name = meta.Name,
+                        Countdown = 0,
+                        StageId = -1,
+                        StageTypeEnum = MetaEventStage.StageType.Reset,
+                        StageName = null,
+                        Timestamp = timestamp
+                    }, tx);
+                }
+
+                tx.Commit();
+            }
+            catch (Exception e)
+            {
+                LOGGER.Error("Exception thrown when attempting to reset timers", e);
+
+                try
+                {
+                    tx.Rollback();
+                }
+                catch (Exception ex)
+                {
+                    LOGGER.Error("Exception thrown when attempting to roll back timer reset", ex);
+                }
+            }
+        }
+
+        #region Database
+        private void DbCreateTables()
+        {
             IDbCommand cmd = m_DbConn.CreateCommand();
             IDbTransaction trns = m_DbConn.BeginTransaction();
 
@@ -222,45 +245,83 @@ namespace GuildWars2.GoMGoDS.APIServer
                     LOGGER.Error("Exception thrown when attempting to roll back table creation", ex);
                 }
             }
+        }
 
-            cmd = m_DbConn.CreateCommand();
-
-            int build = 0;
-            long timestamp;
+        private T DbGetProperty<T>(string key)
+        {
+            IDbCommand cmd = m_DbConn.CreateCommand();
+            cmd = m_DbConn.CreateCommand();;
 
             try
             {
                 cmd.CommandText = "SELECT value FROM eventtimerapi_prop WHERE key = @key";
-                cmd.AddParameter("@key", "build");
-                if (!int.TryParse((string)cmd.ExecuteScalar(), out build))
-                    build = 0;
-            }
-            catch (Exception e)
-            {
-                LOGGER.Error("Exception thrown when attempting to select build number", e);
-            }
+                cmd.AddParameter("@key", key);
 
-            ResetTimers(build);
+                object obj = cmd.ExecuteScalar();
 
-            try
-            {
-                cmd.Parameters.Clear();
-                cmd.AddParameter("@key", "timestamp");
-                if (long.TryParse((string)cmd.ExecuteScalar(), out timestamp))
-                    m_TimerData.Timestamp = timestamp;
-            }
-            catch (Exception e)
-            {
-                LOGGER.Error("Exception thrown when attempting to select timestamp", e);
-            }
-
-            try
-            {
-                cmd.CommandText = "SELECT * FROM eventtimerapi_events";
-                IDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (obj != null)
                 {
-                    MetaEventStatus status = new MetaEventStatus();
+                    System.ComponentModel.TypeConverter tc = System.ComponentModel.TypeDescriptor.GetConverter(obj);
+                    return (T)tc.ConvertTo(obj, typeof(T));
+                }
+            }
+            catch (Exception e)
+            {
+                LOGGER.Error(string.Format("Exception thrown when attempting to get property [{0}]", key), e);
+            }
+
+            return default(T);
+        }
+
+        private void DbSetProperty<T>(string key, T value, IDbTransaction tx = null)
+        {
+            IDbCommand cmd = m_DbConn.CreateCommand();
+
+            if (tx != null)
+            {
+                cmd.Connection = m_DbConn;
+                cmd.Transaction = tx;
+            }
+
+            try
+            {
+                cmd.CommandText = @"INSERT OR REPLACE INTO eventtimerapi_prop (key, value) VALUES (@key, @value)";
+                cmd.AddParameter("@key", key);
+                cmd.AddParameter("@value", value.ToString());
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                LOGGER.Error(string.Format("Exception thrown when attempting to set property [{0} = {1}]", key, value.ToString()), e);
+            }
+        }
+
+        private MetaEventStatus DbGetMetaEventStatus(string id)
+        {
+            MetaEvent meta = MetaEventDefinitions.MetaEvents.Where(m => m.Id == id).FirstOrDefault();
+            if (meta == null)
+                throw new KeyNotFoundException(string.Format("Meta event [{0}] does not exist", id));
+
+            MetaEventStatus status = new MetaEventStatus()
+                {
+                    Id = meta.Id,
+                    Name = meta.Name,
+                    Countdown = 0,
+                    StageId = -1,
+                    StageTypeEnum = MetaEventStage.StageType.Reset,
+                    StageName = null,
+                    Timestamp = DbGetProperty<long>("timestamp")
+                };
+
+            IDbCommand cmd = m_DbConn.CreateCommand();
+
+            try
+            {
+                cmd.CommandText = "SELECT * FROM eventtimerapi_events WHERE id = @id";
+                cmd.AddParameter("@id", id);
+                IDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
                     status.Id = reader["id"].ToString();
                     status.Name = reader["name"].ToString();
                     status.MinCountdown = uint.Parse(reader["mincountdown"].ToString());
@@ -269,114 +330,45 @@ namespace GuildWars2.GoMGoDS.APIServer
                     status.StageName = reader["stagename"].ToString();
                     status.StageType = reader["stagetype"].ToString();
                     status.Timestamp = long.Parse(reader["timestamp"].ToString());
-
-                    if (m_StatusListMap.ContainsKey(status.Id))
-                    {
-                        int i = m_StatusListMap[status.Id];
-                        m_TimerData.Events[i] = status;
-                    }
                 }
             }
             catch (Exception e)
             {
-                LOGGER.Error("Exception thrown when attempting to select event data", e);
+                LOGGER.Error(string.Format("Exception thrown when attempting to get event data [{0}]", id), e);
             }
+
+            return status;
         }
 
-        private void SaveDatabase()
+        private void DbSetMetaEventStatus(MetaEventStatus status, IDbTransaction tx = null)
         {
-            LOGGER.Debug("Saving timer data to the database");
-
             IDbCommand cmd = m_DbConn.CreateCommand();
-            IDbTransaction trns = m_DbConn.BeginTransaction();
 
-            cmd.Connection = m_DbConn;
-            cmd.Transaction = trns;
+            if (tx != null)
+            {
+                cmd.Connection = m_DbConn;
+                cmd.Transaction = tx;
+            }
 
             try
             {
-                cmd.CommandText = @"INSERT OR REPLACE INTO eventtimerapi_prop (key, value) VALUES ('build', @build), ('timestamp', @timestamp)";
-                cmd.AddParameter("@build", m_TimerData.Build.ToString());
-                cmd.AddParameter("@timestamp", m_TimerData.Timestamp.ToString());
-                cmd.ExecuteNonQuery();
-
                 cmd.CommandText = @"INSERT OR REPLACE INTO eventtimerapi_events (id, name, mincountdown, maxcountdown, stageid, stagename, stagetype, timestamp)
                                         VALUES (@id, @name, @mincountdown, @maxcountdown, @stageid, @stagename, @stagetype, @timestamp)";
-                
-                foreach (MetaEventStatus status in m_TimerData.Events)
-                {
-                    cmd.Parameters.Clear();
-                    cmd.AddParameter("@id", status.Id);
-                    cmd.AddParameter("@name", status.Name);
-                    cmd.AddParameter("@mincountdown", status.MinCountdown);
-                    cmd.AddParameter("@maxcountdown", status.MaxCountdown);
-                    cmd.AddParameter("@stageid", status.StageId);
-                    cmd.AddParameter("@stagename", status.StageName);
-                    cmd.AddParameter("@stagetype", status.StageType);
-                    cmd.AddParameter("@timestamp", status.Timestamp);
-                    cmd.ExecuteNonQuery();
-                }
-
-                trns.Commit();
+                cmd.AddParameter("@id", status.Id);
+                cmd.AddParameter("@name", status.Name);
+                cmd.AddParameter("@mincountdown", status.MinCountdown);
+                cmd.AddParameter("@maxcountdown", status.MaxCountdown);
+                cmd.AddParameter("@stageid", status.StageId);
+                cmd.AddParameter("@stagename", status.StageName);
+                cmd.AddParameter("@stagetype", status.StageType);
+                cmd.AddParameter("@timestamp", status.Timestamp);
+                cmd.ExecuteNonQuery();
             }
             catch (Exception e)
             {
-                LOGGER.Error("Exception thrown when attempting to save timer data to the database", e);
-
-                try
-                {
-                    trns.Rollback();
-                }
-                catch (Exception ex)
-                {
-                    LOGGER.Error("Exception thrown when attempting to roll back timer data save", ex);
-                }
+                LOGGER.Error(string.Format("Exception thrown when attempting to set event data [{0}]", status.Id), e);
             }
         }
-
-        private void ResetTimers(int buildId)
-        {
-            LOGGER.Debug("Resetting timer data");
-
-            bool lockTaken = false;
-            try
-            {
-                m_TimerDataLock.Enter(ref lockTaken);
-
-                m_TimerData.Build = buildId;
-                m_TimerData.Timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
-                m_TimerData.Events = new List<MetaEventStatus>();
-
-                foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
-                {
-                    m_TimerData.Events.Add(new MetaEventStatus()
-                    {
-                        Id = meta.Id,
-                        Name = meta.Name,
-                        Countdown = 0,
-                        StageId = -1,
-                        StageTypeEnum = MetaEventStage.StageType.Reset,
-                        StageName = null,
-                        Timestamp = m_TimerData.Timestamp
-                    });
-                }
-
-                m_StatusListMap = new Dictionary<string, int>();
-                for (int i = 0; i < m_TimerData.Events.Count; i++)
-                {
-                    MetaEventStatus status = m_TimerData.Events[i];
-                    m_StatusListMap[status.Id] = i;
-                }
-            }
-            catch(Exception e)
-            {
-                LOGGER.Error("Exception thrown when attempting to reset timer data", e);
-            }
-            finally
-            {
-                if (lockTaken)
-                    m_TimerDataLock.Exit();
-            }
-        }
+        #endregion
     }
 }
