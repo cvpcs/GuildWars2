@@ -1035,7 +1035,11 @@ module GuildWars2.ArenaNet.Mapper {
             return new L.DivIcon({
                 iconSize: new L.Point(32, 32),
                 className: "leaflet-player-marker",
-                html: "<img width=\"32\" height=\"32\" style=\"transform: rotate(" + rotation + "deg);\" src=\"" + ResourceBaseUri + "/player_position.png\" />"
+                html: "<img width=\"32\" height=\"32\" style=\"" +
+                        "-webkit-transform: rotate(" + rotation + "deg);" +
+                        "-moz-transform: rotate(" + rotation + "deg);" +
+                        "transform: rotate(" + rotation + "deg);" +
+                        "\" src=\"" + ResourceBaseUri + "/player_position.png\" />"
             });
         }
     }
