@@ -8,7 +8,8 @@ using System.Threading;
 
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
-using GuildWars2.SyntaxError.Model;
+using GuildWars2.GoMGoDS.API;
+using GuildWars2.GoMGoDS.Model;
 
 using log4net;
 
@@ -19,7 +20,7 @@ namespace GuildWars2.GoMGoDS.APIServer
         private static ILog LOGGER = LogManager.GetLogger(typeof(EventTimerAPI));
 
         private static TimeSpan p_PollRate = new TimeSpan(0, 0, 30);
-        private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(EventTimerData));
+        private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(EventTimerResponse));
 
         private IDbConnection m_DbConn;
 
@@ -129,10 +130,10 @@ namespace GuildWars2.GoMGoDS.APIServer
             }
         }
 
-        private string GetJson()
+        private string GetJson(IDictionary<string, string> _GET)
         {
             string data = string.Empty;
-            EventTimerData timerData = new EventTimerData()
+            EventTimerResponse timerData = new EventTimerResponse()
                 {
                     Build = DbGetProperty<int>("build"),
                     Timestamp = DbGetProperty<long>("timestamp"),

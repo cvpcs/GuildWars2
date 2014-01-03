@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.GoMGoDS.APIServe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net", "log4net\log4net.csproj", "{181FE707-E161-4722-9F38-6AAAB6FAA106}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.GoMGoDS", "GuildWars2.GoMGoDS\GuildWars2.GoMGoDS.csproj", "{2DD77528-F341-4CE2-B66F-7324228EB023}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -447,6 +449,18 @@ Global
 		{181FE707-E161-4722-9F38-6AAAB6FAA106}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{181FE707-E161-4722-9F38-6AAAB6FAA106}.Release|Mono.ActiveCfg = Release|Any CPU
 		{181FE707-E161-4722-9F38-6AAAB6FAA106}.Release|Win32.ActiveCfg = Release|Any CPU
+		{2DD77528-F341-4CE2-B66F-7324228EB023}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DD77528-F341-4CE2-B66F-7324228EB023}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DD77528-F341-4CE2-B66F-7324228EB023}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2DD77528-F341-4CE2-B66F-7324228EB023}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2DD77528-F341-4CE2-B66F-7324228EB023}.Debug|Mono.ActiveCfg = Debug|Any CPU
+		{2DD77528-F341-4CE2-B66F-7324228EB023}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{2DD77528-F341-4CE2-B66F-7324228EB023}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DD77528-F341-4CE2-B66F-7324228EB023}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DD77528-F341-4CE2-B66F-7324228EB023}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2DD77528-F341-4CE2-B66F-7324228EB023}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2DD77528-F341-4CE2-B66F-7324228EB023}.Release|Mono.ActiveCfg = Release|Any CPU
+		{2DD77528-F341-4CE2-B66F-7324228EB023}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

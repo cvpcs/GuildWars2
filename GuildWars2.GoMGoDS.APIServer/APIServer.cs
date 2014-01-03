@@ -27,7 +27,9 @@ namespace GuildWars2.GoMGoDS.APIServer
         {
             InitializeComponent();
 
-            m_APIs["/event_timer_data.json"] = new EventTimerAPI();
+            m_APIs["/championevents.json"] = new ChampionEventsAPI();
+            m_APIs["/eventtimer.json"] = new EventTimerAPI();
+            m_APIs["/nodes.json"] = new NodesAPI();
         }
 
         protected override void OnStart(string[] args)

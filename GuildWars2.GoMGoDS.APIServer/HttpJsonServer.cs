@@ -20,7 +20,7 @@ namespace GuildWars2.GoMGoDS.APIServer
         private readonly ManualResetEvent m_Ready;
         private Queue<HttpListenerContext> m_Queue;
 
-        public delegate string RequestHandler();
+        public delegate string RequestHandler(IDictionary<string, string> _GET);
         private IDictionary<string, RequestHandler> m_RequestHandlers;
 
         public HttpJsonServer(uint port)
@@ -131,7 +131,11 @@ namespace GuildWars2.GoMGoDS.APIServer
 
                 if (m_RequestHandlers.ContainsKey(request.Url.AbsolutePath))
                 {
-                    string str = m_RequestHandlers[request.Url.AbsolutePath]();
+                    IDictionary<string, string> _get = new Dictionary<string, string>();
+                    foreach (string key in request.QueryString.Keys)
+                        _get.Add(key, request.QueryString.Get(key));
+
+                    string str = m_RequestHandlers[request.Url.AbsolutePath](_get);
                     byte[] buf = Encoding.UTF8.GetBytes(str);
 
                     response.ContentType = "application/json";
