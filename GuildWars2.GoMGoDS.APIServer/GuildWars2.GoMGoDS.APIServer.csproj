@@ -40,7 +40,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
@@ -83,6 +82,10 @@
     <ProjectReference Include="..\GuildWars2.GoMGoDS\GuildWars2.GoMGoDS.csproj">
       <Project>{2dd77528-f341-4ce2-b66f-7324228eb023}</Project>
       <Name>GuildWars2.GoMGoDS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HtmlAgilityPack\HtmlAgilityPack.fx.4.5.csproj">
+      <Project>{1028002a-bbe2-4ff2-94b7-a8368a8f6887}</Project>
+      <Name>HtmlAgilityPack.fx.4.5</Name>
     </ProjectReference>
     <ProjectReference Include="..\log4net\log4net.csproj">
       <Project>{181fe707-e161-4722-9f38-6aaab6faa106}</Project>

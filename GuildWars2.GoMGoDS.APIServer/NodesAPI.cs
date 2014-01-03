@@ -5,9 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Json;
-//using System.Threading;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 using System.Xml.XPath;
 
 using GuildWars2.ArenaNet.API;
@@ -15,6 +13,7 @@ using GuildWars2.ArenaNet.Model;
 using GuildWars2.GoMGoDS.API;
 using GuildWars2.GoMGoDS.Model;
 
+using HtmlAgilityPack;
 using log4net;
 
 namespace GuildWars2.GoMGoDS.APIServer
@@ -22,11 +21,12 @@ namespace GuildWars2.GoMGoDS.APIServer
     public class NodesAPI : IAPI
     {
         private static ILog LOGGER = LogManager.GetLogger(typeof(NodesAPI));
+        private static string p_ValRegexFormat = @"^.*(?:;|\s)?{0}:\s*([\d.]+)px.*$";
 
-        private static Regex p_XVal = new Regex(@"^.*(?:;|\s)?left:\s*(\d+)px.*$");
-        private static Regex p_YVal = new Regex(@"^.*(?:;|\s)?top:\s*(\d+)px.*$");
-        private static Regex p_WVal = new Regex(@"^.*(?:;|\s)?width:\s*(\d+)px.*$");
-        private static Regex p_HVal = new Regex(@"^.*(?:;|\s)?height:\s*(\d+)px.*$");
+        private static Regex p_XVal = new Regex(string.Format(p_ValRegexFormat, "left"));
+        private static Regex p_YVal = new Regex(string.Format(p_ValRegexFormat, "top"));
+        private static Regex p_WVal = new Regex(string.Format(p_ValRegexFormat, "width"));
+        private static Regex p_HVal = new Regex(string.Format(p_ValRegexFormat, "height"));
 
         private static TimeSpan p_CacheTimeout = new TimeSpan(1, 0, 0);
         private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(Object));
@@ -125,7 +125,10 @@ namespace GuildWars2.GoMGoDS.APIServer
             DateTime timestamp = DbGetLatestTimestamp(worldId, mapId);
             if (DateTime.Now - timestamp > p_CacheTimeout)
             {
-                nodes = GetGw2Nodes(worldId, mapId);
+                timestamp = DateTime.UtcNow;
+
+                nodes = GetGw2Nodes(worldId, mapId, timestamp);
+
                 if (nodes != null)
                 {
                     IDbTransaction tx = m_DbConn.BeginTransaction();
@@ -185,7 +188,7 @@ namespace GuildWars2.GoMGoDS.APIServer
             return data;
         }
 
-        private IList<NodeInfo> GetGw2Nodes(int worldId, int mapId)
+        private IList<NodeInfo> GetGw2Nodes(int worldId, int mapId, DateTime timestamp)
         {
             IList<NodeInfo> nodes = new List<NodeInfo>();
 
@@ -198,19 +201,14 @@ namespace GuildWars2.GoMGoDS.APIServer
                     html = client.DownloadString(string.Format("http://gw2nodes.com/index.php?server={0}&map={1}", p_WorldIdMap[worldId], p_MapIdMap[mapId]));
                 }
 
-                MemoryStream ms = new MemoryStream();
-                StreamWriter sw = new StreamWriter(ms);
-                sw.Write(html);
-                sw.Flush();
-                ms.Position = 0;
-                XDocument docNav = XDocument.Load(ms);
-                sw.Close();
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(html);
 
-                XPathNavigator nav = docNav.CreateNavigator();
+                XPathNavigator nav = doc.CreateNavigator();
 
                 XPathNavigator canvas = nav.SelectSingleNode("//div[@id='map']/canvas");
-                int width = int.Parse(canvas.GetAttribute("width", null));
-                int height = int.Parse(canvas.GetAttribute("height", null));
+                double width = double.Parse(canvas.GetAttribute("width", null));
+                double height = double.Parse(canvas.GetAttribute("height", null));
 
                 XPathNodeIterator imgList = nav.Select("//div[@id='map']/img[@class='node']");
                 while (imgList.MoveNext())
@@ -218,10 +216,10 @@ namespace GuildWars2.GoMGoDS.APIServer
                     XPathNavigator img = imgList.Current;
 
                     string style = img.GetAttribute("style", null);
-                    int x = int.Parse(p_XVal.Match(style).Groups[1].Value);
-                    int y = int.Parse(p_YVal.Match(style).Groups[1].Value);
-                    int w = int.Parse(p_WVal.Match(style).Groups[1].Value);
-                    int h = int.Parse(p_HVal.Match(style).Groups[1].Value);
+                    double x = double.Parse(p_XVal.Match(style).Groups[1].Value);
+                    double y = double.Parse(p_YVal.Match(style).Groups[1].Value);
+                    double w = double.Parse(p_WVal.Match(style).Groups[1].Value);
+                    double h = double.Parse(p_HVal.Match(style).Groups[1].Value);
 
                     string n = img.GetAttribute("nodetype", null);
                     string t = n.ToLower();
@@ -239,9 +237,9 @@ namespace GuildWars2.GoMGoDS.APIServer
                         {
                             WorldId = worldId,
                             MapId = mapId,
-                            X = x,
-                            Y = y,
-                            Timestamp = DateTime.UtcNow,
+                            X = (int)x,
+                            Y = (int)y,
+                            Timestamp = timestamp,
                             Name = n,
                             Type = t
                         });
@@ -301,7 +299,7 @@ namespace GuildWars2.GoMGoDS.APIServer
                 cmd.CommandText = @"SELECT * FROM nodesapi_nodes
                                         WHERE worldid = @worldid AND mapid = @mapid";
                 cmd.AddParameter("@worldid", worldId);
-                cmd.AddParameter("@mapdid", mapId);
+                cmd.AddParameter("@mapid", mapId);
                 IDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -404,9 +402,9 @@ namespace GuildWars2.GoMGoDS.APIServer
                 cmd.CommandText = @"SELECT MAX(timestamp) FROM nodesapi_nodes
                                         WHERE worldid = @worldid AND mapid = @mapid";
                 cmd.AddParameter("@worldid", worldId);
-                cmd.AddParameter("@mapdid", mapId);
+                cmd.AddParameter("@mapid", mapId);
                 object obj = cmd.ExecuteScalar();
-                if (obj != null)
+                if (obj != null && !string.IsNullOrEmpty(obj.ToString()))
                     return new DateTime(long.Parse(obj.ToString()));
             }
             catch (Exception e)

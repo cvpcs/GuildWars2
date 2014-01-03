@@ -7,7 +7,6 @@ using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Xml.Linq;
 using System.Xml.XPath;
 
 using GuildWars2.ArenaNet.API;
@@ -15,6 +14,7 @@ using GuildWars2.ArenaNet.Model;
 using GuildWars2.GoMGoDS.API;
 using GuildWars2.GoMGoDS.Model;
 
+using HtmlAgilityPack;
 using log4net;
 
 namespace GuildWars2.GoMGoDS.APIServer
@@ -55,15 +55,10 @@ namespace GuildWars2.GoMGoDS.APIServer
                 html = client.DownloadString(WIKI_URL);
             }
 
-            MemoryStream ms = new MemoryStream();
-            StreamWriter sw = new StreamWriter(ms);
-            sw.Write(html);
-            sw.Flush();
-            ms.Position = 0;
-            XDocument docNav = XDocument.Load(ms);
-            sw.Close();
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(html);
 
-            XPathNavigator nav = docNav.CreateNavigator();
+            XPathNavigator nav = doc.CreateNavigator();
             XPathNodeIterator i = nav.Select("//table/tr/td[position()=6]");
 
             IList<string> champ_list = new List<string>();
