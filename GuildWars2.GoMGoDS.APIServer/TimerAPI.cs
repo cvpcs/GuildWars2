@@ -34,6 +34,9 @@ namespace GuildWars2.GoMGoDS.APIServer
             m_Timer = new Timer(m_PollRate.TotalMilliseconds);
             m_Timer.Elapsed += WorkerThread;
             m_Timer.Start();
+            
+            // force-call the thread at least once
+            WorkerThread(this, null);
         }
 
         public void Stop()
