@@ -43,7 +43,7 @@ namespace GuildWars2.GoMGoDS.APIServer
         {
             // check if build has changed, reset timers if it has
             BuildResponse build = new BuildRequest().Execute();
-            if (build != null && build.BuildId != DbGetProperty<int>("build"))
+            if (build != null && build.BuildId != DbGetBuild())
                 ResetTimers(build.BuildId);
 
             // get data
@@ -107,7 +107,7 @@ namespace GuildWars2.GoMGoDS.APIServer
 
                 try
                 {
-                    DbSetProperty<long>("timestamp", timestamp, tx);
+                    DbSetProperty("timestamp", timestamp.ToString(), tx);
 
                     foreach (MetaEventStatus status in changedStatuses)
                         DbSetMetaEventStatus(status, tx);
@@ -135,8 +135,8 @@ namespace GuildWars2.GoMGoDS.APIServer
             string data = string.Empty;
             EventTimerResponse timerData = new EventTimerResponse()
                 {
-                    Build = DbGetProperty<int>("build"),
-                    Timestamp = DbGetProperty<long>("timestamp"),
+                    Build = DbGetBuild(),
+                    Timestamp = DbGetTimestamp(),
                     Events = new List<MetaEventStatus>()
                 };
 
@@ -171,8 +171,8 @@ namespace GuildWars2.GoMGoDS.APIServer
 
             try
             {
-                DbSetProperty<int>("build", build, tx);
-                DbSetProperty<long>("timestamp", timestamp, tx);
+                DbSetProperty("build", build.ToString(), tx);
+                DbSetProperty("timestamp", timestamp.ToString(), tx);
 
                 foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
                 {
@@ -248,7 +248,7 @@ namespace GuildWars2.GoMGoDS.APIServer
             }
         }
 
-        private T DbGetProperty<T>(string key)
+        private string DbGetProperty(string key)
         {
             IDbCommand cmd = m_DbConn.CreateCommand();
             cmd = m_DbConn.CreateCommand();;
@@ -262,8 +262,7 @@ namespace GuildWars2.GoMGoDS.APIServer
 
                 if (obj != null)
                 {
-                    System.ComponentModel.TypeConverter tc = System.ComponentModel.TypeDescriptor.GetConverter(obj);
-                    return (T)tc.ConvertTo(obj, typeof(T));
+                    return obj.ToString();
                 }
             }
             catch (Exception e)
@@ -271,10 +270,10 @@ namespace GuildWars2.GoMGoDS.APIServer
                 LOGGER.Error(string.Format("Exception thrown when attempting to get property [{0}]", key), e);
             }
 
-            return default(T);
+            return string.Empty;
         }
 
-        private void DbSetProperty<T>(string key, T value, IDbTransaction tx = null)
+        private void DbSetProperty(string key, string value, IDbTransaction tx = null)
         {
             IDbCommand cmd = m_DbConn.CreateCommand();
 
@@ -288,13 +287,33 @@ namespace GuildWars2.GoMGoDS.APIServer
             {
                 cmd.CommandText = @"INSERT OR REPLACE INTO eventtimerapi_prop (key, value) VALUES (@key, @value)";
                 cmd.AddParameter("@key", key);
-                cmd.AddParameter("@value", value.ToString());
+                cmd.AddParameter("@value", value);
                 cmd.ExecuteNonQuery();
             }
             catch (Exception e)
             {
                 LOGGER.Error(string.Format("Exception thrown when attempting to set property [{0} = {1}]", key, value.ToString()), e);
             }
+        }
+
+        private int DbGetBuild()
+        {
+            int build;
+
+            if (!int.TryParse(DbGetProperty("build"), out build))
+                build = -1;
+
+            return build;
+        }
+
+        private long DbGetTimestamp()
+        {
+            long timestamp;
+
+            if (!long.TryParse(DbGetProperty("timestamp"), out timestamp))
+                timestamp = -1;
+
+            return timestamp;
         }
 
         private MetaEventStatus DbGetMetaEventStatus(string id)
@@ -311,7 +330,7 @@ namespace GuildWars2.GoMGoDS.APIServer
                     StageId = -1,
                     StageTypeEnum = MetaEventStage.StageType.Reset,
                     StageName = null,
-                    Timestamp = DbGetProperty<long>("timestamp")
+                    Timestamp = DbGetTimestamp()
                 };
 
             IDbCommand cmd = m_DbConn.CreateCommand();
