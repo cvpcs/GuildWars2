@@ -79,10 +79,10 @@ namespace GuildWars2.GoMGoDS.Model
 
             /* GOOD */
             MetaEvents.Add(new MetaEvent("foulbear", "Foulbear Chieftain")
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault Foulbear Kraal", 600)
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault Foulbear Kraal", 780)
                             .AddEvent(new Guid("D9F1CF48-B1CB-49F5-BFAF-4CEC5E68C9CF"), EventStateType.Active) // Assault Foulbear Kraal by killing its leaders before the ogres can rally.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy Foulbear Kraal", 600)
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy Foulbear Kraal", 720)
                             .AddEvent(new Guid("4B478454-8CD2-4B44-808C-A35918FA86AA")) // Destroy Foulbear Kraal before the ogres can rally.
                         )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill the Foulbear Chieftain", 600)
