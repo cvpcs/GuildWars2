@@ -25,6 +25,7 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         private static string WIKI_URL = "http://wiki.guildwars2.com/wiki/List_of_champions";
         private static Regex WIKI_NAME_CLEAN = new Regex("[^a-z0-9]");
+        private static Regex GUID = new Regex("[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}");
 
         private static TimeSpan p_PollRate = new TimeSpan(24, 0, 0);
         private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(ChampionEventsResponse));
@@ -104,7 +105,7 @@ namespace GuildWars2.GoMGoDS.APIServer
         {
             string data = string.Empty;
             ChampionEventsResponse eventData = new ChampionEventsResponse();
-            eventData.AddRange(DbGetEvents());
+            eventData.ChampionEvents = DbGetEvents();
 
             try
             {
@@ -115,6 +116,8 @@ namespace GuildWars2.GoMGoDS.APIServer
                 StreamReader reader = new StreamReader(stream);
                 data = reader.ReadToEnd();
                 reader.Close();
+
+                data = GUID.Replace(data, m => m.ToString().ToUpper());
             }
             catch (Exception e)
             {

@@ -5,5 +5,9 @@ using System.Runtime.Serialization;
 namespace GuildWars2.GoMGoDS.API
 {
     [DataContract]
-    public class ChampionEventsResponse : List<Guid> { }
+    public class ChampionEventsResponse
+    {
+        [DataMember(Name = "champion_events")]
+        public List<Guid> ChampionEvents;
+    }
 }
