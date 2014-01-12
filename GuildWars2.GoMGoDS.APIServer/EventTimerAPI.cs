@@ -98,9 +98,9 @@ namespace GuildWars2.GoMGoDS.APIServer
         {
             long timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
 
-            IList<EventState> metaEvents = events.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)).ToList();
+            HashSet<EventState> metaEvents = new HashSet<EventState>(events.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)));
 
-            IList<MetaEventStatus> changedStatuses = new List<MetaEventStatus>();
+            HashSet<MetaEventStatus> changedStatuses = new HashSet<MetaEventStatus>();
 
             // discover meta-event states
             foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
@@ -124,7 +124,7 @@ namespace GuildWars2.GoMGoDS.APIServer
                 // we're in a stage
                 if (stageId >= 0)
                 {
-                    MetaEventStage stage = meta.Stages[stageId];
+                    MetaEventStage stage = meta.Stages.ElementAt(stageId);
 
                     if (stage.Countdown > 0 && stage.Countdown != uint.MaxValue)
                     {

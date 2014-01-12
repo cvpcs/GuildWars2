@@ -10,7 +10,7 @@ namespace GuildWars2.GoMGoDS.Model
     {
         public static IList<MetaEvent> MetaEvents;
 
-        public static IList<Guid> EventList;
+        public static HashSet<Guid> EventList;
         public static IDictionary<MetaEvent, List<Guid>> EventDictionary;
 
         static MetaEventDefinitions()
@@ -167,6 +167,19 @@ namespace GuildWars2.GoMGoDS.Model
             
             /* GOOD */
             MetaEvents.Add(new MetaEvent("megadestroyer", "Megadestroyer")
+                    .AddStage(new MetaEventMultiLineStage(MetaEventStage.StageType.PreEvent, "Assist the sylvari camp")
+                            .AddEvent(new Guid("294E08F6-CA36-42B3-8D06-B321BA06EECA"), "Stop the destroyer-essence collectors") // Stop the Inquest's destroyer-essence collectors by destroying their power cores.
+                            .AddEvent(new Guid("61D4579A-C53F-4C26-A31B-92FABE3DA566"), "Defend the Advanced Arcanomics lab") // Defend the Advanced Arcanomics lab.
+                            .AddEvent(new Guid("3BA29A69-A30B-405D-96AC-CBA5D511C163"), "Stop the rampaging golem") // Stop the rampaging Inquest golem.
+                        )
+                    .AddStage(new MetaEventMultiLineStage(MetaEventStage.StageType.PreEvent, "Clear the volcano of destroyers.")
+                            .AddEvent(new Guid("9E5D9F1A-FE14-49C6-917F-43AAE227165C"), "Slay destroyers to the north") // Slay destroyers, and close their fissures on the volcano's north side.
+                            .AddEvent(new Guid("584A4D22-33DC-4D77-A5D9-2FA7379401ED"), "Slay destroyers to the southeast") // Eliminate destroyer forces in the volcano's southeast cavern.
+                            .AddEvent(new Guid("4210CE81-BDB7-448E-BE33-46E18A5A3477"), "Slay destroyers to the south") // Eliminate destroyer forces on the volcano's south side.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Protect the asura")
+                            .AddEvent(new Guid("36E81760-7D92-458E-AA22-7CDE94112B8F")) // Protect the asura and their technology while they quell the unstable volcano.
+                        )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill the Megadestroyer", 900)
                             .AddEvent(new Guid("C876757A-EF3E-4FBE-A484-07FF790D9B05")) // Kill the megadestroyer before it blows everyone up.
                         )
@@ -197,6 +210,13 @@ namespace GuildWars2.GoMGoDS.Model
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Blocking, "Defeat the rotting oakheart")
                             .AddEvent(new Guid("04084490-0117-4D56-8D67-C4FFFE933C0C")) // Defeat the champion rotting ancient oakheart.
                         ) */
+                    .AddStage(new MetaEventBlockedStage("Assistance needed in the swamp")
+                            .AddBlockedEvent(new Guid("31CEBA08-E44D-472F-81B0-7143D73797F5"), EventStateType.Preparation) // Defeat the shadow behemoth.
+                            .AddEvent(new Guid("1E644459-9EC4-4C63-9975-E37CF5E7C108"), "The monestary requires assistance") // Drive back the centaurs before they steal the monastery's ale.
+                            .AddEvent(new Guid("5AB5E4A7-202C-476F-8B0C-5F2CDC5DB3A0"), "The monestary requires assistance") // Return stolen kegs of ale to Abbot Mathias.
+                            .AddEvent(new Guid("9062EBB9-EAD2-43E4-A820-DC6BD28A3040"), EventStateType.Preparation, "The monestary requires assistance") // Protect the brew shipment.
+                            .AddEvent(new Guid("04084490-0117-4D56-8D67-C4FFFE933C0C"), "Defeat the champion oakheart") // Defeat the champion rotting ancient oakheart.
+                        )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Portals are outside the swamp")
                             .AddEvent(new Guid("AFCF031A-F71D-4CEA-85E1-957179414B25")) // Drive back Underworld creatures by destroying portals in Taminn Foothills.
                             .AddEvent(new Guid("CFBC4A8C-2917-478A-9063-1A8B43CC8C38")) // Drive back Underworld creatures by destroying portals in the Heartwoods.
@@ -287,10 +307,16 @@ namespace GuildWars2.GoMGoDS.Model
             /* READY FOR TEST */
             MetaEvents.Add(new MetaEvent("lyssa", "Temple of Lyssa")
                     /* TODO: The end event is always active, need to find a way to better handle this */
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Capture the seals")
-                            .AddEvent(new Guid("F66922B5-B4BD-461F-8EC5-03327BD2B558")) // Protect the Pact golems until they charge the neutralizer device.
-                            .AddEvent(new Guid("35997B10-179B-4E39-AD7F-54E131ECDD57")) // Destroy the Risen fortifications to capture the Seal of Union.
-                            .AddEvent(new Guid("590364E0-0053-4933-945E-21D396B10B20")) // Defend the Seal of Lyss until the Pact cannon is online.
+                    .AddStage(new MetaEventMultiLineStage(MetaEventStage.StageType.PreEvent, "Capture the seals")
+                            .AddEvent(new Guid("B6D6D060-4974-4385-AB08-F641B6F32823"), EventStateType.Active, "Defend the Song of Lyss") // Defend the seal until the Pact cannon is back online.
+                            .AddEvent(new Guid("2F3955DB-5CAD-480E-AACB-4A9D318AA9A8"), EventStateType.Active, "Defend the Song of Lyss") // Drive off the dragon minions.
+                            .AddEvent(new Guid("590364E0-0053-4933-945E-21D396B10B20"), EventStateType.Active, "Capture the Song of Lyss") // Defend the Seal of Lyss until the Pact cannon is online.
+                            .AddEvent(new Guid("20422E4E-B7C8-46BB-82CD-C0C320E3BD7E"), EventStateType.Active, "Defend the Spark of Ilya") // Defend the energy containment device.
+                            .AddEvent(new Guid("A3BEF1D9-10B0-44C7-8B4B-600BEC0F0316"), EventStateType.Active, "Defend the Spark of Ilya") // Stop the Inquest from draining the energy containment device.
+                            .AddEvent(new Guid("F66922B5-B4BD-461F-8EC5-03327BD2B558"), EventStateType.Active, "Capture the Spark of Ilya") // Protect the Pact golems until they charge the neutralizer device.
+                            .AddEvent(new Guid("F5436671-8934-4BD4-AEF7-4F3741A9CDA4"), EventStateType.Active, "Defend the Seal of Union") // Defeat the Risen forces before they construct fortifications around the Seal of Union.
+                            .AddEvent(new Guid("ADC3AA4C-0212-4AE6-98FA-4F59F3C9BCFA"), EventStateType.Active, "Defend the Seal of Union") // Defend the Seal of Union from corruption.
+                            .AddEvent(new Guid("35997B10-179B-4E39-AD7F-54E131ECDD57"), EventStateType.Active, "Capture the Seal of Union") // Destroy the Risen fortifications to capture the Seal of Union.
                         )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the High Priestess")
                             .AddEvent(new Guid("0372874E-59B7-4A8F-B535-2CF57B8E67E4")) // Kill the Corrupted High Priestess
@@ -387,7 +413,7 @@ namespace GuildWars2.GoMGoDS.Model
 
             // this is here for performance
             EventDictionary = MetaEvents.ToDictionary(me => me, me => me.Stages.SelectMany(s => s.EventStates).Select(s => s.Event).ToList());
-            EventList = EventDictionary.SelectMany(kp => kp.Value).ToList();
+            EventList = new HashSet<Guid>(EventDictionary.SelectMany(kp => kp.Value));
         }
     }
 }

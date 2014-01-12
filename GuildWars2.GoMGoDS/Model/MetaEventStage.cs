@@ -12,7 +12,7 @@ namespace GuildWars2.GoMGoDS.Model
         public virtual string Name { get; private set; }
         public bool IsEndStage { get; private set; }
 
-        public IList<EventState> EventStates { get; private set; }
+        public HashSet<EventState> EventStates { get; private set; }
 
         // 0 = no countdown
         // MaxValue = continue from previous
@@ -23,7 +23,7 @@ namespace GuildWars2.GoMGoDS.Model
         {
             Type = type;
             Name = name;
-            EventStates = new List<EventState>();
+            EventStates = new HashSet<EventState>();
 
             Countdown = countdown;
 
@@ -46,19 +46,19 @@ namespace GuildWars2.GoMGoDS.Model
             return this;
         }
 
-        public virtual bool IsActive(IList<GuildWars2.ArenaNet.Model.EventState> events)
+        public virtual bool IsActive(HashSet<GuildWars2.ArenaNet.Model.EventState> events)
         {
             return events.Where(es => EventStates.Contains(new EventState() { Event = es.EventId, State = es.StateEnum })).Count() > 0;
         }
 
-        public virtual bool IsSuccessful(IList<GuildWars2.ArenaNet.Model.EventState> events)
+        public virtual bool IsSuccessful(HashSet<GuildWars2.ArenaNet.Model.EventState> events)
         {
             IEnumerable<Guid> eventIds = EventStates.Select(es => es.Event).Distinct();
 
             return events.Where(es => eventIds.Contains(es.EventId) && es.StateEnum == EventStateType.Success).Count() == eventIds.Count();
         }
 
-        public virtual bool IsFailed(IList<GuildWars2.ArenaNet.Model.EventState> events)
+        public virtual bool IsFailed(HashSet<GuildWars2.ArenaNet.Model.EventState> events)
         {
             IEnumerable<Guid> eventIds = EventStates.Select(es => es.Event).Distinct();
 

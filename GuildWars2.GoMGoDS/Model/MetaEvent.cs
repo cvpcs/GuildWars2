@@ -14,7 +14,7 @@ namespace GuildWars2.GoMGoDS.Model
         public uint MinSpawn { get; private set; }
         public uint MaxSpawn { get; private set; }
 
-        public IList<MetaEventStage> Stages { get; private set; }
+        public HashSet<MetaEventStage> Stages { get; private set; }
 
         public MetaEvent(string id, string name)
         {
@@ -24,7 +24,7 @@ namespace GuildWars2.GoMGoDS.Model
             MinSpawn = 0;
             MaxSpawn = 0;
 
-            Stages = new List<MetaEventStage>();
+            Stages = new HashSet<MetaEventStage>();
         }
 
         public MetaEvent(string id, string name, uint min, uint max)
@@ -40,16 +40,16 @@ namespace GuildWars2.GoMGoDS.Model
             return this;
         }
 
-        public int GetStageId(IList<EventState> eventStates, int prevStageId = -1)
+        public int GetStageId(HashSet<EventState> eventStates, int prevStageId = -1)
         {
             int stageId = -1;
 
-            for (int i = 0; i < Stages.Count; i++)
+            IEnumerator<MetaEventStage> itr = Stages.GetEnumerator();
+            for (int i = 0; itr.MoveNext(); i++)
             {
-                if (Stages[i].IsActive(eventStates))
+                if (itr.Current.IsActive(eventStates))
                 {
                     stageId = i;
-
                     break;
                 }
             }
@@ -58,11 +58,11 @@ namespace GuildWars2.GoMGoDS.Model
              * If our current stage is recovery and consists entirely of warmups, we need to make sure that the
              * previous stage was a recovery and was successful to ensure that we were actually in recovery.
              */
-            if (stageId >= 0 && Stages[stageId].Type == MetaEventStage.StageType.Recovery &&
-                Stages[stageId].EventStates.Where(es => es.State != EventStateType.Warmup).Count() == 0)
+            if (stageId >= 0 && itr.Current.Type == MetaEventStage.StageType.Recovery &&
+                itr.Current.EventStates.Where(es => es.State != EventStateType.Warmup).Count() == 0)
             {
-                if (!(prevStageId >= 0 && Stages[prevStageId].Type == MetaEventStage.StageType.Recovery &&
-                    Stages[prevStageId].IsSuccessful(eventStates)))
+                if (!(prevStageId >= 0 && itr.Current.Type == MetaEventStage.StageType.Recovery &&
+                    itr.Current.IsSuccessful(eventStates)))
                     stageId = -1;
             }
 
@@ -74,7 +74,7 @@ namespace GuildWars2.GoMGoDS.Model
              */
             if (stageId < 0 && prevStageId >= 0 && prevStageId < Stages.Count - 1)
             {
-                MetaEventStage prevStage = Stages[prevStageId];
+                MetaEventStage prevStage = Stages.ElementAt(prevStageId);
 
                 if (!prevStage.IsEndStage && prevStage.IsSuccessful(eventStates))
                     stageId = prevStageId;

@@ -53,9 +53,8 @@ namespace GuildWars2.GoMGoDS.APIServer.Test
                             }
                         }
 
-                        api.Start(db);
+                        api.Init(db);
                         File.WriteAllText(ConfigurationManager.AppSettings["json_file"], api.RequestHandler(get));
-                        api.Stop();
                     }
 
                     db.Close();

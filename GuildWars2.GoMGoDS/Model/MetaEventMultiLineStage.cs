@@ -61,7 +61,7 @@ namespace GuildWars2.GoMGoDS.Model
             return this;
         }
         
-        public override bool IsActive(IList<GuildWars2.ArenaNet.Model.EventState> events)
+        public override bool IsActive(HashSet<GuildWars2.ArenaNet.Model.EventState> events)
         {
             IEnumerable<EventState> eventStates = events.Select(es => new EventState() { Event = es.EventId, State = es.StateEnum }).Where(es => EventStates.Contains(es)).Distinct();
             m_ActiveName = string.Join("\n", m_EventStateNames.Where(kvp => eventStates.Contains(kvp.Key)).Select(kvp => kvp.Value).Distinct());

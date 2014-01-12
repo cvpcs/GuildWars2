@@ -51,6 +51,7 @@
     <Compile Include="API\Request.cs" />
     <Compile Include="API\Request.Sync.cs" />
     <Compile Include="Model\MetaEvent.cs" />
+    <Compile Include="Model\MetaEventBlockedStage.cs" />
     <Compile Include="Model\MetaEventDefinitions.cs" />
     <Compile Include="Model\MetaEventMultiLineStage.cs" />
     <Compile Include="Model\MetaEventStage.cs" />
