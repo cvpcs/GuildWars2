@@ -5,9 +5,9 @@ namespace GuildWars2.GoMGoDS.APIServer
 {
     public interface IAPI
     {
+        string RequestPath { get; }
         HttpJsonServer.RequestHandler RequestHandler { get; }
 
-        void Start(IDbConnection dbConnection);
-        void Stop();
+        void Init(IDbConnection dbConn);
     }
 }

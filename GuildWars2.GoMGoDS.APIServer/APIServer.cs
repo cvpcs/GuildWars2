@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
-using System.Linq;
+using System.Reflection;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +19,9 @@ namespace GuildWars2.GoMGoDS.APIServer
     {
         private static ILog LOGGER = LogManager.GetLogger(typeof(APIServer));
 
-        private IDictionary<string, IAPI> m_APIs = new Dictionary<string, IAPI>();
+        private IList<IPublisher> m_Publishers = new List<IPublisher>();
+        private IList<IAPI> m_APIs = new List<IAPI>();
+
         private HttpJsonServer m_JsonServer = new HttpJsonServer(uint.Parse(ConfigurationManager.AppSettings["port"]));
         private IDbConnection m_DbConn;
 
@@ -27,9 +29,25 @@ namespace GuildWars2.GoMGoDS.APIServer
         {
             InitializeComponent();
 
-            m_APIs["/championevents.json"] = new ChampionEventsAPI();
-            m_APIs["/eventtimer.json"] = new EventTimerAPI();
-            m_APIs["/nodes.json"] = new NodesAPI();
+            // set up out publishers
+            BuildIdPublisher buildIdPublisher = new BuildIdPublisher();
+            EventStatePublisher eventStatePublisher = new EventStatePublisher();
+
+            m_Publishers.Add(buildIdPublisher);
+            m_Publishers.Add(eventStatePublisher);
+
+            // set up our APIs
+            ChampionEventsAPI championEventsApi = new ChampionEventsAPI();
+            EventTimerAPI eventTimerApi = new EventTimerAPI();
+            NodesAPI nodesApi = new NodesAPI();
+
+            m_APIs.Add(championEventsApi);
+            m_APIs.Add(eventTimerApi);
+            m_APIs.Add(nodesApi);
+
+            // register our subscribers
+            buildIdPublisher.RegisterSubscriber(eventTimerApi);
+            eventStatePublisher.RegisterSubscriber(eventTimerApi);
         }
 
         protected override void OnStart(string[] args)
@@ -39,14 +57,14 @@ namespace GuildWars2.GoMGoDS.APIServer
             m_DbConn = new SqliteConnection(string.Format("Data Source={0}", ConfigurationManager.AppSettings["sqlite_db"]));
             m_DbConn.Open();
 
-            foreach (string path in m_APIs.Keys)
+            foreach (IAPI api in m_APIs)
             {
-                IAPI api = m_APIs[path];
-
-                m_JsonServer.RegisterPath(path, api.RequestHandler);
-
-                api.Start(m_DbConn);
+                m_JsonServer.RegisterPath(api.RequestPath, api.RequestHandler);
+                api.Init(m_DbConn);
             }
+
+            foreach (IPublisher publisher in m_Publishers)
+                publisher.Start();
 
             m_JsonServer.Start();
         }
@@ -57,10 +75,8 @@ namespace GuildWars2.GoMGoDS.APIServer
 
             m_JsonServer.Stop();
 
-            foreach (IAPI api in m_APIs.Values)
-            {
-                api.Stop();
-            }
+            foreach (IPublisher publisher in m_Publishers)
+                publisher.Stop();
 
             m_DbConn.Close();
         }

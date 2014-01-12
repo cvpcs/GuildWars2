@@ -18,7 +18,7 @@ using log4net;
 
 namespace GuildWars2.GoMGoDS.APIServer
 {
-    public class NodesAPI : IAPI
+    public class NodesAPI : CachedAPI<NodesResponse>
     {
         private static ILog LOGGER = LogManager.GetLogger(typeof(NodesAPI));
         private static string p_ValRegexFormat = @"^.*(?:;|\s)?{0}:\s*([\d.]+)px.*$";
@@ -29,7 +29,6 @@ namespace GuildWars2.GoMGoDS.APIServer
         private static Regex p_HVal = new Regex(string.Format(p_ValRegexFormat, "height"));
 
         private static TimeSpan p_CacheTimeout = new TimeSpan(1, 0, 0);
-        private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(Object));
 
         private static IDictionary<int, int> p_WorldIdMap = new Dictionary<int, int>()
             {
@@ -98,95 +97,101 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         private IDbConnection m_DbConn;
 
-        public HttpJsonServer.RequestHandler RequestHandler { get { return GetJson; } }
+        public NodesAPI()
+            : base(p_CacheTimeout)
+        { }
 
-        public void Start(IDbConnection dbConn)
+        #region APIBase
+        public override string RequestPath { get { return "/nodes.json"; } }
+
+        public override void Init(IDbConnection dbConn)
         {
             m_DbConn = dbConn;
             DbCreateTables();
         }
 
-        public void Stop()
-        { }
-
-        private string GetJson(IDictionary<string, string> _GET)
+        protected override NodesResponse GetData(IDictionary<string, string> _get)
         {
-            string data = string.Empty;
-
             int worldId = -1;
-            if (_GET.ContainsKey("world_id"))
-                int.TryParse(_GET["world_id"], out worldId);
+            if (_get.ContainsKey("world_id"))
+                int.TryParse(_get["world_id"], out worldId);
 
             int mapId = -1;
-            if (_GET.ContainsKey("map_id"))
-                int.TryParse(_GET["map_id"], out mapId);
-            
-            IList<NodeInfo> nodes;
+            if (_get.ContainsKey("map_id"))
+                int.TryParse(_get["map_id"], out mapId);
+
             DateTime timestamp = DbGetLatestTimestamp(worldId, mapId);
-            if (DateTime.Now - timestamp > p_CacheTimeout)
+            IList<NodeInfo> nodes = DbGetNodes(worldId, mapId);
+
+            NodesResponse data = new NodesResponse()
             {
-                timestamp = DateTime.UtcNow;
-
-                nodes = GetGw2Nodes(worldId, mapId, timestamp);
-
-                if (nodes != null)
-                {
-                    IDbTransaction tx = m_DbConn.BeginTransaction();
-
-                    try
-                    {
-                        DbClearNodes(worldId, mapId);
-
-                        foreach (NodeInfo node in nodes)
-                            DbSaveNode(node);
-
-                        tx.Commit();
-                    }
-                    catch (Exception e)
-                    {
-                        LOGGER.Error("Exception thrown when attempting to update nodes", e);
-
-                        try
-                        {
-                            tx.Rollback();
-                        }
-                        catch (Exception ex)
-                        {
-                            LOGGER.Error("Exception thrown when attempting to roll back nodes update", ex);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                nodes = DbGetNodes(worldId, mapId);
-            }
-
-            NodesResponse nodeData = new NodesResponse()
-                {
-                    WorldId = worldId,
-                    MapId = mapId,
-                    Timestamp = (long)(timestamp - new DateTime(1970, 1, 1)).TotalMilliseconds,
-                    Nodes = nodes.Select<NodeInfo, NodeLocation>(ni => new NodeLocation() { X = ni.X, Y = ni.Y, Name = ni.Name, Type = ni.Type }).ToList()
-                };
-
-            try
-            {
-                MemoryStream stream = new MemoryStream();
-                p_Serializer.WriteObject(stream, nodeData);
-                stream.Flush();
-                stream.Position = 0;
-                StreamReader reader = new StreamReader(stream);
-                data = reader.ReadToEnd();
-                reader.Close();
-            }
-            catch (Exception e)
-            {
-                LOGGER.Error("Exception thrown when attempting to serialize JSON", e);
-            }
+                WorldId = worldId,
+                MapId = mapId,
+                Timestamp = (long)(timestamp - new DateTime(1970, 1, 1)).TotalMilliseconds,
+                Nodes = nodes.Select<NodeInfo, NodeLocation>(ni => new NodeLocation() { X = ni.X, Y = ni.Y, Name = ni.Name, Type = ni.Type }).ToList()
+            };
 
             return data;
         }
+        #endregion
+
+        #region CachedAPI
+        protected override DateTime GetCacheTimestamp(IDictionary<string, string> _get)
+        {
+            int worldId = -1;
+            if (_get.ContainsKey("world_id"))
+                int.TryParse(_get["world_id"], out worldId);
+
+            int mapId = -1;
+            if (_get.ContainsKey("map_id"))
+                int.TryParse(_get["map_id"], out mapId);
+
+            return DbGetLatestTimestamp(worldId, mapId);
+        }
+
+        protected override void RefreshData(IDictionary<string, string> _get)
+        {
+            int worldId = -1;
+            if (_get.ContainsKey("world_id"))
+                int.TryParse(_get["world_id"], out worldId);
+
+            int mapId = -1;
+            if (_get.ContainsKey("map_id"))
+                int.TryParse(_get["map_id"], out mapId);
+
+            DateTime timestamp = DateTime.UtcNow;
+
+            IList<NodeInfo> nodes = GetGw2Nodes(worldId, mapId, timestamp);
+
+            if (nodes != null)
+            {
+                IDbTransaction tx = m_DbConn.BeginTransaction();
+
+                try
+                {
+                    DbClearNodes(worldId, mapId);
+
+                    foreach (NodeInfo node in nodes)
+                        DbSaveNode(node);
+
+                    tx.Commit();
+                }
+                catch (Exception e)
+                {
+                    LOGGER.Error("Exception thrown when attempting to update nodes", e);
+
+                    try
+                    {
+                        tx.Rollback();
+                    }
+                    catch (Exception ex)
+                    {
+                        LOGGER.Error("Exception thrown when attempting to roll back nodes update", ex);
+                    }
+                }
+            }
+        }
+        #endregion
 
         private IList<NodeInfo> GetGw2Nodes(int worldId, int mapId, DateTime timestamp)
         {

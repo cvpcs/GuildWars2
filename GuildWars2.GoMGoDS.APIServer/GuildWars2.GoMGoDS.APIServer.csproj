@@ -47,16 +47,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APIBase.cs" />
     <Compile Include="APIServer.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="APIServer.Designer.cs">
       <DependentUpon>APIServer.cs</DependentUpon>
     </Compile>
+    <Compile Include="BuildIdPublisher.cs" />
+    <Compile Include="CachedAPI.cs" />
     <Compile Include="ChampionEventsAPI.cs" />
+    <Compile Include="EventStatePublisher.cs" />
+    <Compile Include="PublisherBase.cs" />
+    <Compile Include="ISubscriber.cs" />
     <Compile Include="DbExtensions.cs" />
     <Compile Include="EventTimerAPI.cs" />
     <Compile Include="HttpJsonServer.cs" />
+    <Compile Include="IPublisher.cs" />
     <Compile Include="IAPI.cs" />
     <Compile Include="NodesAPI.cs" />
     <Compile Include="Program.cs" />
@@ -67,7 +74,6 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TimerAPI.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

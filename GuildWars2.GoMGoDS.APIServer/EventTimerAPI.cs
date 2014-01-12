@@ -15,45 +15,90 @@ using log4net;
 
 namespace GuildWars2.GoMGoDS.APIServer
 {
-    public class EventTimerAPI : TimerAPI
+    public class EventTimerAPI : APIBase<EventTimerResponse>, ISubscriber<BuildResponse>, ISubscriber<EventsResponse>
     {
         private static ILog LOGGER = LogManager.GetLogger(typeof(EventTimerAPI));
 
-        private static TimeSpan p_PollRate = new TimeSpan(0, 0, 30);
-        private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(EventTimerResponse));
-
         private IDbConnection m_DbConn;
 
-        public override HttpJsonServer.RequestHandler RequestHandler { get { return GetJson; } }
+        #region APIBase
+        public override string RequestPath { get { return "/eventtimer.json"; } }
 
-        public EventTimerAPI()
-            : base(p_PollRate)
-        { }
-
-        protected override void Setup(IDbConnection dbConn)
+        public override void Init(IDbConnection dbConn)
         {
             m_DbConn = dbConn;
             DbCreateTables();
         }
 
-        protected override void Cleanup()
-        { }
-
-        protected override void Run()
+        protected override EventTimerResponse GetData(IDictionary<string, string> _get)
         {
-            // check if build has changed, reset timers if it has
-            BuildResponse build = new BuildRequest().Execute();
-            if (build != null && build.BuildId != DbGetBuild())
-                ResetTimers(build.BuildId);
+            EventTimerResponse data = new EventTimerResponse()
+            {
+                Build = DbGetBuild(),
+                Timestamp = DbGetTimestamp(),
+                Events = new List<MetaEventStatus>()
+            };
 
-            // get data
-            EventsResponse response = new EventsRequest(1007).Execute();
-            if (response == null)
-                throw new TimeoutException("Request timed out when attempting to retrieve event data.");
+            foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
+                data.Events.Add(DbGetMetaEventStatus(meta.Id));
 
+            return data;
+        }
+        #endregion
+
+        #region ISubscriber
+        public void Process(BuildResponse build)
+        {
+            if (build.BuildId != DbGetBuild())
+            {
+                LOGGER.Debug("Resetting timer data");
+
+                long timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+
+                IDbTransaction tx = m_DbConn.BeginTransaction();
+
+                try
+                {
+                    DbSetProperty("build", build.ToString(), tx);
+                    DbSetProperty("timestamp", timestamp.ToString(), tx);
+
+                    foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
+                    {
+                        DbSetMetaEventStatus(new MetaEventStatus()
+                        {
+                            Id = meta.Id,
+                            Name = meta.Name,
+                            Countdown = 0,
+                            StageId = -1,
+                            StageTypeEnum = MetaEventStage.StageType.Reset,
+                            StageName = null,
+                            Timestamp = timestamp
+                        }, tx);
+                    }
+
+                    tx.Commit();
+                }
+                catch (Exception e)
+                {
+                    LOGGER.Error("Exception thrown when attempting to reset timers", e);
+
+                    try
+                    {
+                        tx.Rollback();
+                    }
+                    catch (Exception ex)
+                    {
+                        LOGGER.Error("Exception thrown when attempting to roll back timer reset", ex);
+                    }
+                }
+            }
+        }
+
+        public void Process(EventsResponse events)
+        {
             long timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
 
-            IList<EventState> metaEvents = response.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)).ToList();
+            IList<EventState> metaEvents = events.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)).ToList();
 
             IList<MetaEventStatus> changedStatuses = new List<MetaEventStatus>();
 
@@ -103,6 +148,8 @@ namespace GuildWars2.GoMGoDS.APIServer
 
             if (changedStatuses.Count > 0)
             {
+                LOGGER.DebugFormat("Saving {0} updated event status(es)", changedStatuses.Count);
+
                 IDbTransaction tx = m_DbConn.BeginTransaction();
 
                 try
@@ -129,81 +176,7 @@ namespace GuildWars2.GoMGoDS.APIServer
                 }
             }
         }
-
-        private string GetJson(IDictionary<string, string> _GET)
-        {
-            string data = string.Empty;
-            EventTimerResponse timerData = new EventTimerResponse()
-                {
-                    Build = DbGetBuild(),
-                    Timestamp = DbGetTimestamp(),
-                    Events = new List<MetaEventStatus>()
-                };
-
-            foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
-                timerData.Events.Add(DbGetMetaEventStatus(meta.Id));
-
-            try
-            {
-                MemoryStream stream = new MemoryStream();
-                p_Serializer.WriteObject(stream, timerData);
-                stream.Flush();
-                stream.Position = 0;
-                StreamReader reader = new StreamReader(stream);
-                data = reader.ReadToEnd();
-                reader.Close();
-            }
-            catch (Exception e)
-            {
-                LOGGER.Error("Exception thrown when attempting to serialize JSON", e);
-            }
-
-            return data;
-        }
-
-        private void ResetTimers(int build)
-        {
-            LOGGER.Debug("Resetting timer data");
-
-            long timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
-
-            IDbTransaction tx = m_DbConn.BeginTransaction();
-
-            try
-            {
-                DbSetProperty("build", build.ToString(), tx);
-                DbSetProperty("timestamp", timestamp.ToString(), tx);
-
-                foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
-                {
-                    DbSetMetaEventStatus(new MetaEventStatus()
-                    {
-                        Id = meta.Id,
-                        Name = meta.Name,
-                        Countdown = 0,
-                        StageId = -1,
-                        StageTypeEnum = MetaEventStage.StageType.Reset,
-                        StageName = null,
-                        Timestamp = timestamp
-                    }, tx);
-                }
-
-                tx.Commit();
-            }
-            catch (Exception e)
-            {
-                LOGGER.Error("Exception thrown when attempting to reset timers", e);
-
-                try
-                {
-                    tx.Rollback();
-                }
-                catch (Exception ex)
-                {
-                    LOGGER.Error("Exception thrown when attempting to roll back timer reset", ex);
-                }
-            }
-        }
+        #endregion
 
         #region Database
         private void DbCreateTables()

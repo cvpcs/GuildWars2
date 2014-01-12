@@ -19,7 +19,7 @@ using log4net;
 
 namespace GuildWars2.GoMGoDS.APIServer
 {
-    public class ChampionEventsAPI : TimerAPI
+    public class ChampionEventsAPI : CachedAPI<ChampionEventsResponse>
     {
         private static ILog LOGGER = LogManager.GetLogger(typeof(ChampionEventsAPI));
 
@@ -27,27 +27,35 @@ namespace GuildWars2.GoMGoDS.APIServer
         private static Regex WIKI_NAME_CLEAN = new Regex("[^a-z0-9]");
         private static Regex GUID = new Regex("[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}");
 
-        private static TimeSpan p_PollRate = new TimeSpan(24, 0, 0);
-        private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(ChampionEventsResponse));
+        private static TimeSpan p_CacheTimeout = new TimeSpan(24, 0, 0);
 
         private IDbConnection m_DbConn;
-
-        public override HttpJsonServer.RequestHandler RequestHandler { get { return GetJson; } }
+        private DateTime m_CacheTimestamp = DateTime.MinValue;
 
         public ChampionEventsAPI()
-            : base(p_PollRate)
+            : base(p_CacheTimeout)
         { }
 
-        protected override void Setup(IDbConnection dbConn)
+        #region APIBase
+        public override string RequestPath { get { return "/championevents.json"; } }
+
+        public override void Init(IDbConnection dbConn)
         {
             m_DbConn = dbConn;
             DbCreateTables();
         }
 
-        protected override void Cleanup()
-        { }
+        protected override ChampionEventsResponse GetData(IDictionary<string, string> _get)
+        {
+            ChampionEventsResponse data = new ChampionEventsResponse();
+            data.ChampionEvents = DbGetEvents();
 
-        protected override void Run()
+            return data;
+        }
+        #endregion
+
+        #region CachedAPI
+        protected override void RefreshData(IDictionary<string, string> _get)
         {
             string html;
 
@@ -100,32 +108,7 @@ namespace GuildWars2.GoMGoDS.APIServer
                 }
             }
         }
-
-        private string GetJson(IDictionary<string, string> _GET)
-        {
-            string data = string.Empty;
-            ChampionEventsResponse eventData = new ChampionEventsResponse();
-            eventData.ChampionEvents = DbGetEvents();
-
-            try
-            {
-                MemoryStream stream = new MemoryStream();
-                p_Serializer.WriteObject(stream, eventData);
-                stream.Flush();
-                stream.Position = 0;
-                StreamReader reader = new StreamReader(stream);
-                data = reader.ReadToEnd();
-                reader.Close();
-
-                data = GUID.Replace(data, m => m.ToString().ToUpper());
-            }
-            catch (Exception e)
-            {
-                LOGGER.Error("Exception thrown when attempting to serialize JSON", e);
-            }
-
-            return data;
-        }
+        #endregion
 
         #region Database
         private void DbCreateTables()
