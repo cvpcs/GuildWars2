@@ -42,7 +42,12 @@ namespace GuildWars2.GoMGoDS.Model
 
             /* GOOD */
             MetaEvents.Add(new MetaEvent("eye", "Eye of Zhaitan")
-                    // TODO: other stages?
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy the risen AA gun")
+                            .AddEvent(new Guid("A0E5E563-2701-4D4E-8163-A89FEA02EC38")) // Destroy the Risen anti-aircraft gun so Nallandra can signal her team to land.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Escort Warmaster Leddron")
+                            .AddEvent(new Guid("6FA8BE3F-9F6C-4790-BFBC-380B26FDB06C")) // Escort Warmaster Leddron and his team to Zho'qafa Catacombs.
+                        )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Search Zho'qafa Catacombs")
                             .AddEvent(new Guid("42884028-C274-4DFA-A493-E750B8E1B353")) // Defend the Pact team as they search Zho'qafa Catacombs for artifacts.
                         )
