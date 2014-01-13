@@ -174,7 +174,7 @@ namespace GuildWars2.GoMGoDS.Model
             MetaEvents.Add(new MetaEvent("megadestroyer", "Megadestroyer")
                     .AddStage(new MetaEventMultiLineStage(MetaEventStage.StageType.PreEvent, "Assist the sylvari camp")
                             .AddEvent(new Guid("294E08F6-CA36-42B3-8D06-B321BA06EECA"), "Stop the destroyer-essence collectors") // Stop the Inquest's destroyer-essence collectors by destroying their power cores.
-                            .AddEvent(new Guid("61D4579A-C53F-4C26-A31B-92FABE3DA566"), "Defend the Advanced Arcanomics lab") // Defend the Advanced Arcanomics lab.
+                            .AddEvent(new Guid("61D4579A-C53F-4C26-A31B-92FABE3DA566"), EventStateType.Active, "Defend the Advanced Arcanomics lab") // Defend the Advanced Arcanomics lab.
                             .AddEvent(new Guid("3BA29A69-A30B-405D-96AC-CBA5D511C163"), "Stop the rampaging golem") // Stop the rampaging Inquest golem.
                         )
                     .AddStage(new MetaEventMultiLineStage(MetaEventStage.StageType.PreEvent, "Clear the volcano of destroyers.")
