@@ -8,7 +8,7 @@ using System.Threading;
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
 using GuildWars2.ArenaNet.EventTimer;
-using GuildWars2.SyntaxError.Model;
+using GuildWars2.GoMGoDS.Model;
 
 namespace GuildWars2.ArenaNet.EventTimer.Test
 {
@@ -59,7 +59,7 @@ namespace GuildWars2.ArenaNet.EventTimer.Test
                 EventsResponse response = new EventsRequest(1007).Execute();
                 if (response != null)
                 {
-                    IList<EventState> states = response.Events.Where(e => events.Contains(e.EventId)).ToList();
+                    HashSet<EventState> states = new HashSet<EventState>(response.Events.Where(e => events.Contains(e.EventId)));
                     int stageId = meta.GetStageId(states);
 
                     DateTime timestamp = DateTime.Now;
@@ -70,7 +70,7 @@ namespace GuildWars2.ArenaNet.EventTimer.Test
                         if (column.ColumnName == "Timestamp")
                             row[column] = timestamp.ToString("yyyy-MM-dd HH:mm:ss");
                         else if (column.ColumnName == "MetaState")
-                            row[column] = (stageId >= 0 ? meta.Stages[stageId].Name : "Inactive");
+                            row[column] = (stageId >= 0 ? meta.Stages.ElementAt(stageId).Name : "Inactive");
                         else
                         {
                             Guid eventId = new Guid(column.ColumnName);
