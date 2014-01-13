@@ -11,7 +11,7 @@ namespace GuildWars2.GoMGoDS.APIServer
 {
     public abstract class PublisherBase<T> : IPublisher<T>
     {
-        private static ILog LOGGER = LogManager.GetLogger(typeof(PublisherBase<>));
+        private static ILog LOGGER = null;
 
         private TimeSpan m_PollRate;
         private Timer m_Timer;
@@ -23,6 +23,9 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         public PublisherBase(TimeSpan pollRate)
         {
+            if (LOGGER == null)
+                LOGGER = LogManager.GetLogger(this.GetType());
+
             m_PollRate = pollRate;
 
             m_Subscribers = new List<ISubscriber<T>>();
@@ -74,8 +77,13 @@ namespace GuildWars2.GoMGoDS.APIServer
             {
                 if (UpdateData())
                 {
+                    LOGGER.Debug("Processing subscribers...");
+
                     foreach (ISubscriber<T> subscriber in m_Subscribers)
+                    {
+                        LOGGER.DebugFormat("Calling {0} for processing...", subscriber.GetType().Name);
                         subscriber.Process(m_Data);
+                    }
                 }
             }
             catch (Exception ex)

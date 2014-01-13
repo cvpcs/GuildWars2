@@ -10,12 +10,18 @@ namespace GuildWars2.GoMGoDS.APIServer
 {
     public abstract class APIBase<T> : IAPI
     {
-        private static ILog LOGGER = LogManager.GetLogger(typeof(APIBase<>));
+        private static ILog LOGGER = null;
 
         private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(T));
 
         public abstract string RequestPath { get; }
         public HttpJsonServer.RequestHandler RequestHandler { get { return GetJson; } }
+
+        public APIBase()
+        {
+            if (LOGGER == null)
+                LOGGER = LogManager.GetLogger(this.GetType());
+        }
 
         public abstract void Init(IDbConnection dbConn);
 

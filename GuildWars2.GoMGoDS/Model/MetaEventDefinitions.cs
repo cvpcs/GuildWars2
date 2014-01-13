@@ -208,13 +208,6 @@ namespace GuildWars2.GoMGoDS.Model
 
             /* GOOD */
             MetaEvents.Add(new MetaEvent("behemoth", "Shadow Behemoth", 7200, 9000)
-                    /* TODO: FIGURE OUT HOW BLOCKING EVENTS WILL WORK
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Blocking, "Assistance is needed at the monestary")
-                            .AddEvent(new Guid("9062EBB9-EAD2-43E4-A820-DC6BD28A3040"), EventStateType.Preparation) // Protect the brew shipment.
-                        )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Blocking, "Defeat the rotting oakheart")
-                            .AddEvent(new Guid("04084490-0117-4D56-8D67-C4FFFE933C0C")) // Defeat the champion rotting ancient oakheart.
-                        ) */
                     .AddStage(new MetaEventBlockedStage("Assistance needed in the swamp")
                             .AddBlockedEvent(new Guid("31CEBA08-E44D-472F-81B0-7143D73797F5"), EventStateType.Preparation) // Defeat the shadow behemoth.
                             .AddEvent(new Guid("1E644459-9EC4-4C63-9975-E37CF5E7C108"), "The monestary requires assistance") // Drive back the centaurs before they steal the monastery's ale.
