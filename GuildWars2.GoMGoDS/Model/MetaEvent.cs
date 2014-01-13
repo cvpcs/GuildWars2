@@ -43,14 +43,20 @@ namespace GuildWars2.GoMGoDS.Model
         public int GetStageId(HashSet<EventState> eventStates, int prevStageId = -1)
         {
             int stageId = -1;
+            int blockedStageId = -1;
 
             IEnumerator<MetaEventStage> itr = Stages.GetEnumerator();
             for (int i = 0; itr.MoveNext(); i++)
             {
                 if (itr.Current.IsActive(eventStates))
                 {
-                    stageId = i;
-                    break;
+                    if (itr.Current.Type == MetaEventStage.StageType.Blocking)
+                        blockedStageId = i;
+                    else
+                    {
+                        stageId = i;
+                        break;
+                    }
                 }
             }
 
@@ -79,6 +85,13 @@ namespace GuildWars2.GoMGoDS.Model
                 if (!prevStage.IsEndStage && prevStage.IsSuccessful(eventStates))
                     stageId = prevStageId;
             }
+
+            /* Lastly, if we still don't have a stage id, but we have a blocked stage id, then we use the blocked stage.
+             * We do this because blocked events aren't really part of the meta, so we don't want them showing up most of
+             * the time. Thus we always keep the non-blocked stage if it exists.
+             */
+            if (stageId < 0 && blockedStageId > 0)
+                stageId = blockedStageId;
 
             return stageId;
         }
