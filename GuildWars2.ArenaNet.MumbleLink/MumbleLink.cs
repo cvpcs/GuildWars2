@@ -41,7 +41,7 @@ namespace GuildWars2.ArenaNet.MumbleLink
                     ident = p_IdentitySerializer.ReadObject(stream) as LinkIdentity;
                     writer.Close();
                 }
-                catch (Exception e)
+                catch (Exception)
                 { }
 
                 return ident;

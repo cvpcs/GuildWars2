@@ -140,7 +140,7 @@ namespace GuildWars2.GoMGoDS.APIServer
                 }
 
                 // has the status changed?
-                if (oldStatus.StageId != status.StageId)
+                if (oldStatus.StageId != status.StageId || (stageId >= 0 && oldStatus.StageName !=status.StageName))
                 {
                     changedStatuses.Add(status);
                 }
