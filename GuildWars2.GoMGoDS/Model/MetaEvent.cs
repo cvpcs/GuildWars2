@@ -11,8 +11,8 @@ namespace GuildWars2.GoMGoDS.Model
         public string Id { get; private set; }
         public string Name { get; private set; }
 
-        public uint MinSpawn { get; private set; }
-        public uint MaxSpawn { get; private set; }
+        public uint MinSpawn { get; protected set; }
+        public uint MaxSpawn { get; protected set; }
 
         public HashSet<MetaEventStage> Stages { get; private set; }
 
@@ -40,7 +40,7 @@ namespace GuildWars2.GoMGoDS.Model
             return this;
         }
 
-        public int GetStageId(HashSet<EventState> eventStates, int prevStageId = -1)
+        public virtual int GetStageId(HashSet<EventState> eventStates, int prevStageId = -1)
         {
             int stageId = -1;
             int blockedStageId = -1;

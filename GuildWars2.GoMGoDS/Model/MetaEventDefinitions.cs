@@ -344,11 +344,11 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("tequatl", "Tequatl the Sunless", 3000, 6000)
+            MetaEvents.Add(new MetaEventIntervaled("tequatl", "Tequatl the Sunless", 7200, 300)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Somthing's in the water")
                             .AddEvent(new Guid("568A30CF-8512-462F-9D67-647D69BEFAED"), EventStateType.Preparation)
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat Tequatl the Sunless", 900)
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat Tequatl the Sunless")
                             .AddEvent(new Guid("568A30CF-8512-462F-9D67-647D69BEFAED"), EventStateType.Active) // Defeat Tequatl the Sunless.
                         )
                 );
