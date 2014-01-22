@@ -59,7 +59,7 @@ namespace GuildWars2.GoMGoDS.APIServer
 
                 try
                 {
-                    DbSetProperty("build", build.ToString(), tx);
+                    DbSetProperty("build", build.BuildId.ToString(), tx);
                     DbSetProperty("timestamp", timestamp.ToString(), tx);
 
                     foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
