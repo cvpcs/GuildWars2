@@ -102,6 +102,8 @@ namespace GuildWars2.ArenaNet.EventTimer.Test
                 Thread.Sleep(5000);
             }
 
+            Console.ReadKey(true);
+
             try
             {
                 using (FileStream stream = csv.Open(FileMode.Create))
