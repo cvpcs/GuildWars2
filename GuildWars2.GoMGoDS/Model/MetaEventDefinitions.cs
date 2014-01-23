@@ -409,6 +409,50 @@ namespace GuildWars2.GoMGoDS.Model
                         )
                 );
 
+            /* READY FOR TEST */
+            MetaEvents.Add(new MetaEventIntervaled("marionette", "Twisted Marionette", 7200, 300, 3600)
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Prepare yourselves", 300)
+                            .AddEvent(new Guid("861DCD3D-4398-4863-89DE-4F8F4B7DDEDF")) // Prepare for Scarlet's Twisted Marionette
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "The marionette descends")
+                            .AddEvent(new Guid("AD581729-46BB-4C23-B6CA-F080F62C6174"), EventStateType.Warmup) // Twisted Marionette Weapon Test
+                            .AddEvent(new Guid("AD581729-46BB-4C23-B6CA-F080F62C6174"), EventStateType.Preparation) // Twisted Marionette Weapon Test
+                        )
+                    .AddStage(new MetaEventMultiLineStage(MetaEventStage.StageType.Boss, "Destroy the regulators", 120, true)
+                            .AddEvent(new Guid("8A3BA5D5-2CC1-46CD-9A0A-5DB2B4897439"), "Sever the first chain") // Destroy the power regulators to discharge energy back at the marionette.
+                            .AddEvent(new Guid("3E607C66-3CCD-4165-B94F-1C49A09E2F28"), "Sever the second chain") // Destroy the power regulators to discharge energy back at the marionette.
+                            .AddEvent(new Guid("79D03B7A-2250-4B20-80DC-225100D96B5D"), "Sever the third chain") // Destroy the power regulators to discharge energy back at the marionette.
+                            .AddEvent(new Guid("E5957F3F-3D72-484A-9897-AD481A352B55"), "Sever the fourth chain") // Destroy the power regulators to discharge energy back at the marionette.
+                            .AddEvent(new Guid("C0F3FC76-8B2F-478D-8D1A-5E86580231AB"), "Sever the final chain") // Destroy the power regulators to discharge energy back at the marionette.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Hold the lines")
+                            .AddEvent(new Guid("AFF75C18-EEF7-4330-B988-BE6DC336B8CB")) // Hold the line!
+                            .AddEvent(new Guid("2A9C3838-4460-4CEB-ABFB-FC2AADA7499E")) // Hold the line!
+                            .AddEvent(new Guid("5A660E79-A906-44A4-ADE9-6245B74101FE")) // Hold the line!
+                            .AddEvent(new Guid("EF083B14-324A-4D10-8918-464800E46BCD")) // Hold the line!
+                            .AddEvent(new Guid("D8E6FBE2-83BA-491D-BF32-4B1A315EEC99")) // Hold the line!
+                        )
+                );
+
+            /* READY FOR TEST */
+            MetaEvents.Add(new MetaEventIntervaled("triwurm", "Triple-headed Wurm", 7200, 300, 3600)
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Investigations will begin shortly", 300)
+                            .AddEvent(new Guid("B081F000-5928-4B69-8980-20AD93827B6C"), EventStateType.Preparation) // Investigate the rumors of wurm activity in Whisperwill Bogs.
+                            .AddEvent(new Guid("743B0A35-118E-43D7-ACCE-10FDF00139BD"), EventStateType.Preparation) // Investigate the rumors of wurm activity in Challdar Gorges.
+                            .AddEvent(new Guid("96E9213C-54FD-4D66-B546-EF02FACEACEB"), EventStateType.Preparation) // Investigate the rumors of wurm activity on Jelako Beach.
+                        )
+                    .AddStage(new MetaEventMultiLineStage(MetaEventStage.StageType.PreEvent, "Investigate the rumors")
+                            .AddEvent(new Guid("B081F000-5928-4B69-8980-20AD93827B6C"), "Investigate Whisperwill Bogs") // Investigate the rumors of wurm activity in Whisperwill Bogs.
+                            .AddEvent(new Guid("743B0A35-118E-43D7-ACCE-10FDF00139BD"), "Investigate Challdar Gorges") // Investigate the rumors of wurm activity in Challdar Gorges.
+                            .AddEvent(new Guid("96E9213C-54FD-4D66-B546-EF02FACEACEB"), "Investigate Jelako Beach") // Investigate the rumors of wurm activity on Jelako Beach.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the heads of the wurm")
+                            .AddEvent(new Guid("5F91ED03-6A1B-4A54-9BB4-6A94AE97FC4F")) // Defeat the amber head of the great jungle wurm.
+                            .AddEvent(new Guid("8A155E1C-BD89-4B1A-97E6-4673F4A285C8")) // Defeat the crimson head of the great jungle wurm.
+                            .AddEvent(new Guid("630E3DF2-7A5F-40CA-AC8B-C0E55FF03047")) // Defeat the cobalt head of the great jungle wurm.
+                        )
+                );
+
             // this is here for performance
             EventDictionary = MetaEvents.ToDictionary(me => me, me => me.Stages.SelectMany(s => s.EventStates).Select(s => s.Event).ToList());
             EventList = new HashSet<Guid>(EventDictionary.SelectMany(kp => kp.Value));
