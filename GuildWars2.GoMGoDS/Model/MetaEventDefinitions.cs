@@ -419,7 +419,7 @@ namespace GuildWars2.GoMGoDS.Model
                             .AddEvent(new Guid("AD581729-46BB-4C23-B6CA-F080F62C6174"), EventStateType.Warmup) // Twisted Marionette Weapon Test
                             .AddEvent(new Guid("AD581729-46BB-4C23-B6CA-F080F62C6174"), EventStateType.Preparation) // Twisted Marionette Weapon Test
                         )
-                    .AddStage(new MetaEventMultiLineStage(MetaEventStage.StageType.Boss, "Destroy the regulators", 120, true)
+                    .AddStage(new MetaEventMultiLineStage(MetaEventStage.StageType.Boss, "Destroy the regulators", 150, true)
                             .AddEvent(new Guid("8A3BA5D5-2CC1-46CD-9A0A-5DB2B4897439"), "Sever the first chain") // Destroy the power regulators to discharge energy back at the marionette.
                             .AddEvent(new Guid("3E607C66-3CCD-4165-B94F-1C49A09E2F28"), "Sever the second chain") // Destroy the power regulators to discharge energy back at the marionette.
                             .AddEvent(new Guid("79D03B7A-2250-4B20-80DC-225100D96B5D"), "Sever the third chain") // Destroy the power regulators to discharge energy back at the marionette.
