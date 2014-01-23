@@ -212,6 +212,7 @@ namespace GuildWars2.GoMGoDS.Model
                             .AddBlockedEvent(new Guid("31CEBA08-E44D-472F-81B0-7143D73797F5"), EventStateType.Preparation) // Defeat the shadow behemoth.
                             .AddEvent(new Guid("1E644459-9EC4-4C63-9975-E37CF5E7C108"), "The monestary requires assistance") // Drive back the centaurs before they steal the monastery's ale.
                             .AddEvent(new Guid("5AB5E4A7-202C-476F-8B0C-5F2CDC5DB3A0"), "The monestary requires assistance") // Return stolen kegs of ale to Abbot Mathias.
+                            .AddEvent(new Guid("9062EBB9-EAD2-43E4-A820-DC6BD28A3040"), EventStateType.Warmup, "The monestary requires assistance") // Protect the brew shipment.
                             .AddEvent(new Guid("9062EBB9-EAD2-43E4-A820-DC6BD28A3040"), EventStateType.Preparation, "The monestary requires assistance") // Protect the brew shipment.
                             .AddEvent(new Guid("04084490-0117-4D56-8D67-C4FFFE933C0C"), "Defeat the champion oakheart") // Defeat the champion rotting ancient oakheart.
                         )
@@ -411,7 +412,7 @@ namespace GuildWars2.GoMGoDS.Model
 
             /* READY FOR TEST */
             MetaEvents.Add(new MetaEventIntervaled("marionette", "Twisted Marionette", 7200, 300, 3600)
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Prepare yourselves", 300)
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "The floating machine is churning", 300)
                             .AddEvent(new Guid("861DCD3D-4398-4863-89DE-4F8F4B7DDEDF")) // Prepare for Scarlet's Twisted Marionette
                         )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "The marionette descends")
@@ -436,7 +437,7 @@ namespace GuildWars2.GoMGoDS.Model
 
             /* READY FOR TEST */
             MetaEvents.Add(new MetaEventIntervaled("triwurm", "Triple-headed Wurm", 7200, 300, 3600)
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Investigations will begin shortly", 300)
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Investigations will begin shortly", 360) // (5 min wait + 1 min dialog)
                             .AddEvent(new Guid("B081F000-5928-4B69-8980-20AD93827B6C"), EventStateType.Preparation) // Investigate the rumors of wurm activity in Whisperwill Bogs.
                             .AddEvent(new Guid("743B0A35-118E-43D7-ACCE-10FDF00139BD"), EventStateType.Preparation) // Investigate the rumors of wurm activity in Challdar Gorges.
                             .AddEvent(new Guid("96E9213C-54FD-4D66-B546-EF02FACEACEB"), EventStateType.Preparation) // Investigate the rumors of wurm activity on Jelako Beach.
@@ -446,7 +447,7 @@ namespace GuildWars2.GoMGoDS.Model
                             .AddEvent(new Guid("743B0A35-118E-43D7-ACCE-10FDF00139BD"), "Investigate Challdar Gorges") // Investigate the rumors of wurm activity in Challdar Gorges.
                             .AddEvent(new Guid("96E9213C-54FD-4D66-B546-EF02FACEACEB"), "Investigate Jelako Beach") // Investigate the rumors of wurm activity on Jelako Beach.
                         )
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the heads of the wurm")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the heads of the wurm", 900)
                             .AddEvent(new Guid("5F91ED03-6A1B-4A54-9BB4-6A94AE97FC4F")) // Defeat the amber head of the great jungle wurm.
                             .AddEvent(new Guid("8A155E1C-BD89-4B1A-97E6-4673F4A285C8")) // Defeat the crimson head of the great jungle wurm.
                             .AddEvent(new Guid("630E3DF2-7A5F-40CA-AC8B-C0E55FF03047")) // Defeat the cobalt head of the great jungle wurm.
