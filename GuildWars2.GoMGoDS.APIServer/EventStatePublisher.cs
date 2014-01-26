@@ -16,7 +16,7 @@ namespace GuildWars2.GoMGoDS.APIServer
 
         protected override bool UpdateData()
         {
-            EventsResponse events = new EventsRequest(1007).Execute();
+            EventsResponse events = new EventsRequest().Execute();
 
             if (events != null)
             {

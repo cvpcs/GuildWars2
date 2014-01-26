@@ -18,6 +18,7 @@ namespace GuildWars2.GoMGoDS.APIServer
     public class EventTimerAPI : APIBase<EventTimerResponse>, ISubscriber<BuildResponse>, ISubscriber<EventsResponse>
     {
         private static ILog LOGGER = LogManager.GetLogger(typeof(EventTimerAPI));
+        private static int WORLD_ID = 1007;
 
         private IDbConnection m_DbConn;
 
@@ -98,7 +99,7 @@ namespace GuildWars2.GoMGoDS.APIServer
         {
             long timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
 
-            HashSet<EventState> metaEvents = new HashSet<EventState>(events.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)));
+            HashSet<EventState> metaEvents = new HashSet<EventState>(events.Events.Where(es => es.WorldId == WORLD_ID && MetaEventDefinitions.EventList.Contains(es.EventId)));
 
             HashSet<MetaEventStatus> changedStatuses = new HashSet<MetaEventStatus>();
 
