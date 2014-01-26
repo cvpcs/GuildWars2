@@ -7,6 +7,8 @@ namespace GuildWars2.GoMGoDS.Model
     [DataContract]
     public class ContestedLocationStatus
     {
+        public string Id { get { return Abbreviation.ToLower(); } }
+
         [DataMember(Name = "name")]
         public string Name;
 
@@ -14,12 +16,12 @@ namespace GuildWars2.GoMGoDS.Model
         public string Abbreviation;
 
         [DataMember(Name = "open_on")]
-        public Dictionary<string, string> OpenOn;
+        public List<int> OpenOn;
 
         [DataMember(Name = "defend_on")]
-        public Dictionary<string, int> DefendOn;
+        public List<int> DefendOn;
 
         [DataMember(Name = "capture_on")]
-        public Dictionary<string, double> CaptureOn;
+        public List<int> CaptureOn;
     }
 }

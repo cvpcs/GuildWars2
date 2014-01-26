@@ -10,6 +10,10 @@ namespace GuildWars2.GoMGoDS.APIServer
             IDataParameter parameter = command.CreateParameter();
             parameter.ParameterName = key;
             parameter.Value = value;
+
+            if (command.Parameters.Contains(key))
+                command.Parameters.RemoveAt(key);
+
             command.Parameters.Add(parameter);
         }
     }

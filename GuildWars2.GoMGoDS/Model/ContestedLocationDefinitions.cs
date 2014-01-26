@@ -101,6 +101,9 @@ namespace GuildWars2.GoMGoDS.Model
                     .AddDefendEvent(new Guid("989A298C-B06B-4E9B-A871-1506A6EE3FEC")) // defend interruptor
                     .AddDefendEvent(new Guid("04902E61-A102-4D32-860D-C14B150BD4F5")) // defend interruptor
                 );
+
+            // this is here for performance
+            EventList = new HashSet<Guid>(ContestedLocations.SelectMany(l => l.Events).Distinct().ToList());
         }
     }
 }

@@ -38,5 +38,48 @@ namespace GuildWars2.GoMGoDS.Model
             DefendEvents.Add(eid);
             return this;
         }
+
+        public ContestedLocationStatus GetStatus(HashSet<EventState> eventStates)
+        {
+            HashSet<int> open = new HashSet<int>();
+            HashSet<int> defend = new HashSet<int>();
+            HashSet<int> capture = new HashSet<int>();
+
+            foreach (EventState state in eventStates.Where(es => DefendEvents.Contains(es.EventId)))
+            {
+                switch (state.StateEnum)
+                {
+                    case EventStateType.Warmup:
+                    case EventStateType.Preparation:
+                    case EventStateType.Success:
+                        open.Add(state.WorldId);
+                        break;
+                    case EventStateType.Active:
+                        defend.Add(state.WorldId);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            foreach (EventState state in eventStates.Where(es => CaptureEvents.Contains(es.EventId)))
+            {
+                if (state.StateEnum == EventStateType.Active)
+                {
+                    open.Remove(state.WorldId);
+                    defend.Remove(state.WorldId);
+                    capture.Add(state.WorldId);
+                }
+            }
+
+            return new ContestedLocationStatus()
+                {
+                    Name = Name,
+                    Abbreviation = Abbreviation,
+                    OpenOn = open.ToList(),
+                    DefendOn = defend.ToList(),
+                    CaptureOn = capture.ToList()
+                };
+        }
     }
 }
