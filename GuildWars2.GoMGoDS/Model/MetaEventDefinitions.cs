@@ -455,8 +455,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             // this is here for performance
-            EventDictionary = MetaEvents.ToDictionary(me => me, me => me.Stages.SelectMany(s => s.EventStates).Select(s => s.Event).ToList());
-            EventList = new HashSet<Guid>(EventDictionary.SelectMany(kp => kp.Value));
+            EventList = new HashSet<Guid>(MetaEvents.SelectMany(me => me.Stages).SelectMany(s => s.EventStates).Select(s => s.Event).Distinct().ToList());
         }
     }
 }
