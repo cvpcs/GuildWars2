@@ -142,6 +142,10 @@ namespace GuildWars2.GoMGoDS.APIServer
                 // has the status changed?
                 if (oldStatus.StageId != status.StageId || (stageId >= 0 && oldStatus.StageName !=status.StageName))
                 {
+                    // if the actual stage hasn't changed (multiline scenareo) then don't update the timestamp
+                    if (oldStatus.StageId == status.StageId)
+                        status.Timestamp = oldStatus.Timestamp;
+
                     changedStatuses.Add(status);
                 }
             }
