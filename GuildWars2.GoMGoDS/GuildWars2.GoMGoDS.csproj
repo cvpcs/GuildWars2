@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="API\ChampionEventsRequest.cs" />
     <Compile Include="API\ChampionEventsResponse.cs" />
+    <Compile Include="API\ContestedStatusRequest.cs" />
+    <Compile Include="API\ContestedStatusResponse.cs" />
     <Compile Include="API\NodesRequest.cs" />
     <Compile Include="API\EventTimerRequest.cs" />
     <Compile Include="API\EventTimerResponse.cs" />
@@ -53,6 +55,9 @@
     <Compile Include="API\Request.cs" />
     <Compile Include="API\Request.Sync.cs" />
     <Compile Include="DateExtensions.cs" />
+    <Compile Include="Model\ContestedLocationStatus.cs" />
+    <Compile Include="Model\ContestedLocationDefinitions.cs" />
+    <Compile Include="Model\ContestedLocation.cs" />
     <Compile Include="Model\MetaEvent.cs" />
     <Compile Include="Model\MetaEventBlockedStage.cs" />
     <Compile Include="Model\MetaEventDefinitions.cs" />
