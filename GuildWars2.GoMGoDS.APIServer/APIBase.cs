@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
-using System.IO;
-using System.Runtime.Serialization.Json;
 
 using log4net;
+using Newtonsoft.Json;
 
 namespace GuildWars2.GoMGoDS.APIServer
 {
@@ -12,7 +12,7 @@ namespace GuildWars2.GoMGoDS.APIServer
     {
         private static ILog LOGGER = null;
 
-        private static DataContractJsonSerializer p_Serializer = new DataContractJsonSerializer(typeof(T));
+        private static readonly bool INDENT_JSON = bool.TrueString.Equals(ConfigurationManager.AppSettings["indent_json"], StringComparison.CurrentCultureIgnoreCase);
 
         public abstract string RequestPath { get; }
         public HttpJsonServer.RequestHandler RequestHandler { get { return GetJson; } }
@@ -34,13 +34,7 @@ namespace GuildWars2.GoMGoDS.APIServer
 
             try
             {
-                MemoryStream stream = new MemoryStream();
-                p_Serializer.WriteObject(stream, data);
-                stream.Flush();
-                stream.Position = 0;
-                StreamReader reader = new StreamReader(stream);
-                json = reader.ReadToEnd();
-                reader.Close();
+                json = JsonConvert.SerializeObject(data, (INDENT_JSON ? Formatting.Indented : Formatting.None));
             }
             catch (Exception e)
             {
