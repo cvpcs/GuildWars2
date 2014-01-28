@@ -13,6 +13,8 @@ namespace GuildWars2.ArenaNet.API
             RestClient client = new RestClient();
             client.BaseUrl = URL;
             client.Timeout = Timeout;
+            client.AddHandler("application/json", new RestSharpNewtonSoftJsonDeserializer());
+            client.AddHandler("text/json", new RestSharpNewtonSoftJsonDeserializer());
 
             RestRequest request = new RestRequest();
             request.Method = APIMethod;

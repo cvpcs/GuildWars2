@@ -35,7 +35,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -67,12 +66,15 @@
     <Compile Include="Model\MetaEventStatus.cs" />
     <Compile Include="Model\NodeLocation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RestSharpDataContractJsonDeserializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GuildWars2.ArenaNet\GuildWars2.ArenaNet.csproj">
       <Project>{65382ece-3e80-47e3-9864-0c6995907c2b}</Project>
       <Name>GuildWars2.ArenaNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Newtonsoft.Json\Newtonsoft.Json.csproj">
+      <Project>{eeea67f9-9089-481d-a4dc-0966dec9fd7d}</Project>
+      <Name>Newtonsoft.Json</Name>
     </ProjectReference>
     <ProjectReference Include="..\RestSharp\RestSharp.csproj">
       <Project>{2ececfbf-5f3e-40ee-a963-72336dc7abe2}</Project>

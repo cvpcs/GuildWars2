@@ -195,6 +195,9 @@
     <Compile Include="..\GuildWars2.ArenaNet\Model\Continent.cs">
       <Link>Model\Continent.cs</Link>
     </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\Model\EmblemFlagType.cs">
+      <Link>Model\EmblemFlagType.cs</Link>
+    </Compile>
     <Compile Include="..\GuildWars2.ArenaNet\Model\Event.cs">
       <Link>Model\Event.cs</Link>
     </Compile>
@@ -306,9 +309,16 @@
     <Compile Include="..\GuildWars2.ArenaNet\Model\Wvw\ObjectiveState.cs">
       <Link>Model\Wvw\ObjectiveState.cs</Link>
     </Compile>
+    <Compile Include="..\GuildWars2.ArenaNet\RestSharpNewtonSoftJsonDeserializer.cs">
+      <Link>RestSharpNewtonSoftJsonDeserializer.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Newtonsoft.Json.Silverlight\Newtonsoft.Json.Silverlight.csproj">
+      <Project>{dc3c6f3d-2ca1-4278-9b79-63770fb3ea2d}</Project>
+      <Name>Newtonsoft.Json.Silverlight</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RestSharp.Silverlight\RestSharp.Silverlight.csproj">
       <Project>{940083d4-dd57-43c1-9506-a7a811216d36}</Project>
       <Name>RestSharp.Silverlight</Name>

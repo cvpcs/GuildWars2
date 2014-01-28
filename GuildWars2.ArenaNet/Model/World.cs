@@ -1,9 +1,12 @@
 ﻿using System;
 
+using Newtonsoft.Json;
+
 namespace GuildWars2.ArenaNet.Model
 {
     public class World : NamedModel<int>
     {
+        [JsonIgnore]
         public RegionType Region
         {
             get

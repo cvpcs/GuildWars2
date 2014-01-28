@@ -54,10 +54,9 @@ namespace GuildWars2.ArenaNet.Mapper
                     {
                         foreach (FloorRegion region in floor.Regions.Values)
                         {
-                            foreach (string mapId in region.Maps.Keys)
+                            foreach (int mid in region.Maps.Keys)
                             {
-                                int mid = int.Parse(mapId);
-                                FloorMapDetails map = region.Maps[mapId];
+                                FloorMapDetails map = region.Maps[mid];
                                 m_MapData.Add(mid, map);
                             }
                         }
@@ -85,9 +84,9 @@ namespace GuildWars2.ArenaNet.Mapper
                                 IDictionary<Guid, EventDetails> evDetails = new Dictionary<Guid, EventDetails>();
                                 IDictionary<Guid, bool> evChamps = new Dictionary<Guid, bool>();
 
-                                foreach (KeyValuePair<string, EventDetails> entry in events.Events)
+                                foreach (KeyValuePair<Guid, EventDetails> entry in events.Events)
                                 {
-                                    Guid eid = new Guid(entry.Key);
+                                    Guid eid = entry.Key;
                                     EventDetails ev = entry.Value;
                                     if (!ev.Name.StartsWith("skill challenge: ", StringComparison.InvariantCultureIgnoreCase) && m_MapData.ContainsKey(ev.MapId))
                                     {

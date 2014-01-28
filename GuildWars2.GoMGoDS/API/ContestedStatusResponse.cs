@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+
+using Newtonsoft.Json;
 
 using GuildWars2.GoMGoDS.Model;
 
 namespace GuildWars2.GoMGoDS.API
 {
-    [DataContract]
     public class ContestedStatusResponse
     {
-        [DataMember(Name = "build")]
+        [JsonProperty("build")]
         public int Build;
 
-        [DataMember(Name = "timestamp")]
+        [JsonProperty("timestamp")]
         public long Timestamp;
 
-        [DataMember(Name = "locations")]
+        [JsonProperty("locations")]
         public List<ContestedLocationStatus> Locations;
     }
 }

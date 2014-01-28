@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+
+using Newtonsoft.Json;
 
 namespace GuildWars2.GoMGoDS.Model
 {
-    [DataContract]
     public class MetaEventStatus
     {
-        [DataMember(Name = "id")]
+        [JsonProperty("id")]
         public string Id { get; set; }
 
-        [DataMember(Name = "name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
 
-        [DataMember(Name = "minCountdown")]
+        [JsonProperty("minCountdown")]
         public uint MinCountdown { get; set; }
 
-        [DataMember(Name = "maxCountdown")]
+        [JsonProperty("maxCountdown")]
         public uint MaxCountdown { get; set; }
 
+        [JsonIgnore]
         public uint Countdown
         {
             set
@@ -28,15 +29,16 @@ namespace GuildWars2.GoMGoDS.Model
             }
         }
 
-        [DataMember(Name = "stageId")]
+        [JsonProperty("stageId")]
         public int StageId { get; set; }
 
-        [DataMember(Name = "stageName")]
+        [JsonProperty("stageName")]
         public string StageName { get; set; }
 
-        [DataMember(Name = "stageType")]
+        [JsonProperty("stageType")]
         public string StageType { get; set; }
 
+        [JsonIgnore]
         public MetaEventStage.StageType StageTypeEnum
         {
             get
@@ -53,7 +55,7 @@ namespace GuildWars2.GoMGoDS.Model
             }
         }
 
-        [DataMember(Name = "timestamp")]
+        [JsonProperty("timestamp")]
         public long Timestamp { get; set; }
     }
 }

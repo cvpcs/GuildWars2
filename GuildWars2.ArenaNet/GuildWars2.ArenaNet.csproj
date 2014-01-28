@@ -83,6 +83,8 @@
     <Compile Include="API\Wvw\MatchesResponse.cs" />
     <Compile Include="API\Wvw\ObjectiveNamesRequest.cs" />
     <Compile Include="API\Wvw\ObjectiveNamesResponse.cs" />
+    <Compile Include="Model\EmblemFlagType.cs" />
+    <Compile Include="RestSharpNewtonSoftJsonDeserializer.cs" />
     <Compile Include="ImageServices.Async.cs" />
     <Compile Include="ImageServices.cs" />
     <Compile Include="Model\Color.cs" />
@@ -128,6 +130,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Newtonsoft.Json\Newtonsoft.Json.csproj">
+      <Project>{eeea67f9-9089-481d-a4dc-0966dec9fd7d}</Project>
+      <Name>Newtonsoft.Json</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RestSharp\RestSharp.csproj">
       <Project>{2ececfbf-5f3e-40ee-a963-72336dc7abe2}</Project>
       <Name>RestSharp</Name>

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using RestSharp;
 
+using GuildWars2.ArenaNet;
+
 namespace GuildWars2.ArenaNet.API
 {
     public abstract partial class Request<T>
@@ -13,6 +15,8 @@ namespace GuildWars2.ArenaNet.API
             RestClient client = new RestClient();
             client.BaseUrl = URL;
             client.Timeout = Timeout;
+            client.AddHandler("application/json", new RestSharpNewtonSoftJsonDeserializer());
+            client.AddHandler("text/json", new RestSharpNewtonSoftJsonDeserializer());
 
             RestRequest request = new RestRequest();
             request.Method = APIMethod;

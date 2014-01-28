@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+
+using Newtonsoft.Json;
 
 using GuildWars2.GoMGoDS.Model;
 
 namespace GuildWars2.GoMGoDS.API
 {
-    [DataContract]
     public class NodesResponse
     {
-        [DataMember(Name = "world_id")]
+        [JsonProperty("world_id")]
         public int WorldId;
 
-        [DataMember(Name = "map_id")]
+        [JsonProperty("map_id")]
         public int MapId;
 
-        [DataMember(Name = "timestamp")]
+        [JsonProperty("timestamp")]
         public long Timestamp;
 
-        [DataMember(Name = "nodes")]
+        [JsonProperty("nodes")]
         public List<NodeLocation> Nodes;
     }
 }

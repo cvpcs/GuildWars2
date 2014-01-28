@@ -4,7 +4,8 @@ namespace GuildWars2.ArenaNet.Model
 {
     public enum ItemType
     {
-        Invalid, // Unknown type
+        None,
+        Invalid,
         Armor,
         Back,
         Bag,

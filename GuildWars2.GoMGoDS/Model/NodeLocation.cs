@@ -1,21 +1,21 @@
 ﻿using System;
-using System.Runtime.Serialization;
+
+using Newtonsoft.Json;
 
 namespace GuildWars2.GoMGoDS.Model
 {
-    [DataContract]
     public class NodeLocation
     {
-        [DataMember(Name = "x")]
+        [JsonProperty("x")]
         public int X;
 
-        [DataMember(Name = "y")]
+        [JsonProperty("y")]
         public int Y;
 
-        [DataMember(Name = "name")]
+        [JsonProperty("name")]
         public string Name;
 
-        [DataMember(Name = "type")]
+        [JsonProperty("type")]
         public string Type;
     }
 }

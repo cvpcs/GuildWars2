@@ -65,6 +65,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.GoMGoDS.APIServe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlAgilityPack.fx.4.5", "HtmlAgilityPack\HtmlAgilityPack.fx.4.5.csproj", "{1028002A-BBE2-4FF2-94B7-A8368A8F6887}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Newtonsoft.Json", "Newtonsoft.Json\Newtonsoft.Json.csproj", "{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Newtonsoft.Json.Silverlight", "Newtonsoft.Json.Silverlight\Newtonsoft.Json.Silverlight.csproj", "{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -489,6 +493,30 @@ Global
 		{1028002A-BBE2-4FF2-94B7-A8368A8F6887}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{1028002A-BBE2-4FF2-94B7-A8368A8F6887}.Release|Mono.ActiveCfg = Release|Any CPU
 		{1028002A-BBE2-4FF2-94B7-A8368A8F6887}.Release|Win32.ActiveCfg = Release|Any CPU
+		{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}.Debug|Mono.ActiveCfg = Debug|Any CPU
+		{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}.Release|Mono.ActiveCfg = Release|Any CPU
+		{EEEA67F9-9089-481D-A4DC-0966DEC9FD7D}.Release|Win32.ActiveCfg = Release|Any CPU
+		{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}.Debug|Mono.ActiveCfg = Debug|Any CPU
+		{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}.Release|Mono.ActiveCfg = Release|Any CPU
+		{DC3C6F3D-2CA1-4278-9B79-63770FB3EA2D}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

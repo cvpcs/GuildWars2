@@ -4,7 +4,8 @@ namespace GuildWars2.ArenaNet.Model
 {
     public enum RarityType
     {
-        Invalid, // Unknown type
+        None,
+        Invalid,
         Junk,
         Basic,
         Fine,

@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+
+using Newtonsoft.Json;
 
 namespace GuildWars2.GoMGoDS.Model
 {
-    [DataContract]
     public class ContestedLocationStatus
     {
+        [JsonIgnore]
         public string Id { get { return Abbreviation.ToLower(); } }
 
-        [DataMember(Name = "name")]
+        [JsonProperty("name")]
         public string Name;
 
-        [DataMember(Name = "abbreviation")]
+        [JsonProperty("abbreviation")]
         public string Abbreviation;
 
-        [DataMember(Name = "open_on")]
+        [JsonProperty("open_on")]
         public List<int> OpenOn;
 
-        [DataMember(Name = "defend_on")]
+        [JsonProperty("defend_on")]
         public List<int> DefendOn;
 
-        [DataMember(Name = "capture_on")]
+        [JsonProperty("capture_on")]
         public List<int> CaptureOn;
     }
 }

@@ -1,18 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
+using Newtonsoft.Json;
 
 namespace GuildWars2.ArenaNet.Model
 {
     public class EventDetails
     {
+        [JsonProperty("name")]
         public string Name { get; set; }
 
+        [JsonProperty("level")]
         public int Level { get; set; }
 
+        [JsonProperty("map_id")]
         public int MapId { get; set; }
-        
+
+        [JsonProperty("flags")]
         public List<string> Flags { get; set; }
+        [JsonIgnore]
         public EventFlagType FlagsEnum
         {
             get
@@ -32,6 +38,7 @@ namespace GuildWars2.ArenaNet.Model
             }
         }
 
+        [JsonProperty("location")]
         public Location Location { get; set; }
     }
 }

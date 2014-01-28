@@ -1,12 +1,17 @@
 ﻿using System;
 
+using Newtonsoft.Json;
+
 namespace GuildWars2.ArenaNet.Model.Wvw
 {
     public class ObjectiveState
     {
+        [JsonProperty("id")]
         public int Id { get; set; }
 
+        [JsonProperty("owner")]
         public string Owner { get; set; }
+        [JsonIgnore]
         public ObjectiveOwnerType OwnerEnum
         {
             get
@@ -19,6 +24,7 @@ namespace GuildWars2.ArenaNet.Model.Wvw
             }
         }
 
+        [JsonProperty("owner_guild")]
         public Guid OwnerGuild { get; set; }
     }
 }

@@ -1,17 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Newtonsoft.Json;
+
 namespace GuildWars2.ArenaNet.Model
 {
     public class ItemDetails
     {
+        [JsonProperty("item_id")]
         public int ItemId { get; set; }
+
+        [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("description")]
         public string Description { get; set; }
+
+        [JsonProperty("level")]
         public int Level { get; set; }
+
+        [JsonProperty("vendor_value")]
         public int VendorValue { get; set; }
 
+        [JsonProperty("type")]
         public string Type { get; set; }
+        [JsonIgnore]
         public ItemType TypeEnum
         {
             get
@@ -24,7 +37,9 @@ namespace GuildWars2.ArenaNet.Model
             }
         }
 
+        [JsonProperty("rarity")]
         public string Rarity { get; set; }
+        [JsonIgnore]
         public RarityType RarityEnum
         {
             get
@@ -37,7 +52,9 @@ namespace GuildWars2.ArenaNet.Model
             }
         }
 
+        [JsonProperty("game_types")]
         public List<string> GameTypes { get; set; }
+        [JsonIgnore]
         public GameType GameTypesEnum
         {
             get
@@ -56,8 +73,10 @@ namespace GuildWars2.ArenaNet.Model
                 return typeAll;
             }
         }
- 
+
+        [JsonProperty("flags")]
         public List<string> Flags { get; set; }
+        [JsonIgnore]
         public FlagType FlagsEnum
         {
             get
@@ -77,7 +96,9 @@ namespace GuildWars2.ArenaNet.Model
             }
         }
 
+        [JsonProperty("restrictions")]
         public List<string> Restrictions { get; set; }
+        [JsonIgnore]
         public RestrictionType RestrictionsEnum
         {
             get
@@ -97,8 +118,13 @@ namespace GuildWars2.ArenaNet.Model
             }
         }
 
+        [JsonProperty("icon_file_id")]
         public int IconFileId { get; set; }
+
+        [JsonProperty("icon_file_signature")]
         public string IconFileSignature { get; set; }
+
+        [JsonIgnore]
         public AssetFile IconFile
         {
             get

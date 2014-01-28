@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+
+using Newtonsoft.Json;
 
 namespace GuildWars2.GoMGoDS.API
 {
-    [DataContract]
     public class ChampionEventsResponse
     {
-        [DataMember(Name = "champion_events")]
+        [JsonProperty("champion_events")]
         public List<Guid> ChampionEvents;
     }
 }
