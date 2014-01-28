@@ -6,11 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-#if SILVERLIGHT
-using Microsoft.Maps.MapControl;
-#else
 using Microsoft.Maps.MapControl.WPF;
-#endif
 
 namespace GuildWars2.ArenaNet.Mapper
 {
@@ -60,14 +56,6 @@ namespace GuildWars2.ArenaNet.Mapper
             get { return m_PopupContent; }
             set { SetPopupContent(value); }
         }
-
-#if SILVERLIGHT
-        public object ToolTip
-        {
-            get { return ToolTipService.GetToolTip(this); }
-            set { ToolTipService.SetToolTip(this, value); }
-        }
-#endif
 
         public ImagePushpin()
             : base("/ImagePushpinTemplate.xaml")

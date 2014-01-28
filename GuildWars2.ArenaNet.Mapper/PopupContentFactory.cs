@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -8,10 +9,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 using GuildWars2.SyntaxError.Model;
-
-#if !SILVERLIGHT
-using System.Diagnostics;
-#endif
 
 namespace GuildWars2.ArenaNet.Mapper
 {
@@ -56,9 +53,7 @@ namespace GuildWars2.ArenaNet.Mapper
             Hyperlink link = new Hyperlink();
             link.NavigateUri = uri;
             link.TargetName = target;
-#if !SILVERLIGHT
             link.RequestNavigate += (s, e) => Process.Start(e.Uri.AbsoluteUri);
-#endif
             link.Inlines.Add(text);
 
             p.Inlines.Add(link);
@@ -102,11 +97,7 @@ namespace GuildWars2.ArenaNet.Mapper
             copy.Height = 18;
             copy.Margin = new Thickness(2, 1, 0, 1);
             copy.Click += (s, e) => Clipboard.SetText(code.ToString());
-#if SILVERLIGHT
-            ToolTipService.SetToolTip(copy, "Copy to clipboard");
-#else
             copy.ToolTip = "Copy to clipboard";
-#endif
 
             panel.Children.Add(copy);
 
@@ -117,19 +108,11 @@ namespace GuildWars2.ArenaNet.Mapper
 
         private void AppendParagraph(Paragraph p)
         {
-#if SILVERLIGHT
-            RichTextBlock tb = new RichTextBlock();
-#else
             TextBlock tb = new TextBlock();
-#endif
             tb.Foreground = Brushes.Black;
 
-#if SILVERLIGHT
-            tb.Blocks.Add(p);
-#else
             while (p.Inlines.Count > 0)
                 tb.Inlines.Add(p.Inlines.FirstInline);
-#endif
 
             Content.Children.Add(tb);
         }

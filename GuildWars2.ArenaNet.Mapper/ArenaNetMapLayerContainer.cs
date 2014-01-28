@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
-#if SILVERLIGHT
-using Microsoft.Maps.MapControl;
-#else
 using Microsoft.Maps.MapControl.WPF;
-#endif
 
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;

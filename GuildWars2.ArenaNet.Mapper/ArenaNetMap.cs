@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 
-#if SILVERLIGHT
-using Microsoft.Maps.MapControl;
-#else
 using Microsoft.Maps.MapControl.WPF;
-#endif
 
 namespace GuildWars2.ArenaNet.Mapper
 {
@@ -20,10 +16,6 @@ namespace GuildWars2.ArenaNet.Mapper
         {
             AnimationLevel = AnimationLevel.Full;
             ScaleVisibility = Visibility.Collapsed;
-
-#if SILVERLIGHT
-            NavigationVisibility = Visibility.Collapsed;
-#endif
 
             MouseWheel += MouseWheelHandler;
             MouseDoubleClick += MouseDoubleClickHandler;
@@ -117,19 +109,11 @@ namespace GuildWars2.ArenaNet.Mapper
             e.Handled = true;
         }
 
-#if SILVERLIGHT
-        private void MouseDoubleClickHandler(object sender, MapMouseEventArgs e)
-        {
-            ZoomAboutPoint(e.ViewportPoint, 1.0);
-            e.Handled = true;
-        }
-#else
         private void MouseDoubleClickHandler(object sender, MouseButtonEventArgs e)
         {
             ZoomAboutPoint(e.GetPosition(this), 1.0);
             e.Handled = true;
         }
-#endif
 
         private void ViewChangeEndHandler(object sender, MapEventArgs e)
         {
