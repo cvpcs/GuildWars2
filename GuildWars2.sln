@@ -27,17 +27,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet", "Guil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.Test", "GuildWars2.ArenaNet.Test\GuildWars2.ArenaNet.Test.csproj", "{2C2D15BC-9119-43A0-ADCC-E0938A647071}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.EventTimer", "GuildWars2.ArenaNet.EventTimer\GuildWars2.ArenaNet.EventTimer.csproj", "{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp", "RestSharp\RestSharp.csproj", "{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.EventTimer.Test", "GuildWars2.ArenaNet.EventTimer.Test\GuildWars2.ArenaNet.EventTimer.Test.csproj", "{80726AA3-0790-412D-B5D1-8D1373AD668A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.Mapper", "GuildWars2.ArenaNet.Mapper\GuildWars2.ArenaNet.Mapper.csproj", "{35746C2E-DEFB-480B-96BF-FB504F51A2E5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.SyntaxError", "GuildWars2.SyntaxError\GuildWars2.SyntaxError.csproj", "{FDA6740A-4370-4B57-990C-285C3C77E97D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.SyntaxError.Test", "GuildWars2.SyntaxError.Test\GuildWars2.SyntaxError.Test.csproj", "{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.TradingPost.Test", "GuildWars2.TradingPost.Test\GuildWars2.TradingPost.Test.csproj", "{1C659B42-976D-47CC-A00E-5ECB72CFB889}"
 EndProject
@@ -253,20 +247,6 @@ Global
 		{2C2D15BC-9119-43A0-ADCC-E0938A647071}.Release|Mono.ActiveCfg = Release|Any CPU
 		{2C2D15BC-9119-43A0-ADCC-E0938A647071}.Release|Mono.Build.0 = Release|Any CPU
 		{2C2D15BC-9119-43A0-ADCC-E0938A647071}.Release|Win32.ActiveCfg = Release|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Debug|Mono.ActiveCfg = Debug|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Debug|Mono.Build.0 = Debug|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Release|Any CPU.Build.0 = Release|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Release|Mono.ActiveCfg = Release|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Release|Mono.Build.0 = Release|Any CPU
-		{97F7E068-776B-4C2E-A1E8-AA5DF5ECA318}.Release|Win32.ActiveCfg = Release|Any CPU
 		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2ECECFBF-5F3E-40EE-A963-72336DC7ABE2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -303,30 +283,6 @@ Global
 		{35746C2E-DEFB-480B-96BF-FB504F51A2E5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{35746C2E-DEFB-480B-96BF-FB504F51A2E5}.Release|Mono.ActiveCfg = Release|Any CPU
 		{35746C2E-DEFB-480B-96BF-FB504F51A2E5}.Release|Win32.ActiveCfg = Release|Any CPU
-		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Debug|Mono.ActiveCfg = Debug|Any CPU
-		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Release|Mono.ActiveCfg = Release|Any CPU
-		{FDA6740A-4370-4B57-990C-285C3C77E97D}.Release|Win32.ActiveCfg = Release|Any CPU
-		{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}.Debug|Mono.ActiveCfg = Debug|Any CPU
-		{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}.Release|Mono.ActiveCfg = Release|Any CPU
-		{2A6488B8-1FC0-45AB-86BF-B5B8EB238253}.Release|Win32.ActiveCfg = Release|Any CPU
 		{1C659B42-976D-47CC-A00E-5ECB72CFB889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1C659B42-976D-47CC-A00E-5ECB72CFB889}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C659B42-976D-47CC-A00E-5ECB72CFB889}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

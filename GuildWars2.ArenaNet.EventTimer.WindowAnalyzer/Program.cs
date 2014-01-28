@@ -8,8 +8,8 @@ using Timer = System.Timers.Timer;
 
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
-using GuildWars2.SyntaxError.API;
-using GuildWars2.SyntaxError.Model;
+using GuildWars2.GoMGoDS.API;
+using GuildWars2.GoMGoDS.Model;
 
 namespace GuildWars2.ArenaNet.EventTimer.WindowAnalyzer
 {
@@ -25,7 +25,7 @@ namespace GuildWars2.ArenaNet.EventTimer.WindowAnalyzer
         public static void Main(string[] args)
         {
             Console.Write("Loading current event status . . . ");
-            m_EventStatus = new EventTimerDataRequest().Execute().Events.ToDictionary(ev => ev.Id);
+            m_EventStatus = new EventTimerRequest().Execute().Events.ToDictionary(ev => ev.Id);
             m_Data = new List<EventSpawnData>();
             Console.WriteLine("Done.");
 
@@ -70,7 +70,7 @@ namespace GuildWars2.ArenaNet.EventTimer.WindowAnalyzer
 
                 long timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
 
-                IList<EventState> metaEvents = response.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)).ToList();
+                HashSet<EventState> metaEvents = new HashSet<EventState>(response.Events.Where(es => MetaEventDefinitions.EventList.Contains(es.EventId)));
 
                 foreach (MetaEvent meta in MetaEventDefinitions.MetaEvents)
                 {
@@ -83,12 +83,12 @@ namespace GuildWars2.ArenaNet.EventTimer.WindowAnalyzer
                             {
                                 Id = meta.Id,
                                 StageId = stageId,
-                                StageTypeEnum = (stageId >= 0 ? meta.Stages[stageId].Type : MetaEventStage.StageType.Invalid),
+                                StageTypeEnum = (stageId >= 0 ? meta.Stages.ElementAt(stageId).Type : MetaEventStage.StageType.Invalid),
                                 Timestamp = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds
                             };
 
                         if (stageId < 0 && oldevs.StageId >= 0)
-                            newevs.StageName = meta.Stages[oldevs.StageId].IsFailed(metaEvents).ToString();
+                            newevs.StageName = meta.Stages.ElementAt(oldevs.StageId).IsFailed(metaEvents).ToString();
 
                         if (oldevs.StageTypeEnum == MetaEventStage.StageType.Invalid &&
                             newevs.StageTypeEnum != MetaEventStage.StageType.Invalid)

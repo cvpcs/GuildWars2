@@ -48,10 +48,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GuildWars2.ArenaNet.EventTimer\GuildWars2.ArenaNet.EventTimer.csproj">
-      <Project>{97f7e068-776b-4c2e-a1e8-aa5df5eca318}</Project>
-      <Name>GuildWars2.ArenaNet.EventTimer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GuildWars2.ArenaNet\GuildWars2.ArenaNet.csproj">
       <Project>{65382ece-3e80-47e3-9864-0c6995907c2b}</Project>
       <Name>GuildWars2.ArenaNet</Name>

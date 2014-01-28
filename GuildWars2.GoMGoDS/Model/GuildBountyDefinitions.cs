@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GuildWars2.SyntaxError.Model
+namespace GuildWars2.GoMGoDS.Model
 {
     public static class GuildBountyDefinitions
     {

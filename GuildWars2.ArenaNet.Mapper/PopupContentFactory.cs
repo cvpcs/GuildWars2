@@ -8,7 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-using GuildWars2.SyntaxError.Model;
+using GuildWars2.GoMGoDS.Model;
 
 namespace GuildWars2.ArenaNet.Mapper
 {

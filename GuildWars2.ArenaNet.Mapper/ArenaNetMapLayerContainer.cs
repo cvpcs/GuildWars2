@@ -8,8 +8,8 @@ using Microsoft.Maps.MapControl.WPF;
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
 
-using GuildWars2.SyntaxError.API;
-using GuildWars2.SyntaxError.Model;
+using GuildWars2.GoMGoDS.API;
+using GuildWars2.GoMGoDS.Model;
 
 namespace GuildWars2.ArenaNet.Mapper
 {

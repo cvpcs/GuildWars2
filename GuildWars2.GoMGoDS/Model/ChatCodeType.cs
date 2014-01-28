@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GuildWars2.SyntaxError.Model
+namespace GuildWars2.GoMGoDS.Model
 {
     public enum ChatCodeType
     {

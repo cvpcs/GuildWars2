@@ -20,8 +20,8 @@ using Location = Microsoft.Maps.MapControl.WPF.Location;
 
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
-using GuildWars2.SyntaxError.API;
-using GuildWars2.SyntaxError.Model;
+using GuildWars2.GoMGoDS.API;
+using GuildWars2.GoMGoDS.Model;
 
 namespace GuildWars2.ArenaNet.Mapper
 {
@@ -110,7 +110,7 @@ namespace GuildWars2.ArenaNet.Mapper
                                 if (!ev.Name.StartsWith("skill challenge: ", StringComparison.InvariantCultureIgnoreCase) && m_MapData.ContainsKey(ev.MapId))
                                 {
                                     evDetails[eid] = ev;
-                                    evChamps[eid] = championEvents.Contains(eid);
+                                    evChamps[eid] = championEvents.ChampionEvents.Contains(eid);
                                 }
                             }
 
@@ -131,7 +131,7 @@ namespace GuildWars2.ArenaNet.Mapper
                 });
 
             m_EventTimerBoxes = new Dictionary<string, EventTimerBox>();
-            new EventTimerDataRequest().ExecuteAsync(timerData =>
+            new EventTimerRequest().ExecuteAsync(timerData =>
                 {
                     if (timerData != null)
                     {
@@ -298,7 +298,7 @@ namespace GuildWars2.ArenaNet.Mapper
             {
                 try
                 {
-                    EventTimerDataResponse timerData = new EventTimerDataRequest().Execute();
+                    EventTimerResponse timerData = new EventTimerRequest().Execute();
                     if (timerData != null)
                     {
                         Dispatcher.Invoke(() =>

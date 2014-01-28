@@ -129,9 +129,9 @@
       <Project>{65382ece-3e80-47e3-9864-0c6995907c2b}</Project>
       <Name>GuildWars2.ArenaNet</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GuildWars2.SyntaxError\GuildWars2.SyntaxError.csproj">
-      <Project>{fda6740a-4370-4b57-990c-285c3c77e97d}</Project>
-      <Name>GuildWars2.SyntaxError</Name>
+    <ProjectReference Include="..\GuildWars2.GoMGoDS\GuildWars2.GoMGoDS.csproj">
+      <Project>{2dd77528-f341-4ce2-b66f-7324228eb023}</Project>
+      <Name>GuildWars2.GoMGoDS</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

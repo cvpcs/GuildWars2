@@ -54,9 +54,14 @@
     <Compile Include="API\Request.cs" />
     <Compile Include="API\Request.Sync.cs" />
     <Compile Include="DateExtensions.cs" />
+    <Compile Include="Model\ChatCode.cs" />
+    <Compile Include="Model\ChatCodeType.cs" />
     <Compile Include="Model\ContestedLocationStatus.cs" />
     <Compile Include="Model\ContestedLocationDefinitions.cs" />
     <Compile Include="Model\ContestedLocation.cs" />
+    <Compile Include="Model\GuildBounty.cs" />
+    <Compile Include="Model\GuildBountyDefinitions.cs" />
+    <Compile Include="Model\GuildBountyPath.cs" />
     <Compile Include="Model\MetaEvent.cs" />
     <Compile Include="Model\MetaEventBlockedStage.cs" />
     <Compile Include="Model\MetaEventDefinitions.cs" />
@@ -65,6 +70,7 @@
     <Compile Include="Model\MetaEventStage.cs" />
     <Compile Include="Model\MetaEventStatus.cs" />
     <Compile Include="Model\NodeLocation.cs" />
+    <Compile Include="Model\PathDirectionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
