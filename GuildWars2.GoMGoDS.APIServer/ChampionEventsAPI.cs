@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Net;
-using System.Linq;
-using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Xml.XPath;
 
 using GuildWars2.ArenaNet.API;
@@ -151,10 +147,10 @@ namespace GuildWars2.GoMGoDS.APIServer
             try
             {
                 cmd.CommandText = "SELECT * FROM championeventsapi_events";
-                IDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (IDataReader reader = cmd.ExecuteReader())
                 {
-                    events.Add(new Guid(reader["id"].ToString()));
+                    while (reader.Read())
+                        events.Add(new Guid(reader["id"].ToString()));
                 }
             }
             catch (Exception e)

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
-using System.Threading;
 
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
@@ -271,21 +268,27 @@ namespace GuildWars2.GoMGoDS.APIServer
             {
                 cmd.CommandText = "SELECT world_id FROM contestedstatusapi_open WHERE location_id = @id";
                 cmd.AddParameter("@id", id);
-                IDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
-                    status.OpenOn.Add(int.Parse(reader["world_id"].ToString()));
+                using (IDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                        status.OpenOn.Add(int.Parse(reader["world_id"].ToString()));
+                }
 
                 cmd.CommandText = "SELECT world_id FROM contestedstatusapi_defend WHERE location_id = @id";
                 cmd.AddParameter("@id", id);
-                reader = cmd.ExecuteReader();
-                if (reader.Read())
-                    status.DefendOn.Add(int.Parse(reader["world_id"].ToString()));
+                using (IDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                        status.DefendOn.Add(int.Parse(reader["world_id"].ToString()));
+                }
 
                 cmd.CommandText = "SELECT world_id FROM contestedstatusapi_capture WHERE location_id = @id";
                 cmd.AddParameter("@id", id);
-                reader = cmd.ExecuteReader();
-                if (reader.Read())
-                    status.CaptureOn.Add(int.Parse(reader["world_id"].ToString()));
+                using (IDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                        status.CaptureOn.Add(int.Parse(reader["world_id"].ToString()));
+                }
             }
             catch (Exception e)
             {

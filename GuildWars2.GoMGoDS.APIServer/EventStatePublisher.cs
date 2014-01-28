@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using GuildWars2.ArenaNet.API;
-using GuildWars2.ArenaNet.Model;
 
 namespace GuildWars2.GoMGoDS.APIServer
 {

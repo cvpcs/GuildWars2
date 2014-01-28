@@ -38,15 +38,19 @@ namespace GuildWars2.GoMGoDS.APIServer
 
             // set up our APIs
             ChampionEventsAPI championEventsApi = new ChampionEventsAPI();
+            ContestedStatusAPI contestedStatusApi = new ContestedStatusAPI();
             EventTimerAPI eventTimerApi = new EventTimerAPI();
             NodesAPI nodesApi = new NodesAPI();
 
             m_APIs.Add(championEventsApi);
+            m_APIs.Add(contestedStatusApi);
             m_APIs.Add(eventTimerApi);
             m_APIs.Add(nodesApi);
 
             // register our subscribers
+            buildIdPublisher.RegisterSubscriber(contestedStatusApi);
             buildIdPublisher.RegisterSubscriber(eventTimerApi);
+            eventStatePublisher.RegisterSubscriber(contestedStatusApi);
             eventStatePublisher.RegisterSubscriber(eventTimerApi);
         }
 

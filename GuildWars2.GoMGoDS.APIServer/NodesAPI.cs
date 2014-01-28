@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
 using System.Xml.XPath;
 
@@ -305,19 +303,21 @@ namespace GuildWars2.GoMGoDS.APIServer
                                         WHERE worldid = @worldid AND mapid = @mapid";
                 cmd.AddParameter("@worldid", worldId);
                 cmd.AddParameter("@mapid", mapId);
-                IDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (IDataReader reader = cmd.ExecuteReader())
                 {
-                    nodes.Add(new NodeInfo()
-                        {
-                            WorldId = int.Parse(reader["worldid"].ToString()),
-                            MapId = int.Parse(reader["mapid"].ToString()),
-                            X = int.Parse(reader["x"].ToString()),
-                            Y = int.Parse(reader["y"].ToString()),
-                            Timestamp = new DateTime(long.Parse(reader["timestamp"].ToString())),
-                            Name = reader["name"].ToString(),
-                            Type = reader["type"].ToString()
-                        });
+                    while (reader.Read())
+                    {
+                        nodes.Add(new NodeInfo()
+                            {
+                                WorldId = int.Parse(reader["worldid"].ToString()),
+                                MapId = int.Parse(reader["mapid"].ToString()),
+                                X = int.Parse(reader["x"].ToString()),
+                                Y = int.Parse(reader["y"].ToString()),
+                                Timestamp = new DateTime(long.Parse(reader["timestamp"].ToString())),
+                                Name = reader["name"].ToString(),
+                                Type = reader["type"].ToString()
+                            });
+                    }
                 }
             }
             catch (Exception e)

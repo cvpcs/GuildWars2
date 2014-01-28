@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
-using System.Threading;
 
 using GuildWars2.ArenaNet.API;
 using GuildWars2.ArenaNet.Model;
@@ -317,17 +314,19 @@ namespace GuildWars2.GoMGoDS.APIServer
             {
                 cmd.CommandText = "SELECT * FROM eventtimerapi_events WHERE id = @id";
                 cmd.AddParameter("@id", id);
-                IDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                using (IDataReader reader = cmd.ExecuteReader())
                 {
-                    status.Id = reader["id"].ToString();
-                    status.Name = reader["name"].ToString();
-                    status.MinCountdown = uint.Parse(reader["mincountdown"].ToString());
-                    status.MaxCountdown = uint.Parse(reader["maxcountdown"].ToString());
-                    status.StageId = int.Parse(reader["stageid"].ToString());
-                    status.StageName = reader["stagename"].ToString();
-                    status.StageType = reader["stagetype"].ToString();
-                    status.Timestamp = long.Parse(reader["timestamp"].ToString());
+                    if (reader.Read())
+                    {
+                        status.Id = reader["id"].ToString();
+                        status.Name = reader["name"].ToString();
+                        status.MinCountdown = uint.Parse(reader["mincountdown"].ToString());
+                        status.MaxCountdown = uint.Parse(reader["maxcountdown"].ToString());
+                        status.StageId = int.Parse(reader["stageid"].ToString());
+                        status.StageName = reader["stagename"].ToString();
+                        status.StageType = reader["stagetype"].ToString();
+                        status.Timestamp = long.Parse(reader["timestamp"].ToString());
+                    }
                 }
             }
             catch (Exception e)
