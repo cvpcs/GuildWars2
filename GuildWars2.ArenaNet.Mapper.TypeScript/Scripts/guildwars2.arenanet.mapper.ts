@@ -3,7 +3,7 @@
 /// <reference path="typings/leaflet.polylineDecorator/leaflet.polylineDecorator.d.ts" />
 /// <reference path="typings/guildwars2.arenanet/guildwars2.arenanet.d.ts" />
 /// <reference path="typings/guildwars2.arenanet.mumblelink/guildwars2.arenanet.mumblelink.d.ts" />
-/// <reference path="guildwars2.syntaxerror.ts" />
+/// <reference path="guildwars2.gomgods.ts" />
 
 module GuildWars2.ArenaNet.Mapper {
     var ResourceBaseUri: string = "Resources";
@@ -131,7 +131,7 @@ module GuildWars2.ArenaNet.Mapper {
             MapperJQuery.when(mapFloorRequest, eventDetailsRequest, championEventsRequest, worldNamesRequest).done(function (a: any, b: any, c: any, d: any): void {
                 var mapFloorResponse: GuildWars2.ArenaNet.API.MapFloorResponse = a[0];
                 var eventDetailsResponse: GuildWars2.ArenaNet.API.EventDetailsResponse = b[0];
-                var championEventsResponse: GuildWars2.SyntaxError.API.ChampionEventsResponse = c[0];
+                var championEventsResponse: GuildWars2.GoMGoDS.API.ChampionEventsResponse = c[0];
                 var worldNamesResponse: GuildWars2.ArenaNet.API.WorldNamesResponse = d[0];
 
                 that.worldSelectionControl.setWorlds(worldNamesResponse);
@@ -313,7 +313,7 @@ module GuildWars2.ArenaNet.Mapper {
                 if (ev.name.toLowerCase().indexOf("skill challenge: ") == 0 || this.mapData[mid] == undefined)
                     continue;
 
-                var hasChamp = (champions.indexOf(eid) >= 0);
+                var hasChamp = (champions.indexOf(eid.toLowerCase()) >= 0);
                 var map = this.mapData[mid];
 
                 if (this.mapEvents[mid] == undefined) {
@@ -391,7 +391,7 @@ module GuildWars2.ArenaNet.Mapper {
         private loadNodes(): void {
             var that = this;
 
-            MapperJQuery.get("http://gomgods.com/gw2/mapper/nodes?world_id=" + this.worldSelectionControl.currentWorldId, function (response: GuildWars2.SyntaxError.API.NodesResponse): void {
+            MapperJQuery.get("http://gomgods.com/gw2/mapper/nodes?world_id=" + this.worldSelectionControl.currentWorldId, function (response: GuildWars2.GoMGoDS.API.NodesResponse): void {
                 for (var mid in that.mapNodes)
                     that.mapNodes[mid].clearLayers();
 
@@ -425,8 +425,8 @@ module GuildWars2.ArenaNet.Mapper {
         }
 
         private loadBounties(): void {
-            for (var i in GuildWars2.SyntaxError.Model.GuildBountyDefinitions.Bounties) {
-                var bounty = GuildWars2.SyntaxError.Model.GuildBountyDefinitions.Bounties[i];
+            for (var i in GuildWars2.GoMGoDS.Model.GuildBountyDefinitions.Bounties) {
+                var bounty = GuildWars2.GoMGoDS.Model.GuildBountyDefinitions.Bounties[i];
                 var mid = bounty.map_id;
 
                 if (this.mapBounties[mid] == undefined) {
@@ -730,8 +730,8 @@ module GuildWars2.ArenaNet.Mapper {
                 jqIcon.show();
             });
 
-            for (var i in GuildWars2.SyntaxError.Model.GuildBountyDefinitions.Bounties) {
-                var bounty = GuildWars2.SyntaxError.Model.GuildBountyDefinitions.Bounties[i];
+            for (var i in GuildWars2.GoMGoDS.Model.GuildBountyDefinitions.Bounties) {
+                var bounty = GuildWars2.GoMGoDS.Model.GuildBountyDefinitions.Bounties[i];
 
                 this.addButton(bounty, map, list);
                 L.DomUtil.create("br", null, list);
@@ -745,7 +745,7 @@ module GuildWars2.ArenaNet.Mapper {
         public show() { MapperJQuery(this.mapContainer).show(); }
         public hide() { MapperJQuery(this.mapContainer).hide(); }
 
-        private addButton(bounty: GuildWars2.SyntaxError.Model.GuildBounty, map: L.Map, container: HTMLElement) {
+        private addButton(bounty: GuildWars2.GoMGoDS.Model.GuildBounty, map: L.Map, container: HTMLElement) {
             var link = <HTMLAnchorElement>L.DomUtil.create("a", "leaflet-control-bountypan-link", container);
             var jqLink = MapperJQuery(link);
             jqLink.attr("href", "#");
@@ -949,7 +949,7 @@ module GuildWars2.ArenaNet.Mapper {
             "mining": new L.Icon({ iconUrl: ResourceBaseUri + "/mining.png", iconSize: new L.Point(20, 20) })
         };
 
-        constructor(latlng: L.LatLng, node: GuildWars2.SyntaxError.Model.Node) {
+        constructor(latlng: L.LatLng, node: GuildWars2.GoMGoDS.Model.Node) {
             super(latlng, {
                 title: (node.name != "" ? node.name : undefined),
                 clickable: (node.name != "")
@@ -1066,7 +1066,7 @@ module GuildWars2.ArenaNet.Mapper {
                     .appendWikiLink(poi.name);
 
                 if (poi.type == "landmark" || poi.type == "waypoint")
-                    popupFactory.appendChatCode(GuildWars2.SyntaxError.Model.ChatCode.CreateMapLink(poi));
+                    popupFactory.appendChatCode(GuildWars2.GoMGoDS.Model.ChatCode.CreateMapLink(poi));
 
                 super.bindPopup(popupFactory.getContent(), { offset: new L.Point(0, -10) });
             }

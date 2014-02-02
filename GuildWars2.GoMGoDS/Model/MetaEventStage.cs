@@ -38,11 +38,7 @@ namespace GuildWars2.GoMGoDS.Model
 
         public virtual MetaEventStage AddEvent(Guid ev, EventStateType state)
         {
-            EventState evs = new EventState() { Event = ev, State = state };
-
-            if (!EventStates.Contains(evs))
-                EventStates.Add(evs);
-
+            EventStates.Add(new EventState() { Event = ev, State = state });
             return this;
         }
 

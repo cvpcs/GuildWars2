@@ -41,7 +41,7 @@
     <Content Include="Resources\vista.png" />
     <Content Include="Resources\warrior.png" />
     <Content Include="Resources\waypoint.png" />
-    <TypeScriptCompile Include="Scripts\guildwars2.syntaxerror.ts" />
+    <TypeScriptCompile Include="Scripts\guildwars2.gomgods.ts" />
     <Content Include="Scripts\leaflet.polylineDecorator.min.js" />
     <TypeScriptCompile Include="Scripts\typings\guildwars2.arenanet.mumblelink\guildwars2.arenanet.mumblelink.d.ts" />
     <Content Include="Scripts\typings\guildwars2.arenanet\guildwars2.arenanet.d.ts" />

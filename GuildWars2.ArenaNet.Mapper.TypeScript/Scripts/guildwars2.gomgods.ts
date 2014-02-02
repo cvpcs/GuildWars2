@@ -1,4 +1,4 @@
-module GuildWars2.SyntaxError {
+module GuildWars2.GoMGoDS {
 
     export module API {
 
@@ -7,7 +7,7 @@ module GuildWars2.SyntaxError {
         }
 
         export interface NodesResponse {
-            maps: { [key: number]: GuildWars2.SyntaxError.Model.NodeMap };
+            maps: { [key: number]: GuildWars2.GoMGoDS.Model.NodeMap };
         }
 
     }
