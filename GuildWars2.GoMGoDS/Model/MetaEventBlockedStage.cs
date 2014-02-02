@@ -9,12 +9,20 @@ namespace GuildWars2.GoMGoDS.Model
 {
     public class MetaEventBlockedStage : MetaEventMultiLineStage
     {
-        public HashSet<EventState> BlockedEventStates { get; private set; }
+        private HashSet<EventState> m_BlockedEventStates;
+
+        public override HashSet<EventState> EventStates
+        {
+            get
+            {
+                return new HashSet<EventState>(base.EventStates.Union(m_BlockedEventStates));
+            }
+        }
         
         public MetaEventBlockedStage(string name, uint countdown = 0, bool isEndStage = false)
             : base(StageType.Blocking, name, countdown, isEndStage)
         {
-            BlockedEventStates = new HashSet<EventState>();
+            m_BlockedEventStates = new HashSet<EventState>();
         }
 
         public MetaEventBlockedStage AddBlockedEvent(Guid ev)
@@ -25,18 +33,26 @@ namespace GuildWars2.GoMGoDS.Model
 
         public MetaEventBlockedStage AddBlockedEvent(Guid ev, EventStateType state)
         {
-            EventState evs = new EventState() { Event = ev, State = state };
-
-            if (!BlockedEventStates.Contains(evs))
-                BlockedEventStates.Add(evs);
-
+            m_BlockedEventStates.Add(new EventState() { Event = ev, State = state });
             return this;
         }
 
         public override bool IsActive(HashSet<ArenaNet.Model.EventState> events)
         {
-            return events.Where(es => BlockedEventStates.Contains(new EventState() { Event = es.EventId, State = es.StateEnum })).Count() > 0 &&
+            return events.Where(es => m_BlockedEventStates.Contains(new EventState() { Event = es.EventId, State = es.StateEnum })).Count() > 0 &&
                 base.IsActive(events);
+        }
+
+        public override bool IsSuccessful(HashSet<ArenaNet.Model.EventState> events)
+        {
+            return events.Where(es => m_BlockedEventStates.Contains(new EventState() { Event = es.EventId, State = es.StateEnum })).Count() > 0 && 
+                base.IsSuccessful(events);
+        }
+
+        public override bool IsFailed(HashSet<ArenaNet.Model.EventState> events)
+        {
+            return events.Where(es => m_BlockedEventStates.Contains(new EventState() { Event = es.EventId, State = es.StateEnum })).Count() > 0 && 
+                base.IsFailed(events);
         }
     }
 }

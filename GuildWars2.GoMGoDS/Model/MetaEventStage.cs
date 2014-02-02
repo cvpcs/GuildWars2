@@ -10,9 +10,9 @@ namespace GuildWars2.GoMGoDS.Model
     {
         public virtual StageType Type { get; private set; }
         public virtual string Name { get; private set; }
-        public bool IsEndStage { get; private set; }
+        public virtual bool IsEndStage { get; private set; }
 
-        public HashSet<EventState> EventStates { get; private set; }
+        public virtual HashSet<EventState> EventStates { get; private set; }
 
         // 0 = no countdown
         // MaxValue = continue from previous
