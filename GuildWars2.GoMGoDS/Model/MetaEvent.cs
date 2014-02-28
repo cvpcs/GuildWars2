@@ -90,7 +90,7 @@ namespace GuildWars2.GoMGoDS.Model
              * We do this because blocked events aren't really part of the meta, so we don't want them showing up most of
              * the time. Thus we always keep the non-blocked stage if it exists.
              */
-            if (stageId < 0 && blockedStageId > 0)
+            if (stageId < 0 && blockedStageId >= 0)
                 stageId = blockedStageId;
 
             return stageId;

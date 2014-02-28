@@ -249,8 +249,10 @@ namespace GuildWars2.GoMGoDS.Model
 
             /* GOOD */
             MetaEvents.Add(new MetaEvent("taidha", "Taidha Covington")
-                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy the canons")
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy the northern canons")
                             .AddEvent(new Guid("B6B7EE2A-AD6E-451B-9FE5-D5B0AD125BB2")) // Eliminate the cannons at the northern defensive tower.
+                        )
+                    .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Capture the southern tower")
                             .AddEvent(new Guid("189E7ABE-1413-4F47-858E-4612D40BF711")) // Capture Taidha Covington's southern defensive tower.
                         )
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault the gate")
