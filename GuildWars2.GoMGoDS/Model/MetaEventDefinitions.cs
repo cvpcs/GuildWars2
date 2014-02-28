@@ -412,7 +412,7 @@ namespace GuildWars2.GoMGoDS.Model
                         )
                 );
 
-            /* READY FOR TEST */
+            /* READY FOR TEST *//*
             MetaEvents.Add(new MetaEventIntervaled("marionette", "Twisted Marionette", 7200, 300, 3600)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "The floating machine is churning", 300)
                             .AddEvent(new Guid("861DCD3D-4398-4863-89DE-4F8F4B7DDEDF")) // Prepare for Scarlet's Twisted Marionette
@@ -435,7 +435,7 @@ namespace GuildWars2.GoMGoDS.Model
                             .AddEvent(new Guid("EF083B14-324A-4D10-8918-464800E46BCD")) // Hold the line!
                             .AddEvent(new Guid("D8E6FBE2-83BA-491D-BF32-4B1A315EEC99")) // Hold the line!
                         )
-                );
+                );*/
 
             /* READY FOR TEST */
             MetaEvents.Add(new MetaEventIntervaled("triwurm", "Triple-headed Wurm", 7200, 300, 3600)
