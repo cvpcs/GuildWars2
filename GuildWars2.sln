@@ -25,8 +25,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.Overlay.Contract
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet", "GuildWars2.ArenaNet\GuildWars2.ArenaNet.csproj", "{65382ECE-3E80-47E3-9864-0C6995907C2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.Test", "GuildWars2.ArenaNet.Test\GuildWars2.ArenaNet.Test.csproj", "{2C2D15BC-9119-43A0-ADCC-E0938A647071}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.EventTimer.Test", "GuildWars2.ArenaNet.EventTimer.Test\GuildWars2.ArenaNet.EventTimer.Test.csproj", "{80726AA3-0790-412D-B5D1-8D1373AD668A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.Mapper", "GuildWars2.ArenaNet.Mapper\GuildWars2.ArenaNet.Mapper.csproj", "{35746C2E-DEFB-480B-96BF-FB504F51A2E5}"
@@ -42,10 +40,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.GoMGoDS.APIServer", "GuildWars2.GoMGoDS.APIServer\GuildWars2.GoMGoDS.APIServer.csproj", "{CF4226DF-FB9E-4585-A4FE-85BD773BEF70}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.GoMGoDS", "GuildWars2.GoMGoDS\GuildWars2.GoMGoDS.csproj", "{2DD77528-F341-4CE2-B66F-7324228EB023}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.GoMGoDS.APIServer.Test", "GuildWars2.GoMGoDS.APIServer.Test\GuildWars2.GoMGoDS.APIServer.Test.csproj", "{7CAF3787-4416-4775-95ED-0E4C6A1E6850}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.GoMGoDS.Test", "GuildWars2.GoMGoDS.Test\GuildWars2.GoMGoDS.Test.csproj", "{EB0C0718-D0BA-40D7-9234-083242BBD7B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -115,12 +109,6 @@ Global
 		{65382ECE-3E80-47E3-9864-0C6995907C2B}.Mono|Any CPU.Build.0 = Release|Any CPU
 		{65382ECE-3E80-47E3-9864-0C6995907C2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65382ECE-3E80-47E3-9864-0C6995907C2B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2C2D15BC-9119-43A0-ADCC-E0938A647071}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C2D15BC-9119-43A0-ADCC-E0938A647071}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C2D15BC-9119-43A0-ADCC-E0938A647071}.Mono|Any CPU.ActiveCfg = Release|Any CPU
-		{2C2D15BC-9119-43A0-ADCC-E0938A647071}.Mono|Any CPU.Build.0 = Release|Any CPU
-		{2C2D15BC-9119-43A0-ADCC-E0938A647071}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C2D15BC-9119-43A0-ADCC-E0938A647071}.Release|Any CPU.Build.0 = Release|Any CPU
 		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80726AA3-0790-412D-B5D1-8D1373AD668A}.Mono|Any CPU.ActiveCfg = Release|Any CPU
@@ -165,18 +153,6 @@ Global
 		{2DD77528-F341-4CE2-B66F-7324228EB023}.Mono|Any CPU.Build.0 = Release|Any CPU
 		{2DD77528-F341-4CE2-B66F-7324228EB023}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DD77528-F341-4CE2-B66F-7324228EB023}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7CAF3787-4416-4775-95ED-0E4C6A1E6850}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7CAF3787-4416-4775-95ED-0E4C6A1E6850}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7CAF3787-4416-4775-95ED-0E4C6A1E6850}.Mono|Any CPU.ActiveCfg = Mono|Any CPU
-		{7CAF3787-4416-4775-95ED-0E4C6A1E6850}.Mono|Any CPU.Build.0 = Mono|Any CPU
-		{7CAF3787-4416-4775-95ED-0E4C6A1E6850}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7CAF3787-4416-4775-95ED-0E4C6A1E6850}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB0C0718-D0BA-40D7-9234-083242BBD7B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB0C0718-D0BA-40D7-9234-083242BBD7B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB0C0718-D0BA-40D7-9234-083242BBD7B2}.Mono|Any CPU.ActiveCfg = Release|Any CPU
-		{EB0C0718-D0BA-40D7-9234-083242BBD7B2}.Mono|Any CPU.Build.0 = Release|Any CPU
-		{EB0C0718-D0BA-40D7-9234-083242BBD7B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB0C0718-D0BA-40D7-9234-083242BBD7B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
