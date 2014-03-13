@@ -356,7 +356,7 @@ namespace GuildWars2.GoMGoDS.Model
                         )
                 );
 
-            /* GOOD */
+            /* GOOD *//*
             MetaEvents.Add(new MetaEvent("scarlet", "Scarlet Briar")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Lornar's Pass", 2700, true)
                             .AddEvent(new Guid("6DEB01AE-675E-4FF9-9789-53CB73FC621E"), EventStateType.Active) // Scarlet's Minions Invade!
@@ -397,7 +397,7 @@ namespace GuildWars2.GoMGoDS.Model
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defend Sparkfly Fen", 2700, true)
                             .AddEvent(new Guid("92979945-63A4-42D7-8AE5-1EFADC9E636F"), EventStateType.Active) // Scarlet's Minions Invade!
                         )
-                );
+                );*/
 
             /* READY FOR TEST */
             MetaEvents.Add(new MetaEvent("arah", "Gates of Arah")
