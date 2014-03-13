@@ -11,7 +11,6 @@
     <AssemblyName>GuildWars2.GoMGoDS.APIServer.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Mono-3.2.3</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,8 +33,20 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Mono|AnyCPU' ">
+    <OutputPath>bin\Mono\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Data.Sqlite" />
+    <Reference Include="Mono.Data.Sqlite" Condition=" '$(Confirguration)' != 'Mono' ">
+      <HintPath>..\GuildWars2.GoMGoDS.APIServer\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite" Condition=" '$(Confirguration)' == 'Mono' " />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -61,7 +72,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="sqlite3.dll">
+    <Content Include="..\GuildWars2.GoMGoDS.APIServer\sqlite3.dll" Condition=" '$(Confirguration)' != 'Mono' ">
+      <Link>sqlite3.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
