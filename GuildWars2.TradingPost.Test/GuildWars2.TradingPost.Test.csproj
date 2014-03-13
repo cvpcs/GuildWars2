@@ -34,6 +34,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.4.6.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -84,6 +91,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -97,14 +105,6 @@
     <ProjectReference Include="..\GuildWars2.TradingPost\GuildWars2.TradingPost.csproj">
       <Project>{6fd385ff-7414-40f3-85bd-152bc2119adf}</Project>
       <Name>GuildWars2.TradingPost</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\HtmlAgilityPack\HtmlAgilityPack.fx.4.5.csproj">
-      <Project>{1028002a-bbe2-4ff2-94b7-a8368a8f6887}</Project>
-      <Name>HtmlAgilityPack.fx.4.5</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RestSharp\RestSharp.csproj">
-      <Project>{2ececfbf-5f3e-40ee-a963-72336dc7abe2}</Project>
-      <Name>RestSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
