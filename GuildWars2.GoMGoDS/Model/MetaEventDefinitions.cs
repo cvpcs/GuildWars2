@@ -8,17 +8,39 @@ namespace GuildWars2.GoMGoDS.Model
 {
     public static class MetaEventDefinitions
     {
-        public static IList<MetaEvent> MetaEvents;
+        public const string MEID_CLAW = "claw";
+        public const string MEID_COMMISSAR = "commissar";
+        public const string MEID_EYE = "eye";
+        public const string MEID_ELEMENTAL = "elemental";
+        public const string MEID_SHAMAN = "shaman";
+        public const string MEID_FOULBEAR = "foulbear";
+        public const string MEID_MAW = "maw";
+        public const string MEID_GOLEM = "golem";
+        public const string MEID_WURM = "wurm";
+        public const string MEID_KARKA = "karka";
+        public const string MEID_MEGADESTROYER = "megadestroyer";
+        public const string MEID_ULGOTH = "ulgoth";
+        public const string MEID_BEHEMOTH = "behemoth";
+        public const string MEID_SHATTERER = "shatterer";
+        public const string MEID_TAIDHA = "taidha";
+        public const string MEID_BALTHAZAR = "balthazar";
+        public const string MEID_DWAYNA = "dwayna";
+        public const string MEID_GRENTH = "grenth";
+        public const string MEID_LYSSA = "lyssa";
+        public const string MEID_MELANDRU = "melandru";
+        public const string MEID_TEQUATL = "tequatl";
+        public const string MEID_ARAH = "arah";
+        public const string MEID_TRIWURM = "triwurm";
 
+        public static IList<MetaEvent> MetaEvents;
         public static HashSet<Guid> EventList;
-        public static IDictionary<MetaEvent, List<Guid>> EventDictionary;
 
         static MetaEventDefinitions()
         {
             MetaEvents = new List<MetaEvent>();
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("claw", "The Claw of Jormag", 10800, 16200)
+            MetaEvents.Add(new MetaEvent(MEID_CLAW, "The Claw of Jormag", 10800, 16200)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Crystals scatter the landscape")
                             .AddEvent(new Guid("0CA3A7E3-5F66-4651-B0CB-C45D3F0CAD95")) // Destroy the dragon crystal on the road to Slough of Despond.
                             .AddEvent(new Guid("96D736C4-D2C6-4392-982F-AC6B8EF3B1C8")) // Destroy the dragon crystal at Elder's Vale.
@@ -34,14 +56,14 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("commissar", "Dredge Commissar")
+            MetaEvents.Add(new MetaEvent(MEID_COMMISSAR, "Dredge Commissar")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the dredge commissar")
                             .AddEvent(new Guid("95CA969B-0CC6-4604-B166-DBCCE125864F")) // Defeat the dredge commissar.
                         )
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("eye", "Eye of Zhaitan")
+            MetaEvents.Add(new MetaEvent(MEID_EYE, "Eye of Zhaitan")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy the risen AA gun")
                             .AddEvent(new Guid("A0E5E563-2701-4D4E-8163-A89FEA02EC38")) // Destroy the Risen anti-aircraft gun so Nallandra can signal her team to land.
                         )
@@ -57,7 +79,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("elemental", "Fire Elemental", 1500, 3300)
+            MetaEvents.Add(new MetaEvent(MEID_ELEMENTAL, "Fire Elemental", 1500, 3300)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy the chaotic materials")
                             .AddEvent(new Guid("6B897FF9-4BA8-4EBD-9CEC-7DCFDA5361D8")) // Destroy the chaotic materials created by the reactor meltdown.
                         )
@@ -76,14 +98,14 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("shaman", "Fire Shaman", 1500, 3300)
+            MetaEvents.Add(new MetaEvent(MEID_SHAMAN, "Fire Shaman", 1500, 3300)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Kill the Fire Shaman")
                             .AddEvent(new Guid("295E8D3B-8823-4960-A627-23E07575ED96"), EventStateType.Active) // Defeat the fire shaman and his minions.
                         )
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("foulbear", "Foulbear Chieftain")
+            MetaEvents.Add(new MetaEvent(MEID_FOULBEAR, "Foulbear Chieftain")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault Foulbear Kraal", 780)
                             .AddEvent(new Guid("D9F1CF48-B1CB-49F5-BFAF-4CEC5E68C9CF"), EventStateType.Active) // Assault Foulbear Kraal by killing its leaders before the ogres can rally.
                         )
@@ -96,7 +118,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("maw", "The Frozen Maw", 3600, 7200)
+            MetaEvents.Add(new MetaEvent(MEID_MAW, "The Frozen Maw", 3600, 7200)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "The grawl are attacking")
                             .AddEvent(new Guid("6F516B2C-BD87-41A9-9197-A209538BB9DF")) // Protect Tor the Tall's supplies from the grawl.
                         )
@@ -117,7 +139,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("golem", "Golem Mark II", 2400, 3600)
+            MetaEvents.Add(new MetaEvent(MEID_GOLEM, "Golem Mark II", 2400, 3600)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Recovery, "Harvest kelp")
                             .AddEvent(new Guid("A7E0F553-C4E1-452F-B39F-7BDBEC8B0BB1")) // Harvest kelp from the reef lurker fields so the Lonatl chief can heal his tribe.
                         )
@@ -140,7 +162,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("wurm", "Great Jungle Wurm", 7200, 9000)
+            MetaEvents.Add(new MetaEvent(MEID_WURM, "Great Jungle Wurm", 7200, 9000)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Gamarien is jumping with excitement")
                             .AddEvent(new Guid("613A7660-8F3A-4897-8FAC-8747C12E42F8"), EventStateType.Preparation)
                         )
@@ -161,7 +183,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("karka", "Karka Queen")
+            MetaEvents.Add(new MetaEvent(MEID_KARKA, "Karka Queen")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.Boss, "Defeat the Karka Queen", 600)
                             .AddEvent(new Guid("E1CC6E63-EFFE-4986-A321-95C89EA58C07")) // Defeat the Karka Queen threatening the settlements.
                             .AddEvent(new Guid("5282B66A-126F-4DA4-8E9D-0D9802227B6D")) // Defeat the Karka Queen threatening the settlements.
@@ -171,7 +193,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
             
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("megadestroyer", "Megadestroyer")
+            MetaEvents.Add(new MetaEvent(MEID_MEGADESTROYER, "Megadestroyer")
                     .AddStage(new MetaEventMultiLineStage(MetaEventStage.StageType.PreEvent, "Assist the sylvari camp")
                             .AddEvent(new Guid("294E08F6-CA36-42B3-8D06-B321BA06EECA"), "Stop the destroyer-essence collectors") // Stop the Inquest's destroyer-essence collectors by destroying their power cores.
                             .AddEvent(new Guid("61D4579A-C53F-4C26-A31B-92FABE3DA566"), EventStateType.Active, "Defend the Advanced Arcanomics lab") // Defend the Advanced Arcanomics lab.
@@ -191,7 +213,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("ulgoth", "Modniir Ulgoth")
+            MetaEvents.Add(new MetaEvent(MEID_ULGOTH, "Modniir Ulgoth")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault Kingsgate", 1200)
                             .AddEvent(new Guid("DDC0A526-A239-4791-8984-E7396525B648")) // Assault Kingsgate and drive the centaurs back before they can rally their forces.
                         )
@@ -207,7 +229,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("behemoth", "Shadow Behemoth", 7200, 9000)
+            MetaEvents.Add(new MetaEvent(MEID_BEHEMOTH, "Shadow Behemoth", 7200, 9000)
                     .AddStage(new MetaEventBlockedStage("Assistance needed in the swamp")
                             .AddBlockedEvent(new Guid("31CEBA08-E44D-472F-81B0-7143D73797F5"), EventStateType.Preparation) // Defeat the shadow behemoth.
                             .AddEvent(new Guid("1E644459-9EC4-4C63-9975-E37CF5E7C108"), "The monestary requires assistance") // Drive back the centaurs before they steal the monastery's ale.
@@ -231,7 +253,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("shatterer", "The Shatterer", 10800, 11100)
+            MetaEvents.Add(new MetaEvent(MEID_SHATTERER, "The Shatterer", 10800, 11100)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Preparations have begun")
                             .AddEvent(new Guid("8E064416-64B5-4749-B9E2-31971AB41783")) // Escort the Sentinel squad to the Vigil camp in Lowland Burns.
                             .AddEvent(new Guid("580A44EE-BAED-429A-B8BE-907A18E36189")) // Collect siege weapon pieces for Crusader Blackhorn.
@@ -248,7 +270,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("taidha", "Taidha Covington")
+            MetaEvents.Add(new MetaEvent(MEID_TAIDHA, "Taidha Covington")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Destroy the northern canons")
                             .AddEvent(new Guid("B6B7EE2A-AD6E-451B-9FE5-D5B0AD125BB2")) // Eliminate the cannons at the northern defensive tower.
                         )
@@ -264,7 +286,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* READY FOR TEST */
-            MetaEvents.Add(new MetaEvent("balthazar", "Temple of Balthazar")
+            MetaEvents.Add(new MetaEvent(MEID_BALTHAZAR, "Temple of Balthazar")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Escort the Pact")
                             .AddEvent(new Guid("D0ECDACE-41F8-46BD-BB17-8762EF29868C")) // Help the Pact reach the Altar of Betrayal before their morale is depleted.
                         )
@@ -277,7 +299,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("dwayna", "Temple of Dwayna")
+            MetaEvents.Add(new MetaEvent(MEID_DWAYNA, "Temple of Dwayna")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Escort Historian Vermoth")
                             .AddEvent(new Guid("F531683F-FC09-467F-9661-6741E8382E24")) // Escort Historian Vermoth to the Altar of Tempests.
                         )
@@ -293,7 +315,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("grenth", "Temple of Grenth")
+            MetaEvents.Add(new MetaEvent(MEID_GRENTH, "Temple of Grenth")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Assault the temple")
                             .AddEvent(new Guid("C8139970-BE46-419B-B026-485A14002D44")) // Ensure that Keeper Jonez Deadrun reaches the Cathedral of Silence.
                         )
@@ -306,7 +328,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* READY FOR TEST */
-            MetaEvents.Add(new MetaEvent("lyssa", "Temple of Lyssa")
+            MetaEvents.Add(new MetaEvent(MEID_LYSSA, "Temple of Lyssa")
                     /* TODO: The end event is always active, need to find a way to better handle this */
                     .AddStage(new MetaEventMultiLineStage(MetaEventStage.StageType.PreEvent, "Capture the seals")
                             .AddEvent(new Guid("B6D6D060-4974-4385-AB08-F641B6F32823"), EventStateType.Active, "Defend the Song of Lyss") // Defend the seal until the Pact cannon is back online.
@@ -325,7 +347,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEvent("melandru", "Temple of Melandru")
+            MetaEvents.Add(new MetaEvent(MEID_MELANDRU, "Temple of Melandru")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Place the first beacon")
                             .AddEvent(new Guid("3D333172-24CE-47BA-8F1A-1AD47E7B69E4"), EventStateType.Active) // Escort Magister Izzmek to the site of the first signal beacon.
                         )
@@ -347,7 +369,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );
 
             /* GOOD */
-            MetaEvents.Add(new MetaEventIntervaled("tequatl", "Tequatl the Sunless", 7200, 300, 3600)
+            MetaEvents.Add(new MetaEventIntervaled(MEID_TEQUATL, "Tequatl the Sunless", 7200, 300, 3600)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Somthing's in the water")
                             .AddEvent(new Guid("568A30CF-8512-462F-9D67-647D69BEFAED"), EventStateType.Preparation)
                         )
@@ -400,7 +422,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );*/
 
             /* READY FOR TEST */
-            MetaEvents.Add(new MetaEvent("arah", "Gates of Arah")
+            MetaEvents.Add(new MetaEvent(MEID_ARAH, "Gates of Arah")
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Sieze the promenade steps")
                             .AddEvent(new Guid("E87A021D-4E7C-4A50-BEDB-6F5A54C90A9A")) // Help the Pact seize the steps of the Promenade of the Gods.
                         )
@@ -438,7 +460,7 @@ namespace GuildWars2.GoMGoDS.Model
                 );*/
 
             /* READY FOR TEST */
-            MetaEvents.Add(new MetaEventIntervaled("triwurm", "Triple-headed Wurm", 7200, 300, 3600)
+            MetaEvents.Add(new MetaEventIntervaled(MEID_TRIWURM, "Triple-headed Wurm", 7200, 300, 3600)
                     .AddStage(new MetaEventStage(MetaEventStage.StageType.PreEvent, "Investigations will begin shortly", 360) // (5 min wait + 1 min dialog)
                             .AddEvent(new Guid("B081F000-5928-4B69-8980-20AD93827B6C"), EventStateType.Preparation) // Investigate the rumors of wurm activity in Whisperwill Bogs.
                             .AddEvent(new Guid("743B0A35-118E-43D7-ACCE-10FDF00139BD"), EventStateType.Preparation) // Investigate the rumors of wurm activity in Challdar Gorges.
