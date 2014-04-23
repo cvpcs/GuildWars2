@@ -40,6 +40,8 @@ namespace GuildWars2.GoMGoDS.Model
                 { 20 * 4 + 0, MetaEventDefinitions.MEID_TRIWURM }  // 20:00
             };
 
+        private static TimeZoneInfo PST8PDT;
+
         public static string[] MetaEventRotation;
         public static HashSet<string> MetaEventList;
 
@@ -60,12 +62,13 @@ namespace GuildWars2.GoMGoDS.Model
 
             // create a list of all of the metas that are scheduled
             MetaEventList = new HashSet<string>(MetaEventRotation);
+
+            PST8PDT = TimeZoneInfo.FindSystemTimeZoneById(Environment.OSVersion.Platform == PlatformID.Unix ? "PST8PDT" : "Pacific Standard Time");
         }
 
         public static int GetSlot(DateTime utcTime)
         {
-            TimeZoneInfo pst8pdt = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
-            DateTime pt = TimeZoneInfo.ConvertTimeFromUtc(utcTime, pst8pdt);
+            DateTime pt = TimeZoneInfo.ConvertTimeFromUtc(utcTime, PST8PDT);
             return (int)Math.Floor(pt.TimeOfDay.TotalMinutes / 15.0) % MetaEventRotation.Length;
         }
     }
