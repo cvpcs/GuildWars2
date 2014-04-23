@@ -13,7 +13,7 @@ namespace GuildWars2.GoMGoDS.APIServer
     public class EventScheduleAPI : APIBase<EventScheduleResponse>
     {
         #region APIBase
-        public override string RequestPath { get { return "/eventtimer.json"; } }
+        public override string RequestPath { get { return "/eventschedule.json"; } }
 
         public override void Init(IDbConnection dbConn) { }
 
@@ -78,14 +78,14 @@ namespace GuildWars2.GoMGoDS.APIServer
                     status.StageId = 1;
                     status.StageTypeEnum = MetaEventStage.StageType.PreEvent;
                     status.StageName = "This boss is on deck.";
-                    status.Countdown = slot_secs_remaining + 900;
+                    status.Countdown = slot_secs_remaining;
                 }
                 else
                 {
                     status.StageId = 0;
                     status.StageTypeEnum = MetaEventStage.StageType.Invalid;
                     status.StageName = "This boss is on cooldown.";
-                    status.Countdown = slot_secs_remaining + ((uint)(meta_slot - slot) * 900);
+                    status.Countdown = ((uint)(meta_slot - (slot + 1)) * 900) + slot_secs_remaining;
                 }
 
                 data.Events.Add(status);
