@@ -18,14 +18,17 @@ module GuildWars2.ArenaNet.Mapper {
         private bountyPanControl: BountyPanControl = new BountyPanControl();
         private fullscreenControl: FullscreenControl = new FullscreenControl();
         private playerPositionControl: PlayerPositionControl = new PlayerPositionControl();
-        private worldSelectionControl: WorldSelectionControl = new WorldSelectionControl();
+        /* TODO: Megaserver APIs
+        private worldSelectionControl: WorldSelectionControl = new WorldSelectionControl(); */
 
         private playerPosition: PlayerPositionLayer = null;
 
         private bounties: CustomLayerGroup = new CustomLayerGroup();
-        private events: CustomLayerGroup = new CustomLayerGroup();
+        /* TODO: Megaserver APIs
+        private events: CustomLayerGroup = new CustomLayerGroup(); */
         private landmarks: CustomLayerGroup = new CustomLayerGroup();
-        private nodes: CustomLayerGroup = new CustomLayerGroup();
+        /* TODO: Megaserver APIs
+        private nodes: CustomLayerGroup = new CustomLayerGroup(); */
         private sectors: CustomLayerGroup = new CustomLayerGroup();
         private skillChallenges: CustomLayerGroup = new CustomLayerGroup();
         private tasks: CustomLayerGroup = new CustomLayerGroup();
@@ -34,9 +37,11 @@ module GuildWars2.ArenaNet.Mapper {
         private waypoints: CustomLayerGroup = new CustomLayerGroup();
 
         private mapBounties: { [key: number]: CustomLayerGroup } = {};
-        private mapEvents: { [key: number]: CustomLayerGroup } = {};
+        /* TODO: Megaserver APIs
+        private mapEvents: { [key: number]: CustomLayerGroup } = {}; */
         private mapLandmarks: { [key: number]: CustomLayerGroup } = {};
-        private mapNodes: { [key: number]: CustomLayerGroup } = {};
+        /* TODO: Megaserver APIs
+        private mapNodes: { [key: number]: CustomLayerGroup } = {}; */
         private mapSectors: { [key: number]: CustomLayerGroup } = {};
         private mapSkillChallenges: { [key: number]: CustomLayerGroup } = {};
         private mapTasks: { [key: number]: CustomLayerGroup } = {};
@@ -44,8 +49,9 @@ module GuildWars2.ArenaNet.Mapper {
         private mapVistas: { [key: number]: CustomLayerGroup } = {};
         private mapWaypoints: { [key: number]: CustomLayerGroup } = {};
 
+        /* TODO: Megaserver APIs
         private eventMarkers: { [key: string]: EventMarker } = {};
-        private eventPolygons: { [key: string]: EventPolygon } = {};
+        private eventPolygons: { [key: string]: EventPolygon } = {}; */
 
         constructor(id: string) {
             super(id, {
@@ -60,9 +66,10 @@ module GuildWars2.ArenaNet.Mapper {
 
             // start loading ajax queries right away
             var mapFloorRequest = MapperJQuery.get("https://api.guildwars2.com/v1/map_floor.json?continent_id=1&floor=2");
+            /* TODO: Megaserver APIs
             var eventDetailsRequest = MapperJQuery.get("https://api.guildwars2.com/v1/event_details.json");
             var championEventsRequest = MapperJQuery.get("http://gomgods.com/gw2/mapper/champs");
-            var worldNamesRequest = MapperJQuery.get("https://api.guildwars2.com/v1/world_names.json");
+            var worldNamesRequest = MapperJQuery.get("https://api.guildwars2.com/v1/world_names.json"); */
 
             new L.TileLayer("https://tiles.guildwars2.com/1/1/{z}/{x}/{y}.jpg", {
                 minZoom: super.getMinZoom(),
@@ -76,19 +83,23 @@ module GuildWars2.ArenaNet.Mapper {
             this.unlocks.addTo(this);
             this.tasks.addTo(this);
             this.skillChallenges.addTo(this);
-            this.nodes.addTo(this);
+            /* TODO: Megaserver APIs
+            this.nodes.addTo(this); */
             this.sectors.addTo(this);
             this.bounties.addTo(this);
-            this.events.addTo(this);
+            /* TODO: Megaserver APIs
+            this.events.addTo(this); */
 
             this.sectors.setVisibility(false);
             this.bounties.setVisibility(false);
 
             new L.Control.Layers()
                 .addOverlay(this.bounties, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/bounty.png\" /> <span class=\"legend\">Bounties</span>")
-                .addOverlay(this.events, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/event_star.png\" /> <span class=\"legend\">Events</span>")
+                /* TODO: Megaserver APIs
+                .addOverlay(this.events, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/event_star.png\" /> <span class=\"legend\">Events</span>") */
                 .addOverlay(this.landmarks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/poi.png\" /> <span class=\"legend\">Points of Interest</span>")
-                .addOverlay(this.nodes, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/harvesting.png\" /> <span class=\"legend\">Tier 6 Nodes</span>")
+                /* TODO: Megaserver APIs
+                .addOverlay(this.nodes, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/harvesting.png\" /> <span class=\"legend\">Tier 6 Nodes</span>") */
                 .addOverlay(this.sectors, "<span class=\"legend\" style=\"display: inline-block; width: 20px; height: 20px; font-family: menomonia; font-size: 10pt; font-weight: 900; text-align: center; color: #d3d3d3; text-shadow: -1px -1px 0px black;\"><em>A</em></span> <span class=\"legend\">Sectors</span>")
                 .addOverlay(this.skillChallenges, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/skill_point.png\" /> <span class=\"legend\">Skill Points</span>")
                 .addOverlay(this.tasks, "<img width=\"20\" height=\"20\" class=\"legend\" src=\"" + ResourceBaseUri + "/renown_heart.png\" /> <span class=\"legend\">Renown Hearts</span>")
@@ -98,7 +109,8 @@ module GuildWars2.ArenaNet.Mapper {
                 .addTo(this);
 
             this.fullscreenControl.addTo(this);
-            this.worldSelectionControl.addTo(this);
+            /* TODO: Megaserver APIs
+            this.worldSelectionControl.addTo(this); */
             this.bountyPanControl.addTo(this);
             this.playerPositionControl.addTo(this);
 
@@ -128,15 +140,23 @@ module GuildWars2.ArenaNet.Mapper {
             var that = this;
 
             // deal with our AJAX queries now
-            MapperJQuery.when(mapFloorRequest, eventDetailsRequest, championEventsRequest, worldNamesRequest).done(function (a: any, b: any, c: any, d: any): void {
+            MapperJQuery.when(mapFloorRequest
+                    /* TODO: Megaserver APIs
+                    , eventDetailsRequest, championEventsRequest, worldNamesRequest */).done(function (a: any
+                        /* TODO: Megaserver APIs
+                        , b: any, c: any, d: any */): void {
+                /* TODO: Megaserver APIs */
+                var mapFloorResponse: GuildWars2.ArenaNet.API.MapFloorResponse = a;
+                /* TODO: Megaserver APIs
                 var mapFloorResponse: GuildWars2.ArenaNet.API.MapFloorResponse = a[0];
                 var eventDetailsResponse: GuildWars2.ArenaNet.API.EventDetailsResponse = b[0];
                 var championEventsResponse: GuildWars2.GoMGoDS.API.ChampionEventsResponse = c[0];
                 var worldNamesResponse: GuildWars2.ArenaNet.API.WorldNamesResponse = d[0];
 
-                that.worldSelectionControl.setWorlds(worldNamesResponse);
+                that.worldSelectionControl.setWorlds(worldNamesResponse); */
 
                 that.loadFloorData(mapFloorResponse);
+                /* TODO: Megaserver APIs
                 that.loadEventData(eventDetailsResponse.events, championEventsResponse.champion_events);
 
                 that.loadEventStates();
@@ -151,7 +171,7 @@ module GuildWars2.ArenaNet.Mapper {
                     if (that.playerPosition != null) {
                         that.playerPosition.setOpacity(worldId == that.playerPosition.getLastData().server ? 1.0 : 0.7);
                     }
-                });
+                }); */
 
                 setInterval(function (): void { that.uploadPlayerPositionData(); }, 5000);
 
@@ -177,9 +197,11 @@ module GuildWars2.ArenaNet.Mapper {
 
         private setMapVisibility(mid: number, visible: boolean): void {
             if (this.mapBounties[mid] != undefined) this.mapBounties[mid].setVisibility(visible);
-            if (this.mapEvents[mid] != undefined) this.mapEvents[mid].setVisibility(visible);
+            /* TODO: Megaserver APIs
+            if (this.mapEvents[mid] != undefined) this.mapEvents[mid].setVisibility(visible); */
             if (this.mapLandmarks[mid] != undefined) this.mapLandmarks[mid].setVisibility(visible);
-            if (this.mapNodes[mid] != undefined) this.mapNodes[mid].setVisibility(visible);
+            /* TODO: Megaserver APIs
+            if (this.mapNodes[mid] != undefined) this.mapNodes[mid].setVisibility(visible); */
             if (this.mapSectors[mid] != undefined) this.mapSectors[mid].setVisibility(visible);
             if (this.mapSkillChallenges[mid] != undefined) this.mapSkillChallenges[mid].setVisibility(visible);
             if (this.mapTasks[mid] != undefined) this.mapTasks[mid].setVisibility(visible);
@@ -195,9 +217,11 @@ module GuildWars2.ArenaNet.Mapper {
 
         private setAllMapLayerVisibility(visible: boolean): void {
             this.setMapLayerVisibility(this.mapBounties, visible);
-            this.setMapLayerVisibility(this.mapEvents, visible);
+            /* TODO: Megaserver APIs
+            this.setMapLayerVisibility(this.mapEvents, visible); */
             this.setMapLayerVisibility(this.mapLandmarks, visible);
-            this.setMapLayerVisibility(this.mapNodes, visible);
+            /* TODO: Megaserver APIs
+            this.setMapLayerVisibility(this.mapNodes, visible); */
             this.setMapLayerVisibility(this.mapSectors, visible);
             this.setMapLayerVisibility(this.mapSkillChallenges, visible);
             this.setMapLayerVisibility(this.mapTasks, visible);
@@ -305,6 +329,7 @@ module GuildWars2.ArenaNet.Mapper {
             this.bountyPanControl.setMapData(this.mapData);
         }
 
+        /* TODO: Megaserver APIs
         private loadEventData(events: { [key: string]: GuildWars2.ArenaNet.Model.EventDetails }, champions: string[]): void {
             for (var eid in events) {
                 var ev = events[eid];
@@ -422,7 +447,7 @@ module GuildWars2.ArenaNet.Mapper {
                     }
                 }
             });
-        }
+        } */
 
         private loadBounties(): void {
             for (var i in GuildWars2.GoMGoDS.Model.GuildBountyDefinitions.Bounties) {
@@ -513,7 +538,8 @@ module GuildWars2.ArenaNet.Mapper {
                             that.playerPosition = new PlayerPositionLayer(loc, data.player_name, data.player_is_commander);
                             that.addLayer(that.playerPosition);
                             that.playerPositionControl.show();
-                            that.playerPosition.setOpacity(that.worldSelectionControl.currentWorldId == data.server ? 1.0 : 0.7);
+                            /* TODO: Megaserver APIs
+                            that.playerPosition.setOpacity(that.worldSelectionControl.currentWorldId == data.server ? 1.0 : 0.7); */
 
                             locChanged = true;
                         } else {
@@ -884,6 +910,7 @@ module GuildWars2.ArenaNet.Mapper {
         }
     }
 
+    /* TODO: Megaserver APIs
     class EventPolygon extends L.Polygon {
         constructor(latlngs: L.LatLng[], hasChampion: boolean) {
             super(latlngs, {
@@ -965,7 +992,7 @@ module GuildWars2.ArenaNet.Mapper {
                 super.bindPopup(popupFactory.getContent(), { offset: new L.Point(0, -10) });
             }
         }
-    }
+    } */
 
     class PlayerPositionLayer extends L.LayerGroup {
         private static CommanderIcon: L.Icon = new L.Icon({ iconUrl: ResourceBaseUri + "/commander.png", iconSize: new L.Point(32, 32) });
@@ -1112,6 +1139,7 @@ module GuildWars2.ArenaNet.Mapper {
         }
     }
 
+    /* TODO: Megaserver APIs
     class WorldSelectionControl extends L.Control {
         private mapContainer: HTMLElement;
         private worldChangedHandler: { (worldId: number): void };
@@ -1188,7 +1216,7 @@ module GuildWars2.ArenaNet.Mapper {
                     world.name + "</option>");
             }
         }
-    }
+    } */
 
     class PopupContentFactory {
         private static DulfyBountyLinks: { [key: string]: string } =
