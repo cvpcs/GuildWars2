@@ -29,7 +29,7 @@ namespace GuildWars2.GoMGoDS.APIServer
                 throw new NotImplementedException("HttpListener is not supported");
 
             m_Listener = new HttpListener();
-            m_Listener.Prefixes.Add(string.Format("http://localhost:{0}/", port));
+            m_Listener.Prefixes.Add(string.Format("http://*:{0}/", port));
 
             m_ListenerThread = new Thread(HandleRequests);
             m_WorkerThreads = new Thread[5];
