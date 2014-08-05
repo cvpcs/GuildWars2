@@ -29,6 +29,7 @@ namespace GuildWars2.GoMGoDS.APIServer
         {
             InitializeComponent();
 
+            /* TODO: Megaserver APIs
             // set up out publishers
             BuildIdPublisher buildIdPublisher = new BuildIdPublisher();
             EventStatePublisher eventStatePublisher = new EventStatePublisher();
@@ -40,18 +41,22 @@ namespace GuildWars2.GoMGoDS.APIServer
             ChampionEventsAPI championEventsApi = new ChampionEventsAPI();
             ContestedStatusAPI contestedStatusApi = new ContestedStatusAPI();
             EventTimerAPI eventTimerApi = new EventTimerAPI();
-            NodesAPI nodesApi = new NodesAPI();
+            NodesAPI nodesApi = new NodesAPI(); */
+            EventScheduleAPI eventScheduleApi = new EventScheduleAPI();
 
+            /* TODO: Megaserver APIs
             m_APIs.Add(championEventsApi);
             m_APIs.Add(contestedStatusApi);
             m_APIs.Add(eventTimerApi);
-            m_APIs.Add(nodesApi);
+            m_APIs.Add(nodesApi); */
+            m_APIs.Add(eventScheduleApi);
 
             // register our subscribers
+            /* TODO: Megaserver APIs
             buildIdPublisher.RegisterSubscriber(contestedStatusApi);
             buildIdPublisher.RegisterSubscriber(eventTimerApi);
             eventStatePublisher.RegisterSubscriber(contestedStatusApi);
-            eventStatePublisher.RegisterSubscriber(eventTimerApi);
+            eventStatePublisher.RegisterSubscriber(eventTimerApi); */
         }
 
         protected override void OnStart(string[] args)

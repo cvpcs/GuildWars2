@@ -82,6 +82,7 @@
     <Compile Include="CachedAPI.cs" />
     <Compile Include="ChampionEventsAPI.cs" />
     <Compile Include="ContestedStatusAPI.cs" />
+    <Compile Include="EventScheduleAPI.cs" />
     <Compile Include="EventStatePublisher.cs" />
     <Compile Include="PublisherBase.cs" />
     <Compile Include="ISubscriber.cs" />
