@@ -2,7 +2,7 @@
 // Project: https://github.com/bbecquet/Leaflet.PolylineDecorator
 // Definitions by: Vladimir <https://github.com/bbecquet>
 
-/// <reference "../leaflet/leaflet.d.ts" />
+/// <reference path="../leaflet/leaflet.d.ts" />
 
 declare module L {
 
@@ -23,7 +23,7 @@ declare module L {
         patterns?: L.PolylineDecoratorPattern[]
     }
 
-    export class PolylineDecorator extends L.LayerGroup {
+    export class PolylineDecorator extends L.LayerGroup<L.ILayer> {
         constructor(polyline: L.Polyline, options: PolylineDecoratorOptions);
     }
 

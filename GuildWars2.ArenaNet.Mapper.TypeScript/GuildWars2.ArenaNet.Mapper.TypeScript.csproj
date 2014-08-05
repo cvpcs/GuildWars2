@@ -47,14 +47,16 @@
     <Content Include="Scripts\typings\guildwars2.arenanet\guildwars2.arenanet.d.ts" />
     <TypeScriptCompile Include="Scripts\guildwars2.arenanet.mapper.ts" />
     <Content Include="index.html" />
-    <Content Include="Scripts\typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\leaflet.polylineDecorator\leaflet.polylineDecorator.d.ts" />
-    <Content Include="Scripts\typings\leaflet\leaflet.d.ts" />
     <Content Include="web.config" />
+    <TypeScriptCompile Include="Scripts\typings\leaflet\leaflet.d.ts" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
     <Content Include="Styles\guildwars2.arenanet.mapper.css" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

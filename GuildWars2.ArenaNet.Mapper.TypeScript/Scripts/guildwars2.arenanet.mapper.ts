@@ -627,7 +627,7 @@ module GuildWars2.ArenaNet.Mapper {
                     that.isFullscreen = true;
                 }
 
-                map.invalidateSize();
+                map.invalidateSize(true);
             });
 
             return container;
@@ -765,7 +765,7 @@ module GuildWars2.ArenaNet.Mapper {
         }
     }
 
-    class BountyLayerGroup extends L.LayerGroup {
+    class BountyLayerGroup extends L.LayerGroup<L.ILayer> {
         private static Icon: L.Icon = new L.Icon({ iconUrl: ResourceBaseUri + "/bounty.png", iconSize: new L.Point(20, 20) });
 
         private bountyName: string;
@@ -836,7 +836,7 @@ module GuildWars2.ArenaNet.Mapper {
         }
     }
 
-    class CustomLayerGroup extends L.LayerGroup {
+    class CustomLayerGroup extends L.LayerGroup<L.ILayer> {
         private mapParent: L.Map;
         private lgParent: CustomLayerGroup;
         private visible: boolean = true;
@@ -845,7 +845,7 @@ module GuildWars2.ArenaNet.Mapper {
             super(layers);
         }
 
-        public addTo(map: L.Map): L.LayerGroup {
+        public addTo(map: L.Map): L.LayerGroup<L.ILayer> {
             this.mapParent = map;
 
             if (this.visible)
@@ -967,7 +967,7 @@ module GuildWars2.ArenaNet.Mapper {
         }
     }
 
-    class PlayerPositionLayer extends L.LayerGroup {
+    class PlayerPositionLayer extends L.LayerGroup<L.ILayer> {
         private static CommanderIcon: L.Icon = new L.Icon({ iconUrl: ResourceBaseUri + "/commander.png", iconSize: new L.Point(32, 32) });
 
         private commander: boolean;
