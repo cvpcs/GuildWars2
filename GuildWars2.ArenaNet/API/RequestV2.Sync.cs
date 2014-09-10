@@ -7,10 +7,18 @@ using GuildWars2.ArenaNet;
 
 namespace GuildWars2.ArenaNet.API
 {
-    public abstract partial class Request<T>
-        where T : class, new()
+    public abstract partial class RequestV2<TRID, TRDR> : Request<TRDR>
+        where TRDR : class, new()
     {
-        public virtual T Execute()
+        public override TRDR Execute()
+        {
+            if (m_Ids.Count == 0)
+                return null;
+            else
+                return base.Execute();
+        }
+
+        public virtual List<TRID> ExecuteIdList()
         {
             RestClient client = new RestClient();
             client.BaseUrl = URL;
@@ -24,10 +32,11 @@ namespace GuildWars2.ArenaNet.API
 
             foreach (KeyValuePair<string, string> parameter in APIParameters)
             {
-                request.AddParameter(parameter.Key, parameter.Value);
+                if (parameter.Key != "id" && parameter.Key != "ids")
+                    request.AddParameter(parameter.Key, parameter.Value);
             }
 
-            IRestResponse<T> response = client.Execute<T>(request);
+            IRestResponse<List<TRID>> response = client.Execute<List<TRID>>(request);
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 return response.Data;
