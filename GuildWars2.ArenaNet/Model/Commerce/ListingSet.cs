@@ -4,15 +4,9 @@ using Newtonsoft.Json;
 
 namespace GuildWars2.ArenaNet.Model.Commerce
 {
-    public class ListingSet
+    public class ListingSet : ListingPrice
     {
         [JsonProperty("listings")]
         public int Listings { get; set; }
-
-        [JsonProperty("unit_price")]
-        public int UnitPrice { get; set; }
-
-        [JsonProperty("quantity")]
-        public int Quantity { get; set; }
     }
 }

@@ -54,6 +54,8 @@
     <Compile Include="API\ColorsRequest.cs" />
     <Compile Include="API\ColorsResponse.cs" />
     <Compile Include="API\Commerce\ExchangeRequest.cs" />
+    <Compile Include="API\Commerce\PricesRequest.cs" />
+    <Compile Include="API\Commerce\PricesResponse.cs" />
     <Compile Include="API\Commerce\ListingsResponse.cs" />
     <Compile Include="API\Commerce\ListingsRequest.cs" />
     <Compile Include="API\Commerce\ExchangeResponse.cs" />
@@ -63,6 +65,8 @@
     <Compile Include="API\FilesRequest.cs" />
     <Compile Include="API\EventDetailsRequest.cs" />
     <Compile Include="API\EventDetailsResponse.cs" />
+    <Compile Include="API\ItemsRequestV2.cs" />
+    <Compile Include="API\ItemsResponseV2.cs" />
     <Compile Include="API\QuaggansRequest.cs" />
     <Compile Include="API\QuaggansResponse.cs" />
     <Compile Include="API\MapFloorRequest.cs" />
@@ -99,9 +103,12 @@
     <Compile Include="API\Wvw\MatchesResponse.cs" />
     <Compile Include="API\Wvw\ObjectiveNamesRequest.cs" />
     <Compile Include="API\Wvw\ObjectiveNamesResponse.cs" />
+    <Compile Include="Model\Commerce\ItemPrice.cs" />
+    <Compile Include="Model\Commerce\ListingPrice.cs" />
     <Compile Include="Model\Commerce\Listing.cs" />
     <Compile Include="Model\Commerce\ListingSet.cs" />
     <Compile Include="Model\EmblemFlagType.cs" />
+    <Compile Include="Model\ItemDetailsV2.cs" />
     <Compile Include="Model\Quaggan.cs" />
     <Compile Include="RestSharpNewtonSoftJsonDeserializer.cs" />
     <Compile Include="ImageServices.Async.cs" />
