@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using GuildWars2.ArenaNet.Model;
+using GuildWars2.ArenaNet.Model.V1;
 
 namespace GuildWars2.GoMGoDS.Model
 {
@@ -76,7 +76,7 @@ namespace GuildWars2.GoMGoDS.Model
             return this;
         }
         
-        public override bool IsActive(HashSet<GuildWars2.ArenaNet.Model.EventState> events)
+        public override bool IsActive(HashSet<GuildWars2.ArenaNet.Model.V1.EventState> events)
         {
             IEnumerable<EventState> eventStates = events.Select(es => new EventState() { Event = es.EventId, State = es.StateEnum }).Where(es => EventStates.Contains(es)).Distinct();
             m_ActiveName = string.Join("\n", m_SubStages.Values.Where(ss => ss.IsActive(events)).Select(ss => ss.Name).Distinct());

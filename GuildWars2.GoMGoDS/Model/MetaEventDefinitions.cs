@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using GuildWars2.ArenaNet.Model;
+using GuildWars2.ArenaNet.Model.V1;
 
 namespace GuildWars2.GoMGoDS.Model
 {

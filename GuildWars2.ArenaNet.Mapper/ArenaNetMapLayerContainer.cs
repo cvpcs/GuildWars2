@@ -5,8 +5,8 @@ using System.Windows.Media;
 
 using Microsoft.Maps.MapControl.WPF;
 
-using GuildWars2.ArenaNet.API;
-using GuildWars2.ArenaNet.Model;
+using GuildWars2.ArenaNet.API.V1;
+using GuildWars2.ArenaNet.Model.V1;
 
 using GuildWars2.GoMGoDS.API;
 using GuildWars2.GoMGoDS.Model;

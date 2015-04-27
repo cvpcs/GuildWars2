@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using GuildWars2.ArenaNet.Model;
+using GuildWars2.ArenaNet.Model.V1;
 
 namespace GuildWars2.GoMGoDS.Model
 {
@@ -37,19 +37,19 @@ namespace GuildWars2.GoMGoDS.Model
             return this;
         }
 
-        public override bool IsActive(HashSet<ArenaNet.Model.EventState> events)
+        public override bool IsActive(HashSet<ArenaNet.Model.V1.EventState> events)
         {
             return events.Where(es => m_BlockedEventStates.Contains(new EventState() { Event = es.EventId, State = es.StateEnum })).Count() > 0 &&
                 base.IsActive(events);
         }
 
-        public override bool IsSuccessful(HashSet<ArenaNet.Model.EventState> events)
+        public override bool IsSuccessful(HashSet<ArenaNet.Model.V1.EventState> events)
         {
             return events.Where(es => m_BlockedEventStates.Contains(new EventState() { Event = es.EventId, State = es.StateEnum })).Count() > 0 && 
                 base.IsSuccessful(events);
         }
 
-        public override bool IsFailed(HashSet<ArenaNet.Model.EventState> events)
+        public override bool IsFailed(HashSet<ArenaNet.Model.V1.EventState> events)
         {
             return events.Where(es => m_BlockedEventStates.Contains(new EventState() { Event = es.EventId, State = es.StateEnum })).Count() > 0 && 
                 base.IsFailed(events);

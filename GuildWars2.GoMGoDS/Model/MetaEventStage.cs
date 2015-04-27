@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using GuildWars2.ArenaNet.Model;
+using GuildWars2.ArenaNet.Model.V1;
 
 namespace GuildWars2.GoMGoDS.Model
 {
@@ -42,19 +42,19 @@ namespace GuildWars2.GoMGoDS.Model
             return this;
         }
 
-        public virtual bool IsActive(HashSet<GuildWars2.ArenaNet.Model.EventState> events)
+        public virtual bool IsActive(HashSet<GuildWars2.ArenaNet.Model.V1.EventState> events)
         {
             return events.Where(es => EventStates.Contains(new EventState() { Event = es.EventId, State = es.StateEnum })).Count() > 0;
         }
 
-        public virtual bool IsSuccessful(HashSet<GuildWars2.ArenaNet.Model.EventState> events)
+        public virtual bool IsSuccessful(HashSet<GuildWars2.ArenaNet.Model.V1.EventState> events)
         {
             IEnumerable<Guid> eventIds = EventStates.Select(es => es.Event).Distinct();
 
             return events.Where(es => eventIds.Contains(es.EventId) && es.StateEnum == EventStateType.Success).Count() == eventIds.Count();
         }
 
-        public virtual bool IsFailed(HashSet<GuildWars2.ArenaNet.Model.EventState> events)
+        public virtual bool IsFailed(HashSet<GuildWars2.ArenaNet.Model.V1.EventState> events)
         {
             IEnumerable<Guid> eventIds = EventStates.Select(es => es.Event).Distinct();
 

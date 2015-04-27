@@ -5,8 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-using GuildWars2.ArenaNet.API;
-using GuildWars2.ArenaNet.Model;
+using GuildWars2.ArenaNet.API.V1;
+using GuildWars2.ArenaNet.Model.V1;
 using GuildWars2.ArenaNet.EventTimer;
 using GuildWars2.GoMGoDS.Model;
 

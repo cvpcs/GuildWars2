@@ -1,0 +1,23 @@
+﻿using System;
+
+using Newtonsoft.Json;
+
+namespace GuildWars2.ArenaNet.Model.V1
+{
+    public class World : NamedModel<int>
+    {
+        [JsonIgnore]
+        public RegionType Region
+        {
+            get
+            {
+                if (Id >= 1000 && Id < 2000)
+                    return RegionType.NA;
+                else if (Id >= 2000 && Id < 3000)
+                    return RegionType.EU;
+                else
+                    return RegionType.Unknown;
+            }
+        }
+    }
+}

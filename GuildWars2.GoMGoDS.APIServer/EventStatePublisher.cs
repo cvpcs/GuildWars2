@@ -1,6 +1,6 @@
 ﻿using System;
 
-using GuildWars2.ArenaNet.API;
+using GuildWars2.ArenaNet.API.V1;
 
 namespace GuildWars2.GoMGoDS.APIServer
 {

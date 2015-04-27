@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 
-using GuildWars2.ArenaNet.Model;
+using GuildWars2.ArenaNet.Model.V1;
 using GuildWars2.GoMGoDS.Model;
 
 namespace GuildWars2.ArenaNet.Mapper

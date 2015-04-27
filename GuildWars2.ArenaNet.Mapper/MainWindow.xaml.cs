@@ -18,8 +18,8 @@ using System.Windows.Threading;
 using Microsoft.Maps.MapControl.WPF;
 using Location = Microsoft.Maps.MapControl.WPF.Location;
 
-using GuildWars2.ArenaNet.API;
-using GuildWars2.ArenaNet.Model;
+using GuildWars2.ArenaNet.API.V1;
+using GuildWars2.ArenaNet.Model.V1;
 using GuildWars2.GoMGoDS.API;
 using GuildWars2.GoMGoDS.Model;
 

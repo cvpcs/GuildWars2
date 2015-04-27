@@ -2,7 +2,7 @@
 using System.IO;
 using System.Net;
 
-using GuildWars2.ArenaNet.Model;
+using GuildWars2.ArenaNet.Model.V1;
 
 namespace GuildWars2.ArenaNet
 {

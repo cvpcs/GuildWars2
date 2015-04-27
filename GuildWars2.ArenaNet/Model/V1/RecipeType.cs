@@ -1,0 +1,57 @@
+﻿using System;
+
+namespace GuildWars2.ArenaNet.Model.V1
+{
+    public enum RecipeType
+    {
+        Invalid, // Unknown type
+        Amulet,
+        Axe,
+        Backpack,
+        Bag,
+        Boots,
+        Bulk,
+        Coat,
+        Component,
+        Consumable,
+        Dagger,
+        Dessert,
+        Dye,
+        Earring,
+        Feast,
+        Focus,
+        Gloves,
+        Greatsword,
+        Hammer,
+        Harpoon,
+        Helm,
+        IngredientCooking,
+        Inscription,
+        Insignia,
+        Leggings,
+        LongBow,
+        Mace,
+        Meal,
+        Pistol,
+        Potion,
+        Refinement,
+        RefinementEctoplasm,
+        RefinementObsidian,
+        Rifle,
+        Ring,
+        Scepter,
+        Seasoning,
+        Shield,
+        ShortBow,
+        Shoulders,
+        Snack,
+        Soup,
+        Speargun,
+        Staff,
+        Sword,
+        Torch,
+        Trident,
+        UpgradeComponent,
+        Warhorn
+    }
+}
