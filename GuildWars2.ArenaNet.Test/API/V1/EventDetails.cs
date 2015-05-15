@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using GuildWars2.ArenaNet.API.V1;
@@ -20,13 +19,17 @@ namespace GuildWars2.ArenaNet.Test.API.V1
             // assert
             Assert.IsTrue(response.Events.Count > 1);
 
-            var ev = response.Events.First();
+            foreach (var ev in response.Events)
+            {
+                Assert.IsNotNull(ev.Key);
+                Assert.IsNotNull(ev.Value.Name);
+                Assert.IsNotNull(ev.Value.Location);
+                Assert.IsTrue(ev.Value.Level >= 0);
+                Assert.IsTrue(ev.Value.MapId > 0);
 
-            Assert.IsNotNull(ev.Key);
-            Assert.IsNotNull(ev.Value.Name);
-            Assert.IsNotNull(ev.Value.Location);
-            Assert.IsTrue(ev.Value.Level > 0);
-            Assert.IsTrue(ev.Value.MapId > 0);
+                Assert.AreNotEqual(EventFlagType.Invalid, ev.Value.FlagsEnum & EventFlagType.Invalid);
+                Assert.AreNotEqual(LocationType.Invalid, ev.Value.Location.TypeEnum);
+            }
         }
 
         [TestMethod]

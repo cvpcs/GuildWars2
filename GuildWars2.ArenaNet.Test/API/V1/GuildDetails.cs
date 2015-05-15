@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using GuildWars2.ArenaNet.API.V1;

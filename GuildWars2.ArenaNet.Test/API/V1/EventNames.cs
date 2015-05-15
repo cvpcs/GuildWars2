@@ -11,8 +11,6 @@ namespace GuildWars2.ArenaNet.Test.API.V1
     [TestClass]
     public class EventNames
     {
-        private static readonly Guid KarkaEggsEventId = new Guid("659149D4-43EC-4DCB-A6BB-0B2D402B537B");
-
         [TestMethod]
         public void Execute()
         {
@@ -20,8 +18,13 @@ namespace GuildWars2.ArenaNet.Test.API.V1
             var response = new EventNamesRequest().Execute();
 
             // assert
-            var ev = response.Where(e => e.Id == KarkaEggsEventId).First();
-            Assert.AreEqual("Bring karka eggs to Owain.", ev.Name);
+            Assert.IsTrue(response.Count > 0);
+
+            foreach (var ev in response)
+            {
+                Assert.IsNotNull(ev.Id);
+                Assert.IsNotNull(ev.Name);
+            }
         }
 
         [TestMethod]

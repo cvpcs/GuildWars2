@@ -69,8 +69,8 @@
     <Compile Include="API\V2\ItemsResponse.cs" />
     <Compile Include="API\V2\QuaggansRequest.cs" />
     <Compile Include="API\V2\QuaggansResponse.cs" />
-    <Compile Include="API\MapFloorRequest.cs" />
-    <Compile Include="API\MapFloorResponse.cs" />
+    <Compile Include="API\V1\MapFloorRequest.cs" />
+    <Compile Include="API\V1\MapFloorResponse.cs" />
     <Compile Include="API\V1\MapsRequest.cs" />
     <Compile Include="API\V1\MapsResponse.cs" />
     <Compile Include="API\V1\GuildDetailsRequest.cs" />

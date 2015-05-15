@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="API\V1\Colors.cs" />
     <Compile Include="API\V1\Build.cs" />
+    <Compile Include="API\V1\RecipeDetails.cs" />
     <Compile Include="API\V1\ItemDetails.cs" />
     <Compile Include="API\V1\Recipes.cs" />
     <Compile Include="API\V1\Items.cs" />

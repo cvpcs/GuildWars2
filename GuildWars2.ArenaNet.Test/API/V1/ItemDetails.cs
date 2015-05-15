@@ -34,6 +34,10 @@ namespace GuildWars2.ArenaNet.Test.API.V1
             Assert.AreEqual(response.IconFileId, response.IconFile.FileId);
             Assert.AreEqual(response.IconFileSignature, response.IconFile.Signature);
 
+            Assert.AreNotEqual(ItemFlagType.Invalid, response.FlagsEnum & ItemFlagType.Invalid);
+            Assert.AreNotEqual(GameType.Invalid, response.GameTypesEnum & GameType.Invalid);
+            Assert.AreNotEqual(RestrictionType.Invalid, response.RestrictionsEnum & RestrictionType.Invalid);
+
             Assert.IsTrue(response.DefaultSkinId > 0);
         }
 

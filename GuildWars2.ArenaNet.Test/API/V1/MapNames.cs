@@ -20,8 +20,13 @@ namespace GuildWars2.ArenaNet.Test.API.V1
             var response = new MapNamesRequest().Execute();
 
             // assert
-            var map = response.Where(m => m.Id == CursedShoreMapId).First();
-            Assert.AreEqual("Cursed Shore", map.Name);
+            Assert.IsTrue(response.Count > 0);
+
+            foreach (var map in response)
+            {
+                Assert.AreNotEqual(0, map.Id);
+                Assert.IsNotNull(map.Name);
+            }
         }
 
         [TestMethod]
