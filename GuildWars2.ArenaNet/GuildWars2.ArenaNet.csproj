@@ -53,6 +53,10 @@
     <Compile Include="API\V1\BuildResponse.cs" />
     <Compile Include="API\V1\ColorsRequest.cs" />
     <Compile Include="API\V1\ColorsResponse.cs" />
+    <Compile Include="API\V1\SkinDetailsRequest.cs" />
+    <Compile Include="API\V1\SkinDetailsResponse.cs" />
+    <Compile Include="API\V1\SkinsRequest.cs" />
+    <Compile Include="API\V1\SkinsResponse.cs" />
     <Compile Include="API\V2\Commerce\ExchangeRequest.cs" />
     <Compile Include="API\V2\Commerce\PricesRequest.cs" />
     <Compile Include="API\V2\Commerce\PricesResponse.cs" />
@@ -104,6 +108,15 @@
     <Compile Include="API\V1\Wvw\MatchesResponse.cs" />
     <Compile Include="API\V1\Wvw\ObjectiveNamesRequest.cs" />
     <Compile Include="API\V1\Wvw\ObjectiveNamesResponse.cs" />
+    <Compile Include="Model\V1\WeaponType.cs" />
+    <Compile Include="Model\V1\WeaponDamageType.cs" />
+    <Compile Include="Model\V1\ArmorWeightClassType.cs" />
+    <Compile Include="Model\V1\SkinDetailsWeapon.cs" />
+    <Compile Include="Model\V1\SkinFlagType.cs" />
+    <Compile Include="Model\V1\ArmorType.cs" />
+    <Compile Include="Model\V1\SkinType.cs" />
+    <Compile Include="Model\V1\SkinDetails.cs" />
+    <Compile Include="Model\V1\SkinDetailsArmor.cs" />
     <Compile Include="Model\V2\Commerce\ItemPrice.cs" />
     <Compile Include="Model\V2\Commerce\ListingPrice.cs" />
     <Compile Include="Model\V2\Commerce\Listing.cs" />
@@ -117,6 +130,7 @@
     <Compile Include="Model\V1\Ingredient.cs" />
     <Compile Include="Model\V2\ItemDetails.cs" />
     <Compile Include="Model\V2\Quaggan.cs" />
+    <Compile Include="RestSharpInterfaceTypeConverter.cs" />
     <Compile Include="RestSharpNewtonSoftJsonDeserializer.cs" />
     <Compile Include="ImageServices.Async.cs" />
     <Compile Include="ImageServices.cs" />
