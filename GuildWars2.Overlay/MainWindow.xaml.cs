@@ -1,23 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.ServiceModel;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using Awesomium.Core;
-using Awesomium.Windows.Controls;
 
 using GuildWars2.Overlay.Contract;
 
@@ -29,7 +17,8 @@ namespace GuildWars2.Overlay
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public partial class MainWindow : Window, IOverlay
     {
-        ServiceHost m_SelfHost;
+        private ServiceHost selfHost;
+        private WindowInteropHelper interop;
 
         public MainWindow()
         {
@@ -37,33 +26,89 @@ namespace GuildWars2.Overlay
 
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
+            {
                 Awesomium.Source = new Uri(args[1]);
+            }
 
             Awesomium.IsTransparent = true;
 
             Awesomium.KeyDown += (s, e) =>
                 {
                     if (e.Key == Key.LeftShift)
+                    {
                         WindowUI.Visibility = (WindowUI.IsVisible ? Visibility.Hidden : Visibility.Visible);
+                    }
+
+                    if (e.Key == Key.LeftCtrl)
+                    {
+                        this.IsClickThroughTransparent = !this.IsClickThroughTransparent;
+                    }
                 };
 
             WindowUI.Visibility = Visibility.Visible;
 
-            m_SelfHost = new ServiceHost(this, new Uri("net.pipe://localhost"));
-            m_SelfHost.AddServiceEndpoint(typeof(IOverlay), new NetNamedPipeBinding(), typeof(IOverlay).FullName);
-            m_SelfHost.Open();
+            this.selfHost = new ServiceHost(this, new Uri("net.pipe://localhost"));
+            this.selfHost.AddServiceEndpoint(typeof(IOverlay), new NetNamedPipeBinding(), typeof(IOverlay).FullName);
+            this.selfHost.Open();
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+
+            this.interop = new WindowInteropHelper(this);
+
+            // set window to layered
+            int initialStyle = GetWindowLong(this.interop.Handle, GWL_EXSTYLE);
+            SetWindowLong(this.interop.Handle, GWL_EXSTYLE, initialStyle | WS_EX_LAYERED);
         }
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
 
-            m_SelfHost.Close();
+            this.selfHost.Close();
 
             // shutdown awesomium
             Awesomium.Dispose();
             WebCore.Shutdown();
         }
+
+        #region Click-through transparency
+        private const int GWL_EXSTYLE = -20;
+        private const int WS_EX_LAYERED = 0x80000;
+        private const int WS_EX_TRANSPARENT = 0x20;
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowLong(IntPtr hWnd, int index);
+
+        [DllImport("user32.dll")]
+        private static extern int SetWindowLong(IntPtr hWnd, int index, int newStyle);
+
+        private bool IsClickThroughTransparent
+        {
+            get
+            {
+                int style = GetWindowLong(this.interop.Handle, GWL_EXSTYLE);
+                return (style & WS_EX_TRANSPARENT) == WS_EX_TRANSPARENT;
+            }
+            set
+            {
+                int style = GetWindowLong(this.interop.Handle, GWL_EXSTYLE);
+
+                if (value)
+                {
+                    style |= WS_EX_TRANSPARENT;
+                }
+                else
+                {
+                    style &= ~WS_EX_TRANSPARENT;
+                }
+
+                SetWindowLong(this.interop.Handle, GWL_EXSTYLE, style);
+            }
+        }
+        #endregion
 
         #region IOverlay Contract
 
