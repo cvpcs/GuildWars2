@@ -1,97 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{175835C6-4D13-477B-A38A-4DA6F21F66F2}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GW2Spidy</RootNamespace>
-    <AssemblyName>GW2Spidy</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net45</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="RestSharp, Version=104.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="RestSharp" Version="104.4.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="API\CountedResponse.cs" />
-    <Compile Include="API\CurrentGemPriceRequest.cs" />
-    <Compile Include="API\CurrentGemPriceResponse.cs" />
-    <Compile Include="API\DisciplineListRequest.cs" />
-    <Compile Include="API\DisciplineListResponse.cs" />
-    <Compile Include="API\FullItemListRequest.cs" />
-    <Compile Include="API\FullItemListResponse.cs" />
-    <Compile Include="API\GemPriceHistoryRequest.cs" />
-    <Compile Include="API\GemPriceHistoryResponse.cs" />
-    <Compile Include="API\ItemDataRequest.cs" />
-    <Compile Include="API\ItemDataResponse.cs" />
-    <Compile Include="API\ItemListingsRequest.cs" />
-    <Compile Include="API\ItemListingsResponse.cs" />
-    <Compile Include="API\ItemListRequest.cs" />
-    <Compile Include="API\ItemListResponse.cs" />
-    <Compile Include="API\ItemSearchRequest.cs" />
-    <Compile Include="API\ItemSearchResponse.cs" />
-    <Compile Include="API\PaginatedRequest.cs" />
-    <Compile Include="API\PaginatedResponse.cs" />
-    <Compile Include="API\RarityListRequest.cs" />
-    <Compile Include="API\RarityListResponse.cs" />
-    <Compile Include="API\RecipeDataRequest.cs" />
-    <Compile Include="API\RecipeDataResponse.cs" />
-    <Compile Include="API\RecipeListRequest.cs" />
-    <Compile Include="API\RecipeListResponse.cs" />
-    <Compile Include="API\Request.cs" />
-    <Compile Include="API\TypeListRequest.cs" />
-    <Compile Include="API\TypeListResponse.cs" />
-    <Compile Include="Model\GemPriceLog.cs" />
-    <Compile Include="Model\GemPrice.cs" />
-    <Compile Include="Model\RecipeData.cs" />
-    <Compile Include="Model\Discipline.cs" />
-    <Compile Include="Model\ItemData.cs" />
-    <Compile Include="Model\ItemListing.cs" />
-    <Compile Include="Model\NamedModel.cs" />
-    <Compile Include="Model\ItemSubType.cs" />
-    <Compile Include="Model\ItemType.cs" />
-    <Compile Include="Model\Rarity.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

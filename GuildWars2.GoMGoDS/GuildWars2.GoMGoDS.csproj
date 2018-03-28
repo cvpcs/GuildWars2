@@ -1,103 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2DD77528-F341-4CE2-B66F-7324228EB023}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GuildWars2.GoMGoDS</RootNamespace>
-    <AssemblyName>GuildWars2.GoMGoDS</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net45</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="RestSharp, Version=104.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Newtonsoft.Json" Version="6.0.1" />
+    <PackageReference Include="RestSharp" Version="104.4.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="API\ChampionEventsRequest.cs" />
-    <Compile Include="API\ChampionEventsResponse.cs" />
-    <Compile Include="API\ContestedStatusRequest.cs" />
-    <Compile Include="API\ContestedStatusResponse.cs" />
-    <Compile Include="API\EventScheduleRequest.cs" />
-    <Compile Include="API\EventScheduleResponse.cs" />
-    <Compile Include="API\NodesRequest.cs" />
-    <Compile Include="API\EventTimerRequest.cs" />
-    <Compile Include="API\EventTimerResponse.cs" />
-    <Compile Include="API\NodesResponse.cs" />
-    <Compile Include="API\Request.Async.cs" />
-    <Compile Include="API\Request.cs" />
-    <Compile Include="API\Request.Sync.cs" />
-    <Compile Include="DateExtensions.cs" />
-    <Compile Include="Model\ChatCode.cs" />
-    <Compile Include="Model\ChatCodeType.cs" />
-    <Compile Include="Model\ContestedLocationStatus.cs" />
-    <Compile Include="Model\ContestedLocationDefinitions.cs" />
-    <Compile Include="Model\ContestedLocation.cs" />
-    <Compile Include="Model\GuildBounty.cs" />
-    <Compile Include="Model\GuildBountyDefinitions.cs" />
-    <Compile Include="Model\GuildBountyPath.cs" />
-    <Compile Include="Model\MetaEvent.cs" />
-    <Compile Include="Model\MetaEventBlockedStage.cs" />
-    <Compile Include="Model\MetaEventDefinitions.cs" />
-    <Compile Include="Model\MetaEventIntervaled.cs" />
-    <Compile Include="Model\MetaEventMultiLineStage.cs" />
-    <Compile Include="Model\MetaEventSchedule.cs" />
-    <Compile Include="Model\MetaEventStage.cs" />
-    <Compile Include="Model\MetaEventStatus.cs" />
-    <Compile Include="Model\NodeLocation.cs" />
-    <Compile Include="Model\PathDirectionType.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <ProjectReference Include="..\GuildWars2.ArenaNet\GuildWars2.ArenaNet.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GuildWars2.ArenaNet\GuildWars2.ArenaNet.csproj">
-      <Project>{65382ece-3e80-47e3-9864-0c6995907c2b}</Project>
-      <Name>GuildWars2.ArenaNet</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

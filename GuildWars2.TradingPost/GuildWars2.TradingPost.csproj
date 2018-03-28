@@ -1,87 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6FD385FF-7414-40F3-85BD-152BC2119ADF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GuildWars2.TradingPost</RootNamespace>
-    <AssemblyName>GuildWars2.TradingPost</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net45</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="RestSharp, Version=104.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="RestSharp" Version="104.4.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="API\BuyRequest.cs" />
-    <Compile Include="API\BuyResponse.cs" />
-    <Compile Include="API\ItemsRequest.cs" />
-    <Compile Include="API\ItemsResponse.cs" />
-    <Compile Include="API\SearchRequest.cs" />
-    <Compile Include="API\SearchResponse.cs" />
-    <Compile Include="API\CountedRequest.cs" />
-    <Compile Include="API\CountedResponse.cs" />
-    <Compile Include="API\ListingsRequest.cs" />
-    <Compile Include="API\ListingsResponse.cs" />
-    <Compile Include="API\MeRequest.cs" />
-    <Compile Include="API\MeResponse.cs" />
-    <Compile Include="API\Request.cs" />
-    <Compile Include="Exceptions\CredentialsNotFoundException.cs" />
-    <Compile Include="Exceptions\GameSessionRequiredException.cs" />
-    <Compile Include="Exceptions\LoginFailedException.cs" />
-    <Compile Include="Exceptions\TradingPostOfflineException.cs" />
-    <Compile Include="FuzzyInt.cs" />
-    <Compile Include="Globals.cs" />
-    <Compile Include="Model\Item.cs" />
-    <Compile Include="Model\Listing.cs" />
-    <Compile Include="Model\ListingPrice.cs" />
-    <Compile Include="Model\ListingPriceList.cs" />
-    <Compile Include="Model\Order.cs" />
-    <Compile Include="Model\PasswordEntry.cs" />
-    <Compile Include="Session.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SessionManager.cs" />
-    <Compile Include="RequestUtil.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
