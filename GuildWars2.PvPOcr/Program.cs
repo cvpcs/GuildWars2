@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using ImageMagick;
@@ -14,7 +15,13 @@ namespace GuildWars2.PvPOcr
 
             OverlayHandler.Initialize();
 
-            using (var ocrEngine = new TesseractEngine("./tessdata", "eng", EngineMode.Default))
+            var ocrOptions = new Dictionary<string, object>
+            {
+                ["load_system_dawg"] = false,
+                ["load_freq_dawg"] = false
+            };
+
+            using (var ocrEngine = new TesseractEngine("./tessdata", "eng", EngineMode.Default, null, ocrOptions, false))
             {
                 while (true)
                 {
@@ -57,7 +64,7 @@ namespace GuildWars2.PvPOcr
                               .Trim()
                               .ToLower()
                               .Replace('o', '0');
-
+            
             if (int.TryParse(data, out int result))
             {
                 return result;
