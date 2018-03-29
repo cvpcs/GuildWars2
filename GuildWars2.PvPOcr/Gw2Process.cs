@@ -18,24 +18,17 @@ namespace GuildWars2.PvPOcr
 
         public Bitmap GetBitmap()
         {
-            Rectangle rect = this.GetWindowRectangle();
-
-            var bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
-            Graphics gfxBmp = Graphics.FromImage(bmp);
-            IntPtr hdcBmp = gfxBmp.GetHdc();
-
-            PrintWindow(this.process.MainWindowHandle, hdcBmp, 0);
-
-            gfxBmp.ReleaseHdc(hdcBmp);
-            gfxBmp.Dispose();
-
-            return bmp;
-        }
-
-        public Rectangle GetWindowRectangle()
-        {
             GetWindowRect(this.process.MainWindowHandle, out Rect rect);
-            return new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+            var bitmap = new Bitmap(rect.right - rect.left, rect.bottom - rect.top, PixelFormat.Format32bppArgb);
+
+            using (var graphics = Graphics.FromImage(bitmap))
+            {
+                IntPtr gfxHdc = graphics.GetHdc();
+                PrintWindow(this.process.MainWindowHandle, gfxHdc, 0);
+                graphics.ReleaseHdc(gfxHdc);
+            }
+
+            return bitmap;
         }
 
         [StructLayout(LayoutKind.Sequential)]
