@@ -3,37 +3,37 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.TradingPost", "GuildWars2.TradingPost\GuildWars2.TradingPost.csproj", "{6FD385FF-7414-40F3-85BD-152BC2119ADF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.TradingPost", "GuildWars2.TradingPost\GuildWars2.TradingPost.csproj", "{6FD385FF-7414-40F3-85BD-152BC2119ADF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibMemorySearch", "LibMemorySearch\LibMemorySearch.csproj", "{57ABDC07-0041-4268-95F8-8E73F82D0473}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibMemorySearch", "LibMemorySearch\LibMemorySearch.csproj", "{57ABDC07-0041-4268-95F8-8E73F82D0473}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.TradingPost.ListingsToExcel", "GuildWars2.TradingPost.ListingsToExcel\GuildWars2.TradingPost.ListingsToExcel.csproj", "{60DCA91B-ACAD-47CA-B434-5D4BDD726D04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.TradingPost.ListingsToExcel", "GuildWars2.TradingPost.ListingsToExcel\GuildWars2.TradingPost.ListingsToExcel.csproj", "{60DCA91B-ACAD-47CA-B434-5D4BDD726D04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.Spidy", "GuildWars2.Spidy\GuildWars2.Spidy.csproj", "{175835C6-4D13-477B-A38A-4DA6F21F66F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.Spidy", "GuildWars2.Spidy\GuildWars2.Spidy.csproj", "{175835C6-4D13-477B-A38A-4DA6F21F66F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.Spidy.Prospects", "GuildWars2.Spidy.Prospects\GuildWars2.Spidy.Prospects.csproj", "{210D8F18-1D6F-45FA-8367-2F12BCE9FC9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.Spidy.Prospects", "GuildWars2.Spidy.Prospects\GuildWars2.Spidy.Prospects.csproj", "{210D8F18-1D6F-45FA-8367-2F12BCE9FC9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.TradingPost.FindOutbidOrders", "GuildWars2.TradingPost.FindOutbidOrders\GuildWars2.TradingPost.FindOutbidOrders.csproj", "{5AB23330-F2D9-496C-9BF7-D887212C4188}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.TradingPost.FindOutbidOrders", "GuildWars2.TradingPost.FindOutbidOrders\GuildWars2.TradingPost.FindOutbidOrders.csproj", "{5AB23330-F2D9-496C-9BF7-D887212C4188}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.Spidy.MFMarketSpeculation", "GuildWars2.Spidy.MFMarketSpeculation\GuildWars2.Spidy.MFMarketSpeculation.csproj", "{C5264545-2F62-41E5-95B0-D4543869B0A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.Spidy.MFMarketSpeculation", "GuildWars2.Spidy.MFMarketSpeculation\GuildWars2.Spidy.MFMarketSpeculation.csproj", "{C5264545-2F62-41E5-95B0-D4543869B0A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.Trader", "GuildWars2.Trader\GuildWars2.Trader.csproj", "{DC7A40AC-268E-4A4C-A198-17B34F77FC1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.Trader", "GuildWars2.Trader\GuildWars2.Trader.csproj", "{DC7A40AC-268E-4A4C-A198-17B34F77FC1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.Spidy.FindItems", "GuildWars2.Spidy.FindItems\GuildWars2.Spidy.FindItems.csproj", "{0D6849B3-5C15-43EB-8B08-75AAD9175148}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.Spidy.FindItems", "GuildWars2.Spidy.FindItems\GuildWars2.Spidy.FindItems.csproj", "{0D6849B3-5C15-43EB-8B08-75AAD9175148}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.Overlay", "GuildWars2.Overlay\GuildWars2.Overlay.csproj", "{AC34E286-77D8-4127-9DB8-71996420CF76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.Overlay", "GuildWars2.Overlay\GuildWars2.Overlay.csproj", "{AC34E286-77D8-4127-9DB8-71996420CF76}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.Overlay.Contract", "GuildWars2.Overlay.Contract\GuildWars2.Overlay.Contract.csproj", "{8D5F090C-BBB2-45FB-8F42-D23074AFF395}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.ArenaNet", "GuildWars2.ArenaNet\GuildWars2.ArenaNet.csproj", "{65382ECE-3E80-47E3-9864-0C6995907C2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.EventTimer.Test", "GuildWars2.ArenaNet.EventTimer.Test\GuildWars2.ArenaNet.EventTimer.Test.csproj", "{80726AA3-0790-412D-B5D1-8D1373AD668A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.ArenaNet.EventTimer.Test", "GuildWars2.ArenaNet.EventTimer.Test\GuildWars2.ArenaNet.EventTimer.Test.csproj", "{80726AA3-0790-412D-B5D1-8D1373AD668A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.Mapper", "GuildWars2.ArenaNet.Mapper\GuildWars2.ArenaNet.Mapper.csproj", "{35746C2E-DEFB-480B-96BF-FB504F51A2E5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.TradingPost.Test", "GuildWars2.TradingPost.Test\GuildWars2.TradingPost.Test.csproj", "{1C659B42-976D-47CC-A00E-5ECB72CFB889}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.EventTimer.WindowAnalyzer", "GuildWars2.ArenaNet.EventTimer.WindowAnalyzer\GuildWars2.ArenaNet.EventTimer.WindowAnalyzer.csproj", "{A96E44F4-A42A-44FB-AB5F-AB63CEFBF1D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.ArenaNet.EventTimer.WindowAnalyzer", "GuildWars2.ArenaNet.EventTimer.WindowAnalyzer\GuildWars2.ArenaNet.EventTimer.WindowAnalyzer.csproj", "{A96E44F4-A42A-44FB-AB5F-AB63CEFBF1D3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.Mapper.TypeScript", "GuildWars2.ArenaNet.Mapper.TypeScript\GuildWars2.ArenaNet.Mapper.TypeScript.csproj", "{91EFF760-794A-4CD3-8F82-A7F374018B22}"
 EndProject
@@ -47,7 +47,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.Test", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.PvPOcr", "GuildWars2.PvPOcr\GuildWars2.PvPOcr.csproj", "{3C63A092-E6AB-4098-BB16-7EFFDD9EFFE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.Overlay.Controls", "GuildWars2.Overlay.Controls\GuildWars2.Overlay.Controls.csproj", "{180C3895-06CE-482A-AF39-60742E64D504}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.Overlay.Controls", "GuildWars2.Overlay.Controls\GuildWars2.Overlay.Controls.csproj", "{180C3895-06CE-482A-AF39-60742E64D504}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -139,10 +139,8 @@ Global
 		{88CA6D61-B8FA-423F-9F25-CB887B2AEA2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88CA6D61-B8FA-423F-9F25-CB887B2AEA2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88CA6D61-B8FA-423F-9F25-CB887B2AEA2D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3C63A092-E6AB-4098-BB16-7EFFDD9EFFE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3C63A092-E6AB-4098-BB16-7EFFDD9EFFE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3C63A092-E6AB-4098-BB16-7EFFDD9EFFE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3C63A092-E6AB-4098-BB16-7EFFDD9EFFE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C63A092-E6AB-4098-BB16-7EFFDD9EFFE9}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{3C63A092-E6AB-4098-BB16-7EFFDD9EFFE9}.Release|Any CPU.ActiveCfg = Release|x64
 		{180C3895-06CE-482A-AF39-60742E64D504}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{180C3895-06CE-482A-AF39-60742E64D504}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{180C3895-06CE-482A-AF39-60742E64D504}.Release|Any CPU.ActiveCfg = Release|Any CPU
