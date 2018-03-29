@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.ArenaNet.Test", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuildWars2.PvPOcr", "GuildWars2.PvPOcr\GuildWars2.PvPOcr.csproj", "{3C63A092-E6AB-4098-BB16-7EFFDD9EFFE9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuildWars2.Overlay.Controls", "GuildWars2.Overlay.Controls\GuildWars2.Overlay.Controls.csproj", "{180C3895-06CE-482A-AF39-60742E64D504}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +143,10 @@ Global
 		{3C63A092-E6AB-4098-BB16-7EFFDD9EFFE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C63A092-E6AB-4098-BB16-7EFFDD9EFFE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C63A092-E6AB-4098-BB16-7EFFDD9EFFE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{180C3895-06CE-482A-AF39-60742E64D504}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{180C3895-06CE-482A-AF39-60742E64D504}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{180C3895-06CE-482A-AF39-60742E64D504}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{180C3895-06CE-482A-AF39-60742E64D504}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

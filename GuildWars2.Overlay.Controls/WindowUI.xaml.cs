@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 
-namespace GuildWars2.Overlay
+namespace GuildWars2.Overlay.Controls
 {
     /// <summary>
     /// Interaction logic for WindowUI.xaml

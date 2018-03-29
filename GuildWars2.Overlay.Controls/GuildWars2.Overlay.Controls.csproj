@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net45</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" RequiredTargetFramework="4.0" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <LanguageTargets Condition="Exists('$(MSBuildProjectDirectory)\$(AssemblyName).csproj')">$(MSBuildToolsPath)\Microsoft.CSharp.targets</LanguageTargets>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Page Include="**\*.xaml" Generator="MSBuild:Compile" SubType="Designer" Exclude="App.xaml" />
+    <Compile Update="**\*.xaml.cs" SubType="Designer" DependentUpon="%(FileName)" />
+    <Compile Update="$(IntermediateOutputPath)**\*.g.cs" Visible="false" />
+  </ItemGroup>
+
+</Project>

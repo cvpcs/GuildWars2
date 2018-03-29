@@ -22,6 +22,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\GuildWars2.Overlay.Contract\GuildWars2.Overlay.Contract.csproj" />
+    <ProjectReference Include="..\GuildWars2.Overlay.Controls\GuildWars2.Overlay.Controls.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
