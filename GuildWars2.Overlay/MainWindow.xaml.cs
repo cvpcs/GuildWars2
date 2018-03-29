@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.ServiceModel;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interop;
 
 using Awesomium.Core;
 
 using GuildWars2.Overlay.Contract;
+using GuildWars2.Overlay.Controls;
 
 namespace GuildWars2.Overlay
 {
@@ -15,10 +14,9 @@ namespace GuildWars2.Overlay
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public partial class MainWindow : Window, IOverlay
+    public partial class MainWindow : ClickThroughTransparentWindow, IOverlay
     {
         private ServiceHost selfHost;
-        private WindowInteropHelper interop;
 
         public MainWindow()
         {
@@ -52,17 +50,6 @@ namespace GuildWars2.Overlay
             this.selfHost.Open();
         }
 
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-
-            this.interop = new WindowInteropHelper(this);
-
-            // set window to layered
-            int initialStyle = GetWindowLong(this.interop.Handle, GWL_EXSTYLE);
-            SetWindowLong(this.interop.Handle, GWL_EXSTYLE, initialStyle | WS_EX_LAYERED);
-        }
-
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
@@ -73,42 +60,6 @@ namespace GuildWars2.Overlay
             Awesomium.Dispose();
             WebCore.Shutdown();
         }
-
-        #region Click-through transparency
-        private const int GWL_EXSTYLE = -20;
-        private const int WS_EX_LAYERED = 0x80000;
-        private const int WS_EX_TRANSPARENT = 0x20;
-
-        [DllImport("user32.dll")]
-        private static extern int GetWindowLong(IntPtr hWnd, int index);
-
-        [DllImport("user32.dll")]
-        private static extern int SetWindowLong(IntPtr hWnd, int index, int newStyle);
-
-        private bool IsClickThroughTransparent
-        {
-            get
-            {
-                int style = GetWindowLong(this.interop.Handle, GWL_EXSTYLE);
-                return (style & WS_EX_TRANSPARENT) == WS_EX_TRANSPARENT;
-            }
-            set
-            {
-                int style = GetWindowLong(this.interop.Handle, GWL_EXSTYLE);
-
-                if (value)
-                {
-                    style |= WS_EX_TRANSPARENT;
-                }
-                else
-                {
-                    style &= ~WS_EX_TRANSPARENT;
-                }
-
-                SetWindowLong(this.interop.Handle, GWL_EXSTYLE, style);
-            }
-        }
-        #endregion
 
         #region IOverlay Contract
 
