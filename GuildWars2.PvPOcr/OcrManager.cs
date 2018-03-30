@@ -20,8 +20,8 @@ namespace GuildWars2.PvPOcr
         public event Action<Size> CapturedScreenshot;
         public event Action<ProcessedScreenshotEventArgs> ProcessedScreenshot;
 
-        public Rectangle RedSection { get; set; } = new Rectangle(820, 0, 80, 40);
-        public Rectangle BlueSection { get; set; } = new Rectangle(1020, 0, 80, 40);
+        public Rectangle RedSection { get; set; } = new Rectangle(0, 0, 1, 1);
+        public Rectangle BlueSection { get; set; } = new Rectangle(0, 0, 1, 1);
 
         private Task runningTask;
         private CancellationTokenSource runningTaskTokenSource;

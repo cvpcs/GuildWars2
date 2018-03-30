@@ -99,7 +99,19 @@ namespace GuildWars2.PvPOcr
         {
             InitializeComponent();
 
-            this.ocrManager = new OcrManager();
+
+            this.ocrManager = new OcrManager
+            {
+                RedSection = new Rectangle((int)(0.42708 * SystemParameters.PrimaryScreenWidth),
+                                           (int)(0.00000 * SystemParameters.PrimaryScreenHeight),
+                                           (int)(0.41667 * SystemParameters.PrimaryScreenWidth),
+                                           (int)(0.03704 * SystemParameters.PrimaryScreenHeight)),
+                BlueSection = new Rectangle((int)(0.53125 * SystemParameters.PrimaryScreenWidth),
+                                            (int)(0.00000 * SystemParameters.PrimaryScreenHeight),
+                                            (int)(0.41667 * SystemParameters.PrimaryScreenWidth),
+                                            (int)(0.03704 * SystemParameters.PrimaryScreenHeight))
+            };
+
             this.ocrManager.ScoresRead += (scores) => Dispatcher.Invoke(() =>
             {
                 if (scores.IsValid)
@@ -147,15 +159,12 @@ namespace GuildWars2.PvPOcr
             base.OnClosed(e);
         }
 
-        double value = 0;
         public void ClearScores_Clicked(object sender, EventArgs args)
         {
             Dispatcher.Invoke(() =>
             {
-                value += 0.1;
-                if (value > 1) value = 0;
-                this.redScoreBarWindow?.SetScoreBarFill(value);
-                this.blueScoreBarWindow?.SetScoreBarFill(value);
+                this.redScoreBarWindow?.SetScoreBarFill(0);
+                this.blueScoreBarWindow?.SetScoreBarFill(0);
             });
         }
 
