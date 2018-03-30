@@ -1,70 +1,216 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Drawing;
-using System.ServiceModel;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using GuildWars2.Overlay.Controls;
-using ImageMagick;
-using Tesseract;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
 
 namespace GuildWars2.PvPOcr
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public partial class MainWindow : ClickThroughTransparentWindow
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private readonly ScoreBarAnimator RedScoreBarAnimator;
-        private readonly ScoreBarAnimator BlueScoreBarAnimator;
+        private const string RedBarTitle = "Red score bar";
+        private const string BlueBarTitle = "Blue score bar";
+
+        private static readonly Uri RedBarBackgroundImageUri = new Uri(Path.Combine(Environment.CurrentDirectory, "./resources/redbar_background.png"));
+        private static readonly Uri RedBarBoostImageUri = new Uri(Path.Combine(Environment.CurrentDirectory, "./resources/redbar_boost.png"));
+        private static readonly Uri RedBarScoreImageUri = new Uri(Path.Combine(Environment.CurrentDirectory, "./resources/redbar_score.png"));
+        private static readonly Uri BlueBarBackgroundImageUri = new Uri(Path.Combine(Environment.CurrentDirectory, "./resources/bluebar_background.png"));
+        private static readonly Uri BlueBarBoostImageUri = new Uri(Path.Combine(Environment.CurrentDirectory, "./resources/bluebar_boost.png"));
+        private static readonly Uri BlueBarScoreImageUri = new Uri(Path.Combine(Environment.CurrentDirectory, "./resources/bluebar_score.png"));
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private readonly OcrManager ocrManager;
 
+        private ScoreBarWindow redScoreBarWindow;
+        private ScoreBarWindow blueScoreBarWindow;
+
+        private ObservableCollection<string> consoleOutput = new ObservableCollection<string>();
+        public ObservableCollection<string> ConsoleOutput
+        {
+            get => this.consoleOutput;
+            set { this.consoleOutput = value; this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConsoleOutput))); }
+        }
+
+        private bool isLiveSetupEnabled = true;
+        public bool IsLiveSetupEnabled
+        {
+            get => this.isLiveSetupEnabled;
+            set
+            {
+                if (this.isLiveSetupEnabled != value)
+                {
+                    this.isLiveSetupEnabled = value;
+
+                    if (this.isLiveSetupEnabled) this.ocrManager.ProcessedScreenshot += OcrManager_ProcessedScreenshot;
+                    else this.ocrManager.ProcessedScreenshot -= OcrManager_ProcessedScreenshot;
+
+                    this.OcrProcessedScreenshotViewImage.Effect = this.isLiveSetupEnabled ? null : new BlurEffect();
+
+                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLiveSetupEnabled)));
+                }
+            }
+        }
+
+        private bool isOverlayMode = true;
+        public bool IsOverlayMode
+        {
+            get => this.isOverlayMode;
+            set
+            {
+                if (this.isOverlayMode != value)
+                {
+                    this.isOverlayMode = value;
+
+                    this.redScoreBarWindow.Close();
+                    this.blueScoreBarWindow.Close();
+
+                    var (newRedScoreBarWindow, newBlueScoreBarWindow) = CreateScoreBars(this.isOverlayMode);
+                    newRedScoreBarWindow.Left = this.redScoreBarWindow.Left;
+                    newRedScoreBarWindow.Top = this.redScoreBarWindow.Top;
+                    newRedScoreBarWindow.Width = this.redScoreBarWindow.Width;
+                    newRedScoreBarWindow.Height = this.redScoreBarWindow.Height;
+
+                    newBlueScoreBarWindow.Left = this.blueScoreBarWindow.Left;
+                    newBlueScoreBarWindow.Top = this.blueScoreBarWindow.Top;
+                    newBlueScoreBarWindow.Width = this.blueScoreBarWindow.Width;
+                    newBlueScoreBarWindow.Height = this.blueScoreBarWindow.Height;
+
+                    this.redScoreBarWindow = newRedScoreBarWindow;
+                    this.blueScoreBarWindow = newBlueScoreBarWindow;
+
+                    this.redScoreBarWindow.Show();
+                    this.blueScoreBarWindow.Show();
+
+                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsOverlayMode)));
+                }
+            }
+        }
+        
         public MainWindow()
         {
             InitializeComponent();
 
-            this.RedScoreBarAnimator = new ScoreBarAnimator(nameof(this.RedBoostBar_TransparentStop),
-                                                            nameof(this.RedBoostBar_BlackStop),
-                                                            nameof(this.RedScoreBar_TransparentStop),
-                                                            nameof(this.RedScoreBar_BlackStop));
-            this.BlueScoreBarAnimator = new ScoreBarAnimator(nameof(this.BlueBoostBar_TransparentStop),
-                                                             nameof(this.BlueBoostBar_BlackStop),
-                                                             nameof(this.BlueScoreBar_TransparentStop),
-                                                             nameof(this.BlueScoreBar_BlackStop));
             this.ocrManager = new OcrManager();
-            this.ocrManager.ScoresRead += (scores) => Dispatcher.Invoke(() => 
+            this.ocrManager.ScoresRead += (scores) => Dispatcher.Invoke(() =>
             {
-                this.RedScoreBarAnimator.BeginAnimateScore(scores.RedPercentage, this);
-                this.BlueScoreBarAnimator.BeginAnimateScore(scores.BluePercentage, this);
+                if (scores.IsValid)
+                {
+                    this.redScoreBarWindow?.SetScoreBarFill(scores.RedPercentage);
+                    this.blueScoreBarWindow?.SetScoreBarFill(scores.BluePercentage);
+                }
+
+                ConsoleOutput.Add($"Red: {scores.Red}, Blue: {scores.Blue}");
+                ConsoleScroller.ScrollToBottom();
             });
-            this.ocrManager.ScoresReset += () => Dispatcher.Invoke(() =>
+
+            (this.redScoreBarWindow, this.blueScoreBarWindow) = CreateScoreBars(true);
+            this.redScoreBarWindow.Show();
+            this.blueScoreBarWindow.Show();
+
+            this.RedSectionConfig.Title = "Red score section position";
+            this.RedSectionConfig.SectionRect = this.ocrManager.RedSection;
+            this.BlueSectionConfig.Title = "Blue score section position";
+            this.BlueSectionConfig.SectionRect = this.ocrManager.BlueSection;
+
+            this.ocrManager.CapturedScreenshot += (size) => Dispatcher.Invoke(() =>
             {
-                this.RedScoreBarAnimator.BeginAnimateScore(0, this);
-                this.BlueScoreBarAnimator.BeginAnimateScore(0, this);
+                this.RedSectionConfig.MaxWidth = size.Width;
+                this.RedSectionConfig.MaxHeight = size.Height;
+                this.BlueSectionConfig.MaxWidth = size.Width;
+                this.BlueSectionConfig.MaxHeight = size.Height;
             });
+
+            this.RedSectionConfig.PropertyChanged += (s, e) => this.ocrManager.RedSection = this.RedSectionConfig.SectionRect;
+            this.BlueSectionConfig.PropertyChanged += (s, e) => this.ocrManager.BlueSection = this.BlueSectionConfig.SectionRect;
+
+            this.ocrManager.ProcessedScreenshot += OcrManager_ProcessedScreenshot;
 
             this.ocrManager.StartThread();
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
+        protected override void OnClosed(EventArgs e)
         {
-            if (e.Key == Key.LeftShift)
-            {
-                WindowUI.Visibility = (WindowUI.IsVisible ? Visibility.Hidden : Visibility.Visible);
-            }
+            this.ocrManager.StopThread();
 
-            if (e.Key == Key.LeftCtrl)
-            {
-                this.IsClickThroughTransparent = !this.IsClickThroughTransparent;
-            }
+            this.redScoreBarWindow?.Close();
+            this.blueScoreBarWindow?.Close();
 
-            base.OnKeyDown(e);
+            base.OnClosed(e);
+        }
+
+        double value = 0;
+        public void ClearScores_Clicked(object sender, EventArgs args)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                value += 0.1;
+                if (value > 1) value = 0;
+                this.redScoreBarWindow?.SetScoreBarFill(value);
+                this.blueScoreBarWindow?.SetScoreBarFill(value);
+            });
+        }
+
+        private static (ScoreBarWindow redScoreBarWindow, ScoreBarWindow blueScoreBarWindow) CreateScoreBars(bool overlayMode)
+        {
+            var redBarWindow = new ScoreBarWindow(RedBarBackgroundImageUri, RedBarBoostImageUri, RedBarScoreImageUri, true)
+            {
+                Title = RedBarTitle,
+                AllowsTransparency = overlayMode
+            };
+            var blueBarWindow = new ScoreBarWindow(BlueBarBackgroundImageUri, BlueBarBoostImageUri, BlueBarScoreImageUri)
+            {
+                Title = BlueBarTitle,
+                AllowsTransparency = overlayMode
+            };
+
+            redBarWindow.GreenScreen.Visibility =
+            blueBarWindow.GreenScreen.Visibility = overlayMode ? Visibility.Hidden : Visibility.Visible;
+
+            return (redBarWindow, blueBarWindow);
+        }
+
+        private void OcrManager_ProcessedScreenshot(OcrManager.ProcessedScreenshotEventArgs args)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                WriteableBitmap bitmapDisplay = this.OcrProcessedScreenshotViewImage.Source as WriteableBitmap;
+                if (bitmapDisplay == null ||
+                    bitmapDisplay.Width != args.Screenshot.Width ||
+                    bitmapDisplay.Height != args.Screenshot.Height)
+                {
+                    bitmapDisplay = new WriteableBitmap(args.Screenshot.Width, args.Screenshot.Height,
+                                                        args.Screenshot.HorizontalResolution, args.Screenshot.VerticalResolution,
+                                                        PixelFormats.Bgra32, null);
+                }
+
+                BitmapData screenshotData = args.Screenshot.LockBits(new Rectangle(0, 0, args.Screenshot.Width, args.Screenshot.Height),
+                                                                     ImageLockMode.ReadOnly, args.Screenshot.PixelFormat);
+                BitmapData redSectionData = args.RedSectionPreProcessedScreenshot.LockBits(new Rectangle(0, 0, args.RedSectionPreProcessedScreenshot.Width, args.RedSectionPreProcessedScreenshot.Height),
+                                                                                           ImageLockMode.ReadOnly, args.RedSectionPreProcessedScreenshot.PixelFormat);
+                BitmapData blueSectionData = args.BlueSectionPreProcessedScreenshot.LockBits(new Rectangle(0, 0, args.BlueSectionPreProcessedScreenshot.Width, args.BlueSectionPreProcessedScreenshot.Height),
+                                                                                             ImageLockMode.ReadOnly, args.BlueSectionPreProcessedScreenshot.PixelFormat);
+                bitmapDisplay.WritePixels(new Int32Rect(0, 0, args.Screenshot.Width, args.Screenshot.Height),
+                                          screenshotData.Scan0, screenshotData.Stride * screenshotData.Height, screenshotData.Stride);
+                bitmapDisplay.WritePixels(new Int32Rect(args.RedSection.X, args.RedSection.Y, args.RedSection.Width, args.RedSection.Height),
+                                          redSectionData.Scan0, redSectionData.Stride * redSectionData.Height, redSectionData.Stride);
+                bitmapDisplay.WritePixels(new Int32Rect(args.BlueSection.X, args.BlueSection.Y, args.BlueSection.Width, args.BlueSection.Height),
+                                          blueSectionData.Scan0, blueSectionData.Stride * blueSectionData.Height, blueSectionData.Stride);
+
+                args.Screenshot.UnlockBits(screenshotData);
+                args.RedSectionPreProcessedScreenshot.UnlockBits(redSectionData);
+                args.BlueSectionPreProcessedScreenshot.UnlockBits(blueSectionData);
+
+                this.OcrProcessedScreenshotViewImage.Source = bitmapDisplay;
+            });
         }
     }
 }

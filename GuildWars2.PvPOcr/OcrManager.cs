@@ -17,7 +17,12 @@ namespace GuildWars2.PvPOcr
         };
 
         public event Action<Scores> ScoresRead;
-        public event Action ScoresReset;
+        public event Action<Size> CapturedScreenshot;
+        public event Action<ProcessedScreenshotEventArgs> ProcessedScreenshot;
+
+        public Rectangle RedSection { get; set; } = new Rectangle(820, 0, 80, 40);
+        public Rectangle BlueSection { get; set; } = new Rectangle(1020, 0, 80, 40);
+
         private Task runningTask;
         private CancellationTokenSource runningTaskTokenSource;
 
@@ -29,64 +34,102 @@ namespace GuildWars2.PvPOcr
             }
 
             this.runningTaskTokenSource = new CancellationTokenSource();
-            this.runningTask = Task.Run(() =>
+            CancellationToken token = this.runningTaskTokenSource.Token;
+            this.runningTask = Task.Factory.StartNew(async () =>
             {
                 var gw2Process = new Gw2Process();
-                var numBadReads = 0;
 
                 using (var ocrEngine = new TesseractEngine("./tessdata", "eng", EngineMode.Default, null, TesseractOptions, false))
                 {
-                    while (!this.runningTaskTokenSource.Token.IsCancellationRequested)
+                    while (true)
                     {
+                        token.ThrowIfCancellationRequested();
+
                         using (Bitmap screenshot = gw2Process.GetBitmap())
                         using (var screenshotImage = new MagickImage(screenshot))
+                        using (IMagickImage modifiedScreenshotImage = screenshotImage.Clone())
                         {
+                            this.CapturedScreenshot?.Invoke(screenshot.Size);
+
                             // mess with the image to make it easier to OCR
-                            screenshotImage.Contrast();
-                            screenshotImage.Grayscale(PixelIntensityMethod.Rec709Luminance);
-                            screenshotImage.LevelColors(MagickColor.FromRgb(128, 128, 128), MagickColor.FromRgb(255, 255, 255));
-                            screenshotImage.Negate(Channels.RGB);
+                            modifiedScreenshotImage.Contrast();
+                            modifiedScreenshotImage.Grayscale(PixelIntensityMethod.Rec709Luminance);
+                            modifiedScreenshotImage.LevelColors(MagickColor.FromRgb(128, 128, 128), MagickColor.FromRgb(255, 255, 255));
+                            modifiedScreenshotImage.Negate(Channels.RGB);
 
-                            using (Bitmap modifiedScreenshot = screenshotImage.ToBitmap())
+                            using (var modifiedScreenshot = modifiedScreenshotImage.ToBitmap())
                             {
-                                var scores = new Scores();
+                                string redText, blueText = string.Empty;
+                                using (Page section = ocrEngine.Process(modifiedScreenshot, GetTesseractRect(RedSection), PageSegMode.SingleWord))
+                                {
+                                    redText = section.GetText();
+                                }
+                                using (Page section = ocrEngine.Process(modifiedScreenshot, GetTesseractRect(BlueSection), PageSegMode.SingleWord))
+                                {
+                                    blueText = section.GetText();
+                                }
 
-                                using (Page redSection = ocrEngine.Process(modifiedScreenshot, new Tesseract.Rect(820, 0, 80, 40), PageSegMode.SingleWord))
+                                var scores = new Scores
                                 {
-                                    scores.Red = ProcessScore(redSection);
-                                }
-                                using (Page blueSection = ocrEngine.Process(modifiedScreenshot, new Tesseract.Rect(1020, 0, 80, 40), PageSegMode.SingleWord))
-                                {
-                                    scores.Blue = ProcessScore(blueSection);
-                                }
+                                    Red = ProcessScore(redText),
+                                    Blue = ProcessScore(blueText)
+                                };
 
-                                if (scores.IsValid)
+                                this.ScoresRead?.Invoke(scores);
+
+                                if (this.ProcessedScreenshot != null)
                                 {
-                                    this.ScoresRead?.Invoke(scores);
-                                    numBadReads = 0;
-                                }
-                                else if (numBadReads++ > 5)
-                                {
-                                    this.ScoresReset?.Invoke();
+                                    // only perform this image processing if we have an event handler for processed screenshots
+                                    using (IMagickImage modifiedScreenshotRedSectionImage = modifiedScreenshotImage.Clone(new MagickGeometry(RedSection)))
+                                    using (IMagickImage modifiedScreenshotBlueSectionImage = modifiedScreenshotImage.Clone(new MagickGeometry(BlueSection)))
+                                    using (Bitmap modifiedScreenshotRedSection = modifiedScreenshotRedSectionImage.ToBitmap())
+                                    using (Bitmap modifiedScreenshotBlueSection = modifiedScreenshotBlueSectionImage.ToBitmap())
+                                    {
+                                        var processedScreenshotEventArgs = new ProcessedScreenshotEventArgs
+                                        {
+                                            Screenshot = screenshot,
+
+                                            RedSection = RedSection,
+                                            RedSectionPreProcessedScreenshot = modifiedScreenshotRedSection,
+                                            RedTextResult = redText,
+
+                                            BlueSection = BlueSection,
+                                            BlueSectionPreProcessedScreenshot = modifiedScreenshotBlueSection,
+                                            BlueTextResult = blueText,
+
+                                            Result = scores
+                                        };
+
+                                        this.ProcessedScreenshot(processedScreenshotEventArgs);
+                                    }
                                 }
                             }
                         }
 
-                        Thread.Sleep(100);
+                        await Task.Delay(100, token);
                     }
                 }
-
-            }, this.runningTaskTokenSource.Token);
+            });
         }
 
-        private static int ProcessScore(Page page)
+        public void StopThread()
         {
-            string data = page.GetText()
-                              .Trim()
-                              .ToLower()
-                              .Replace('o', '0');
+            this.runningTaskTokenSource?.Cancel();
+            this.runningTask?.Wait(TimeSpan.FromSeconds(5));
+            this.runningTaskTokenSource?.Dispose();
+            this.runningTaskTokenSource = null;
+            this.runningTask = null;
+        }
 
-            if (int.TryParse(data, out int result))
+        private static Tesseract.Rect GetTesseractRect(Rectangle rect)
+            => new Rect(rect.X, rect.Y, rect.Width, rect.Height);
+
+        private static int ProcessScore(string scoreText)
+        {
+            if (int.TryParse(scoreText.Trim()
+                                      .ToLower()
+                                      .Replace('o', '0'),
+                             out int result))
             {
                 return result;
             }
@@ -103,6 +146,21 @@ namespace GuildWars2.PvPOcr
             public double BluePercentage => Blue / 500.0;
 
             public bool IsValid => Red >= 0 && Red <= 600 && Blue >= 0 && Blue <= 600;
+        }
+
+        public struct ProcessedScreenshotEventArgs
+        {
+            public Bitmap Screenshot;
+
+            public Bitmap RedSectionPreProcessedScreenshot;
+            public Rectangle RedSection;
+            public string RedTextResult;
+
+            public Bitmap BlueSectionPreProcessedScreenshot;
+            public Rectangle BlueSection;
+            public string BlueTextResult;
+
+            public Scores Result;
         }
     }
 }

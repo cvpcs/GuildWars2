@@ -1,0 +1,50 @@
+﻿<Overlay:ClickThroughTransparentWindow
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Overlay="clr-namespace:GuildWars2.Overlay.Controls;assembly=GuildWars2.Overlay.Controls"
+        x:Class="GuildWars2.PvPOcr.ScoreBarWindow"
+        Height="60" Width="800" MinWidth="20" MinHeight="40"
+        WindowStyle="None" AllowsTransparency="True" Topmost="True"
+        Background="#02FFFFFF">
+    <Window.Resources>
+        <Style TargetType="Image">
+            <Setter Property="Stretch" Value="Fill" />
+        </Style>
+    </Window.Resources>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="0" />
+    </WindowChrome.WindowChrome>
+    <Canvas x:Name="Canvas">
+        <Canvas.CacheMode>
+            <BitmapCache />
+        </Canvas.CacheMode>
+        <Grid Width="{Binding ActualWidth, ElementName=Canvas}"
+              Height="{Binding ActualHeight, ElementName=Canvas}"
+              x:Name="BarGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Rectangle Grid.Column="0" Fill="#00FF00" Visibility="Hidden" x:Name="GreenScreen" />
+            <Image Source="./resources/redbar_background.png" Grid.Column="0" Opacity="0.75" x:Name="BackgroundBar" />
+            <Image Source="./resources/redbar_boost.png" Grid.Column="0" x:Name="BoostBar">
+                <Image.OpacityMask>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" x:Name="BoostBar_GradientOpacityMask">
+                        <GradientStop Offset="0" Color="Black" x:Name="BoostBar_GradientOpacityMask_BlackStop" />
+                        <GradientStop Offset="0" Color="Transparent" x:Name="BoostBar_GradientOpacityMask_TransparentStop" />
+                    </LinearGradientBrush>
+                </Image.OpacityMask>
+            </Image>
+            <Image Source="./resources/redbar_score.png" Grid.Column="0" x:Name="ScoreBar">
+                <Image.OpacityMask>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" x:Name="ScoreBar_GradientOpacityMask">
+                        <GradientStop Offset="0" Color="Black" x:Name="ScoreBar_GradientOpacityMask_BlackStop" />
+                        <GradientStop Offset="0" Color="Transparent" x:Name="ScoreBar_GradientOpacityMask_TransparentStop" />
+                    </LinearGradientBrush>
+                </Image.OpacityMask>
+            </Image>
+        </Grid>
+        <Overlay:WindowUI x:Name="WindowUI"
+			Width="{Binding ActualWidth, ElementName=Canvas}"
+			Height="{Binding ActualHeight, ElementName=Canvas}" />
+    </Canvas>
+</Overlay:ClickThroughTransparentWindow>

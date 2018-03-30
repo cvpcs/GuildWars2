@@ -19,7 +19,7 @@ namespace GuildWars2.PvPOcr
         private string scoreBarTransparentStopName;
         private string scoreBarBlackStopName;
 
-        private double currentValue = 0.0d;
+        private double currentValue = 0;
 
         public ScoreBarAnimator(string boostBarTransparentStopName,
                                 string boostBarBlackStopName,
