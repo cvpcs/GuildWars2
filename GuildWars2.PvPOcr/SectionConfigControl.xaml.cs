@@ -60,6 +60,27 @@ namespace GuildWars2.PvPOcr
             set { if (this.sectionHeight != value) { this.sectionHeight = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SectionHeight))); } }
         }
 
+        private int scoreBarHue = 0;
+        public int ScoreBarHue
+        {
+            get => this.scoreBarHue;
+            set { if (this.scoreBarHue != value) { this.scoreBarHue = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ScoreBarHue))); } }
+        }
+
+        private int scoreBarSaturation = 0;
+        public int ScoreBarSaturation
+        {
+            get => this.scoreBarSaturation;
+            set { if (this.scoreBarSaturation != value) { this.scoreBarSaturation = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ScoreBarSaturation))); } }
+        }
+
+        private int scoreBarBrightness = 0;
+        public int ScoreBarBrightness
+        {
+            get => this.scoreBarBrightness;
+            set { if (this.scoreBarBrightness != value) { this.scoreBarBrightness = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ScoreBarBrightness))); } }
+        }
+
         public Rectangle SectionRect
         {
             get => new Rectangle(SectionX, SectionY, SectionWidth, SectionHeight);
@@ -70,6 +91,18 @@ namespace GuildWars2.PvPOcr
                 SectionWidth = value.Width;
                 SectionHeight = value.Height;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SectionRect)));
+            }
+        }
+
+        public ImageModulationParameters ScoreBarModulationParameters
+        {
+            get => new ImageModulationParameters(ScoreBarHue, ScoreBarSaturation, ScoreBarBrightness);
+            set
+            {
+                ScoreBarHue = value.Hue;
+                ScoreBarSaturation = value.Saturation;
+                ScoreBarBrightness = value.Brightness;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ScoreBarModulationParameters)));
             }
         }
 

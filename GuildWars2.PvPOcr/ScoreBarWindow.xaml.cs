@@ -1,9 +1,13 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using GuildWars2.Overlay.Controls;
+using ImageMagick;
 using WindowsPoint = System.Windows.Point;
 
 namespace GuildWars2.PvPOcr
@@ -18,6 +22,10 @@ namespace GuildWars2.PvPOcr
 
         private readonly ScoreBarAnimator scoreBarAnimator;
 
+        private WriteableBitmap scoreBarBitmap;
+        private IMagickImage scoreBarImage;
+        private ImageModulationParameters modulationParameters = new ImageModulationParameters(0, 0, 0);
+
         public ScoreBarWindow(Uri backgroundBarImageUri, Uri boostBarImageUri, Uri scoreBarImageUri, bool isFlipped = false, bool overlayMode = true, RectangleF? position = null)
         {
             InitializeComponent();
@@ -29,7 +37,13 @@ namespace GuildWars2.PvPOcr
 
             this.BackgroundBar.Source = new BitmapImage(backgroundBarImageUri);
             this.BoostBar.Source = new BitmapImage(boostBarImageUri);
-            this.ScoreBar.Source = new BitmapImage(scoreBarImageUri);
+
+            this.scoreBarImage = new MagickImage(scoreBarImageUri.AbsolutePath);
+            this.scoreBarBitmap = new WriteableBitmap(this.scoreBarImage.Width, this.scoreBarImage.Height,
+                                                      this.scoreBarImage.Density.X, this.scoreBarImage.Density.Y,
+                                                      PixelFormats.Bgra32, null);
+            this.scoreBarBitmap.WriteMagickImage(this.scoreBarImage);
+            this.ScoreBar.Source = this.scoreBarBitmap;
 
             this.scoreBarAnimator = new ScoreBarAnimator(nameof(this.BoostBar_GradientOpacityMask_TransparentStop),
                                                          nameof(this.BoostBar_GradientOpacityMask_BlackStop),
@@ -47,6 +61,22 @@ namespace GuildWars2.PvPOcr
 
         public void SetScoreBarFill(double percentage)
             => this.scoreBarAnimator.BeginAnimateScore(percentage, this);
+        
+        public void SetScoreBarModulation(ImageModulationParameters modulationParameters)
+        {
+            if (this.modulationParameters != modulationParameters)
+            {
+                this.modulationParameters = modulationParameters;
+
+                using (IMagickImage clone = this.scoreBarImage.Clone())
+                {
+                    clone.Modulate(new Percentage(modulationParameters.BrightnessPercentage),
+                                   new Percentage(modulationParameters.SaturationPercentage),
+                                   new Percentage(modulationParameters.HuePercentage));
+                    this.scoreBarBitmap.WriteMagickImage(clone);
+                }
+            }
+        }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
@@ -61,6 +91,13 @@ namespace GuildWars2.PvPOcr
             }
 
             base.OnKeyDown(e);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            this.scoreBarImage.Dispose();
+
+            base.OnClosing(e);
         }
     }
 }

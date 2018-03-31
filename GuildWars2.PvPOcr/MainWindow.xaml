@@ -32,8 +32,8 @@
                 <ColumnDefinition Width="0.5*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.7*" />
-                <RowDefinition Height="0.3*" />
+                <RowDefinition Height="0.6*" />
+                <RowDefinition Height="0.4*" />
             </Grid.RowDefinitions>
             <Image Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Stretch="Uniform" x:Name="OcrProcessedScreenshotViewImage" />
             <a:SectionConfigControl Grid.Column="0" Grid.Row="1" x:Name="RedSectionConfig" />
@@ -69,7 +69,14 @@
                     </Style>
                 </ToggleButton.Style>
             </ToggleButton>
-            <Button Content="Clear Scores" Click="ClearScores_Clicked" Margin="5" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button Content="Fill Scores" Grid.Column="0" Click="FillScores_Clicked" Margin="5" />
+                <Button Content="Clear Scores" Grid.Column="1" Click="ClearScores_Clicked" Margin="5" />
+            </Grid>
             <Button Content="Save Config" Click="SaveConfig_Clicked" Margin="5" />
             <Button Content="Load Config" Click="LoadConfig_Clicked" Margin="5" />
         </StackPanel>

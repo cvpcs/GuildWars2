@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:GuildWars2.PvPOcr"
         mc:Ignorable="d" 
         d:DesignHeight="250" d:DesignWidth="300"
         x:Name="Root">
@@ -13,6 +14,9 @@
             <ColumnDefinition Width="0.2*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
@@ -36,5 +40,26 @@
         <Label Grid.Column="0" Grid.Row="4" Content="Height" />
         <Slider Grid.Column="1" Grid.Row="4" Minimum="1" Maximum="{Binding Path=MaxSectionHeight}" Value="{Binding Path=SectionHeight}" />
         <TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding Path=SectionHeight}" />
+
+        <Label Grid.Column="0" Grid.Row="5" Content="Hue" />
+        <Slider Grid.Column="1" Grid.Row="5" 
+                Minimum="{Binding Source={x:Static local:ImageModulationParameters.HueMinValue}}"
+                Maximum="{Binding Source={x:Static local:ImageModulationParameters.HueMaxValue}}"
+                Value="{Binding Path=ScoreBarHue}" />
+        <TextBlock Grid.Column="2" Grid.Row="5" Text="{Binding Path=ScoreBarHue}" />
+
+        <Label Grid.Column="0" Grid.Row="6" Content="Saturation" />
+        <Slider Grid.Column="1" Grid.Row="6" 
+                Minimum="{Binding Source={x:Static local:ImageModulationParameters.SaturationMinValue}}"
+                Maximum="{Binding Source={x:Static local:ImageModulationParameters.SaturationMaxValue}}"
+                Value="{Binding Path=ScoreBarSaturation}" />
+        <TextBlock Grid.Column="2" Grid.Row="6" Text="{Binding Path=ScoreBarSaturation}" />
+
+        <Label Grid.Column="0" Grid.Row="7" Content="Brightness" />
+        <Slider Grid.Column="1" Grid.Row="7"
+                Minimum="{Binding Source={x:Static local:ImageModulationParameters.BrightnessMinValue}}"
+                Maximum="{Binding Source={x:Static local:ImageModulationParameters.BrightnessMaxValue}}"
+                Value="{Binding Path=ScoreBarBrightness}" />
+        <TextBlock Grid.Column="2" Grid.Row="7" Text="{Binding Path=ScoreBarBrightness}" />
     </Grid>
 </UserControl>

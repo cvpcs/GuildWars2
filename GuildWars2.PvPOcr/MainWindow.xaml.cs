@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
@@ -38,7 +37,9 @@ namespace GuildWars2.PvPOcr
                 RedSection = RedSectionConfig.SectionRect,
                 BlueSection = BlueSectionConfig.SectionRect,
                 RedScoreBarPosition = this.redScoreBarWindow.GetWindowRect(),
-                BlueScoreBarPosition = this.blueScoreBarWindow.GetWindowRect()
+                BlueScoreBarPosition = this.blueScoreBarWindow.GetWindowRect(),
+                RedScoreBarModulation = RedSectionConfig.ScoreBarModulationParameters,
+                BlueScoreBarModulation = BlueSectionConfig.ScoreBarModulationParameters
             };
             set
             {
@@ -48,6 +49,8 @@ namespace GuildWars2.PvPOcr
                 BlueSectionConfig.SectionRect = value.BlueSection;
                 this.redScoreBarWindow.SetWindowRect(value.RedScoreBarPosition);
                 this.blueScoreBarWindow.SetWindowRect(value.BlueScoreBarPosition);
+                RedSectionConfig.ScoreBarModulationParameters = value.RedScoreBarModulation;
+                BlueSectionConfig.ScoreBarModulationParameters = value.BlueScoreBarModulation;
             }
         }
 
@@ -104,11 +107,11 @@ namespace GuildWars2.PvPOcr
             {
                 RedSection = new Rectangle((int)(0.42708 * SystemParameters.PrimaryScreenWidth),
                                            (int)(0.00000 * SystemParameters.PrimaryScreenHeight),
-                                           (int)(0.41667 * SystemParameters.PrimaryScreenWidth),
+                                           (int)(0.04167 * SystemParameters.PrimaryScreenWidth),
                                            (int)(0.03704 * SystemParameters.PrimaryScreenHeight)),
                 BlueSection = new Rectangle((int)(0.53125 * SystemParameters.PrimaryScreenWidth),
                                             (int)(0.00000 * SystemParameters.PrimaryScreenHeight),
-                                            (int)(0.41667 * SystemParameters.PrimaryScreenWidth),
+                                            (int)(0.04167 * SystemParameters.PrimaryScreenWidth),
                                             (int)(0.03704 * SystemParameters.PrimaryScreenHeight))
             };
 
@@ -132,8 +135,22 @@ namespace GuildWars2.PvPOcr
             this.RedSectionConfig.Title = "Red score section position";
             this.BlueSectionConfig.Title = "Blue score section position";
 
-            this.RedSectionConfig.PropertyChanged += (s, e) => this.config.RedSection = this.ocrManager.RedSection = this.RedSectionConfig.SectionRect;
-            this.BlueSectionConfig.PropertyChanged += (s, e) => this.config.BlueSection = this.ocrManager.BlueSection = this.BlueSectionConfig.SectionRect;
+            this.RedSectionConfig.PropertyChanged += (s, e) =>
+            {
+                this.config.RedSection =
+                this.ocrManager.RedSection = this.RedSectionConfig.SectionRect;
+
+                this.config.RedScoreBarModulation = this.RedSectionConfig.ScoreBarModulationParameters;
+                this.redScoreBarWindow.SetScoreBarModulation(this.RedSectionConfig.ScoreBarModulationParameters);
+            };
+            this.BlueSectionConfig.PropertyChanged += (s, e) =>
+            {
+                this.config.BlueSection =
+                this.ocrManager.BlueSection = this.BlueSectionConfig.SectionRect;
+
+                this.config.BlueScoreBarModulation = this.BlueSectionConfig.ScoreBarModulationParameters;
+                this.blueScoreBarWindow.SetScoreBarModulation(this.BlueSectionConfig.ScoreBarModulationParameters);
+            };
 
             this.RedSectionConfig.SectionRect = this.ocrManager.RedSection;
             this.BlueSectionConfig.SectionRect = this.ocrManager.BlueSection;
@@ -161,12 +178,21 @@ namespace GuildWars2.PvPOcr
             base.OnClosed(e);
         }
 
+        public void FillScores_Clicked(object sender, EventArgs args)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                this.redScoreBarWindow.SetScoreBarFill(1);
+                this.blueScoreBarWindow.SetScoreBarFill(1);
+            });
+        }
+
         public void ClearScores_Clicked(object sender, EventArgs args)
         {
             Dispatcher.Invoke(() =>
             {
-                this.redScoreBarWindow?.SetScoreBarFill(0);
-                this.blueScoreBarWindow?.SetScoreBarFill(0);
+                this.redScoreBarWindow.SetScoreBarFill(0);
+                this.blueScoreBarWindow.SetScoreBarFill(0);
             });
         }
 
@@ -234,22 +260,9 @@ namespace GuildWars2.PvPOcr
                                                         PixelFormats.Bgra32, null);
                 }
 
-                BitmapData screenshotData = args.Screenshot.LockBits(new Rectangle(0, 0, args.Screenshot.Width, args.Screenshot.Height),
-                                                                     ImageLockMode.ReadOnly, args.Screenshot.PixelFormat);
-                BitmapData redSectionData = args.RedSectionPreProcessedScreenshot.LockBits(new Rectangle(0, 0, args.RedSectionPreProcessedScreenshot.Width, args.RedSectionPreProcessedScreenshot.Height),
-                                                                                           ImageLockMode.ReadOnly, args.RedSectionPreProcessedScreenshot.PixelFormat);
-                BitmapData blueSectionData = args.BlueSectionPreProcessedScreenshot.LockBits(new Rectangle(0, 0, args.BlueSectionPreProcessedScreenshot.Width, args.BlueSectionPreProcessedScreenshot.Height),
-                                                                                             ImageLockMode.ReadOnly, args.BlueSectionPreProcessedScreenshot.PixelFormat);
-                bitmapDisplay.WritePixels(new Int32Rect(0, 0, args.Screenshot.Width, args.Screenshot.Height),
-                                          screenshotData.Scan0, screenshotData.Stride * screenshotData.Height, screenshotData.Stride);
-                bitmapDisplay.WritePixels(new Int32Rect(args.RedSection.X, args.RedSection.Y, args.RedSection.Width, args.RedSection.Height),
-                                          redSectionData.Scan0, redSectionData.Stride * redSectionData.Height, redSectionData.Stride);
-                bitmapDisplay.WritePixels(new Int32Rect(args.BlueSection.X, args.BlueSection.Y, args.BlueSection.Width, args.BlueSection.Height),
-                                          blueSectionData.Scan0, blueSectionData.Stride * blueSectionData.Height, blueSectionData.Stride);
-
-                args.Screenshot.UnlockBits(screenshotData);
-                args.RedSectionPreProcessedScreenshot.UnlockBits(redSectionData);
-                args.BlueSectionPreProcessedScreenshot.UnlockBits(blueSectionData);
+                bitmapDisplay.WriteBitmap(args.Screenshot);
+                bitmapDisplay.WriteBitmap(args.RedSectionPreProcessedScreenshot, args.RedSection);
+                bitmapDisplay.WriteBitmap(args.BlueSectionPreProcessedScreenshot, args.BlueSection);
 
                 this.OcrProcessedScreenshotViewImage.Source = bitmapDisplay;
             });

@@ -10,5 +10,7 @@ namespace GuildWars2.PvPOcr
         public Rectangle BlueSection = new Rectangle(0, 0, 1, 1);
         public RectangleF RedScoreBarPosition = new RectangleF(-1, -1, -1, -1);
         public RectangleF BlueScoreBarPosition = new RectangleF(-1, -1, -1, -1);
+        public ImageModulationParameters RedScoreBarModulation = new ImageModulationParameters(0, 0, 0);
+        public ImageModulationParameters BlueScoreBarModulation = new ImageModulationParameters(0, 0, 0);
     }
 }
