@@ -11,24 +11,43 @@ namespace GuildWars2.PvPOcr
     {
         private Process process;
 
-        public Gw2Process()
-            => this.process = Process.GetProcesses()
-                                     .Where(proc => proc.ProcessName.StartsWith("gw2", StringComparison.CurrentCultureIgnoreCase))
-                                     .FirstOrDefault();
+        public bool IsAvailable
+            => this.process?.HasExited == false;
 
         public Bitmap GetBitmap()
         {
-            GetWindowRect(this.process.MainWindowHandle, out Rect rect);
-            var bitmap = new Bitmap(rect.right - rect.left, rect.bottom - rect.top, PixelFormat.Format32bppArgb);
-
-            using (var graphics = Graphics.FromImage(bitmap))
+            if (!IsAvailable && !TryFindGw2Process(out this.process))
             {
-                IntPtr gfxHdc = graphics.GetHdc();
-                PrintWindow(this.process.MainWindowHandle, gfxHdc, 0);
-                graphics.ReleaseHdc(gfxHdc);
+                throw new InvalidOperationException("Gw2 process not found");
             }
 
-            return bitmap;
+            try
+            {
+                GetWindowRect(this.process.MainWindowHandle, out Rect rect);
+                var bitmap = new Bitmap(rect.right - rect.left, rect.bottom - rect.top, PixelFormat.Format32bppArgb);
+
+                using (var graphics = Graphics.FromImage(bitmap))
+                {
+                    IntPtr gfxHdc = graphics.GetHdc();
+                    PrintWindow(this.process.MainWindowHandle, gfxHdc, 0);
+                    graphics.ReleaseHdc(gfxHdc);
+                }
+
+                return bitmap;
+            }
+            catch
+            {
+                this.process = null;
+                throw;
+            }
+        }
+
+        private static bool TryFindGw2Process(out Process process)
+        {
+            process = Process.GetProcesses()
+                             .Where(proc => proc.ProcessName.StartsWith("gw2", StringComparison.CurrentCultureIgnoreCase))
+                             .FirstOrDefault();
+            return process != null;
         }
 
         [StructLayout(LayoutKind.Sequential)]

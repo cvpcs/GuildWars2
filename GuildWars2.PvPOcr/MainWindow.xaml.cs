@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using Microsoft.Extensions.Logging;
 
 namespace GuildWars2.PvPOcr
 {
@@ -33,12 +34,8 @@ namespace GuildWars2.PvPOcr
         private ScoreBarWindow redScoreBarWindow;
         private ScoreBarWindow blueScoreBarWindow;
 
-        private ObservableCollection<string> consoleOutput = new ObservableCollection<string>();
-        public ObservableCollection<string> ConsoleOutput
-        {
-            get => this.consoleOutput;
-            set { this.consoleOutput = value; this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConsoleOutput))); }
-        }
+        private ObservableCollectionLogger ConsoleLogger = new ObservableCollectionLogger();
+        public ObservableCollection<string> ConsoleOutput => ConsoleLogger.Collection;
 
         private bool isLiveSetupEnabled = true;
         public bool IsLiveSetupEnabled
@@ -120,9 +117,11 @@ namespace GuildWars2.PvPOcr
                     this.blueScoreBarWindow?.SetScoreBarFill(scores.BluePercentage);
                 }
 
-                ConsoleOutput.Add($"Red: {scores.Red}, Blue: {scores.Blue}");
+                ConsoleLogger.LogInformation($"Red: {scores.Red}, Blue: {scores.Blue}");
                 ConsoleScroller.ScrollToBottom();
             });
+
+            this.ocrManager.ProcessingFailed += (e) => Dispatcher.Invoke(() => ConsoleLogger.LogError(e, string.Empty));
 
             (this.redScoreBarWindow, this.blueScoreBarWindow) = CreateScoreBars(true);
             this.redScoreBarWindow.Show();

@@ -20,6 +20,8 @@ namespace GuildWars2.PvPOcr
         public event Action<Size> CapturedScreenshot;
         public event Action<ProcessedScreenshotEventArgs> ProcessedScreenshot;
 
+        public event Action<Exception> ProcessingFailed;
+
         public Rectangle RedSection { get; set; } = new Rectangle(0, 0, 1, 1);
         public Rectangle BlueSection { get; set; } = new Rectangle(0, 0, 1, 1);
 
@@ -45,68 +47,76 @@ namespace GuildWars2.PvPOcr
                     {
                         token.ThrowIfCancellationRequested();
 
-                        using (Bitmap screenshot = gw2Process.GetBitmap())
-                        using (var screenshotImage = new MagickImage(screenshot))
-                        using (IMagickImage modifiedScreenshotImage = screenshotImage.Clone())
+                        try
                         {
-                            this.CapturedScreenshot?.Invoke(screenshot.Size);
-
-                            // mess with the image to make it easier to OCR
-                            modifiedScreenshotImage.Contrast();
-                            modifiedScreenshotImage.Grayscale(PixelIntensityMethod.Rec709Luminance);
-                            modifiedScreenshotImage.LevelColors(MagickColor.FromRgb(128, 128, 128), MagickColor.FromRgb(255, 255, 255));
-                            modifiedScreenshotImage.Negate(Channels.RGB);
-
-                            using (var modifiedScreenshot = modifiedScreenshotImage.ToBitmap())
+                            using (Bitmap screenshot = gw2Process.GetBitmap())
+                            using (var screenshotImage = new MagickImage(screenshot))
+                            using (IMagickImage modifiedScreenshotImage = screenshotImage.Clone())
                             {
-                                string redText, blueText = string.Empty;
-                                using (Page section = ocrEngine.Process(modifiedScreenshot, GetTesseractRect(RedSection), PageSegMode.SingleWord))
-                                {
-                                    redText = section.GetText();
-                                }
-                                using (Page section = ocrEngine.Process(modifiedScreenshot, GetTesseractRect(BlueSection), PageSegMode.SingleWord))
-                                {
-                                    blueText = section.GetText();
-                                }
+                                this.CapturedScreenshot?.Invoke(screenshot.Size);
 
-                                var scores = new Scores
-                                {
-                                    Red = ProcessScore(redText),
-                                    Blue = ProcessScore(blueText)
-                                };
+                                // mess with the image to make it easier to OCR
+                                modifiedScreenshotImage.Contrast();
+                                modifiedScreenshotImage.Grayscale(PixelIntensityMethod.Rec709Luminance);
+                                modifiedScreenshotImage.LevelColors(MagickColor.FromRgb(128, 128, 128), MagickColor.FromRgb(255, 255, 255));
+                                modifiedScreenshotImage.Negate(Channels.RGB);
 
-                                this.ScoresRead?.Invoke(scores);
-
-                                if (this.ProcessedScreenshot != null)
+                                using (var modifiedScreenshot = modifiedScreenshotImage.ToBitmap())
                                 {
-                                    // only perform this image processing if we have an event handler for processed screenshots
-                                    using (IMagickImage modifiedScreenshotRedSectionImage = modifiedScreenshotImage.Clone(new MagickGeometry(RedSection)))
-                                    using (IMagickImage modifiedScreenshotBlueSectionImage = modifiedScreenshotImage.Clone(new MagickGeometry(BlueSection)))
-                                    using (Bitmap modifiedScreenshotRedSection = modifiedScreenshotRedSectionImage.ToBitmap())
-                                    using (Bitmap modifiedScreenshotBlueSection = modifiedScreenshotBlueSectionImage.ToBitmap())
+                                    string redText, blueText = string.Empty;
+                                    using (Page section = ocrEngine.Process(modifiedScreenshot, GetTesseractRect(RedSection), PageSegMode.SingleWord))
                                     {
-                                        var processedScreenshotEventArgs = new ProcessedScreenshotEventArgs
+                                        redText = section.GetText();
+                                    }
+                                    using (Page section = ocrEngine.Process(modifiedScreenshot, GetTesseractRect(BlueSection), PageSegMode.SingleWord))
+                                    {
+                                        blueText = section.GetText();
+                                    }
+
+                                    var scores = new Scores
+                                    {
+                                        Red = ProcessScore(redText),
+                                        Blue = ProcessScore(blueText)
+                                    };
+
+                                    this.ScoresRead?.Invoke(scores);
+
+                                    if (this.ProcessedScreenshot != null)
+                                    {
+                                        // only perform this image processing if we have an event handler for processed screenshots
+                                        using (IMagickImage modifiedScreenshotRedSectionImage = modifiedScreenshotImage.Clone(new MagickGeometry(RedSection)))
+                                        using (IMagickImage modifiedScreenshotBlueSectionImage = modifiedScreenshotImage.Clone(new MagickGeometry(BlueSection)))
+                                        using (Bitmap modifiedScreenshotRedSection = modifiedScreenshotRedSectionImage.ToBitmap())
+                                        using (Bitmap modifiedScreenshotBlueSection = modifiedScreenshotBlueSectionImage.ToBitmap())
                                         {
-                                            Screenshot = screenshot,
+                                            var processedScreenshotEventArgs = new ProcessedScreenshotEventArgs
+                                            {
+                                                Screenshot = screenshot,
 
-                                            RedSection = RedSection,
-                                            RedSectionPreProcessedScreenshot = modifiedScreenshotRedSection,
-                                            RedTextResult = redText,
+                                                RedSection = RedSection,
+                                                RedSectionPreProcessedScreenshot = modifiedScreenshotRedSection,
+                                                RedTextResult = redText,
 
-                                            BlueSection = BlueSection,
-                                            BlueSectionPreProcessedScreenshot = modifiedScreenshotBlueSection,
-                                            BlueTextResult = blueText,
+                                                BlueSection = BlueSection,
+                                                BlueSectionPreProcessedScreenshot = modifiedScreenshotBlueSection,
+                                                BlueTextResult = blueText,
 
-                                            Result = scores
-                                        };
+                                                Result = scores
+                                            };
 
-                                        this.ProcessedScreenshot(processedScreenshotEventArgs);
+                                            this.ProcessedScreenshot(processedScreenshotEventArgs);
+                                        }
                                     }
                                 }
                             }
                         }
+                        catch (Exception e)
+                        {
+                            this.ProcessingFailed?.Invoke(e);
+                            await Task.Delay(TimeSpan.FromSeconds(5), token);
+                        }
 
-                        await Task.Delay(100, token);
+                        await Task.Delay(TimeSpan.FromMilliseconds(100), token);
                     }
                 }
             });

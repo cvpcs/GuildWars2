@@ -19,7 +19,7 @@
                 <ItemsControl ItemsSource="{Binding Path=ConsoleOutput, ElementName=Root, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=.}" Foreground="White" FontFamily="Consolas" />
+                            <TextBlock Text="{Binding Path=.}" Foreground="White" FontFamily="Consolas" TextWrapping="Wrap" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
