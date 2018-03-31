@@ -70,6 +70,8 @@
                 </ToggleButton.Style>
             </ToggleButton>
             <Button Content="Clear Scores" Click="ClearScores_Clicked" Margin="5" />
+            <Button Content="Save Config" Click="SaveConfig_Clicked" Margin="5" />
+            <Button Content="Load Config" Click="LoadConfig_Clicked" Margin="5" />
         </StackPanel>
     </Grid>
 </Window>

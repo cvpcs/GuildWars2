@@ -9,6 +9,8 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
+using Newtonsoft.Json;
 
 namespace GuildWars2.PvPOcr
 {
@@ -17,25 +19,37 @@ namespace GuildWars2.PvPOcr
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private const string RedBarTitle = "Red score bar";
-        private const string BlueBarTitle = "Blue score bar";
-
-        private static readonly Uri RedBarBackgroundImageUri = new Uri(Path.Combine(Environment.CurrentDirectory, "./resources/redbar_background.png"));
-        private static readonly Uri RedBarBoostImageUri = new Uri(Path.Combine(Environment.CurrentDirectory, "./resources/redbar_boost.png"));
-        private static readonly Uri RedBarScoreImageUri = new Uri(Path.Combine(Environment.CurrentDirectory, "./resources/redbar_score.png"));
-        private static readonly Uri BlueBarBackgroundImageUri = new Uri(Path.Combine(Environment.CurrentDirectory, "./resources/bluebar_background.png"));
-        private static readonly Uri BlueBarBoostImageUri = new Uri(Path.Combine(Environment.CurrentDirectory, "./resources/bluebar_boost.png"));
-        private static readonly Uri BlueBarScoreImageUri = new Uri(Path.Combine(Environment.CurrentDirectory, "./resources/bluebar_score.png"));
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly OcrManager ocrManager;
 
-        private ScoreBarWindow redScoreBarWindow;
-        private ScoreBarWindow blueScoreBarWindow;
+        private ScoreBarWindow redScoreBarWindow = new RedScoreBarWindow();
+        private ScoreBarWindow blueScoreBarWindow = new BlueScoreBarWindow();
 
         private ObservableCollectionLogger ConsoleLogger = new ObservableCollectionLogger();
         public ObservableCollection<string> ConsoleOutput => ConsoleLogger.Collection;
+
+        private AppConfig config
+        {
+            get => new AppConfig
+            {
+                UseLiveSetup = IsLiveSetupEnabled,
+                UseOverlayMode = IsOverlayMode,
+                RedSection = RedSectionConfig.SectionRect,
+                BlueSection = BlueSectionConfig.SectionRect,
+                RedScoreBarPosition = this.redScoreBarWindow.GetWindowRect(),
+                BlueScoreBarPosition = this.blueScoreBarWindow.GetWindowRect()
+            };
+            set
+            {
+                IsLiveSetupEnabled = value.UseLiveSetup;
+                IsOverlayMode = value.UseOverlayMode;
+                RedSectionConfig.SectionRect = value.RedSection;
+                BlueSectionConfig.SectionRect = value.BlueSection;
+                this.redScoreBarWindow.SetWindowRect(value.RedScoreBarPosition);
+                this.blueScoreBarWindow.SetWindowRect(value.BlueScoreBarPosition);
+            }
+        }
 
         private bool isLiveSetupEnabled = true;
         public bool IsLiveSetupEnabled
@@ -70,19 +84,8 @@ namespace GuildWars2.PvPOcr
                     this.redScoreBarWindow.Close();
                     this.blueScoreBarWindow.Close();
 
-                    var (newRedScoreBarWindow, newBlueScoreBarWindow) = CreateScoreBars(this.isOverlayMode);
-                    newRedScoreBarWindow.Left = this.redScoreBarWindow.Left;
-                    newRedScoreBarWindow.Top = this.redScoreBarWindow.Top;
-                    newRedScoreBarWindow.Width = this.redScoreBarWindow.Width;
-                    newRedScoreBarWindow.Height = this.redScoreBarWindow.Height;
-
-                    newBlueScoreBarWindow.Left = this.blueScoreBarWindow.Left;
-                    newBlueScoreBarWindow.Top = this.blueScoreBarWindow.Top;
-                    newBlueScoreBarWindow.Width = this.blueScoreBarWindow.Width;
-                    newBlueScoreBarWindow.Height = this.blueScoreBarWindow.Height;
-
-                    this.redScoreBarWindow = newRedScoreBarWindow;
-                    this.blueScoreBarWindow = newBlueScoreBarWindow;
+                    this.redScoreBarWindow = new RedScoreBarWindow(value, this.redScoreBarWindow.GetWindowRect());
+                    this.blueScoreBarWindow = new BlueScoreBarWindow(value, this.blueScoreBarWindow.GetWindowRect());
 
                     this.redScoreBarWindow.Show();
                     this.blueScoreBarWindow.Show();
@@ -123,13 +126,16 @@ namespace GuildWars2.PvPOcr
 
             this.ocrManager.ProcessingFailed += (e) => Dispatcher.Invoke(() => ConsoleLogger.LogError(e, string.Empty));
 
-            (this.redScoreBarWindow, this.blueScoreBarWindow) = CreateScoreBars(true);
             this.redScoreBarWindow.Show();
             this.blueScoreBarWindow.Show();
 
             this.RedSectionConfig.Title = "Red score section position";
-            this.RedSectionConfig.SectionRect = this.ocrManager.RedSection;
             this.BlueSectionConfig.Title = "Blue score section position";
+
+            this.RedSectionConfig.PropertyChanged += (s, e) => this.config.RedSection = this.ocrManager.RedSection = this.RedSectionConfig.SectionRect;
+            this.BlueSectionConfig.PropertyChanged += (s, e) => this.config.BlueSection = this.ocrManager.BlueSection = this.BlueSectionConfig.SectionRect;
+
+            this.RedSectionConfig.SectionRect = this.ocrManager.RedSection;
             this.BlueSectionConfig.SectionRect = this.ocrManager.BlueSection;
 
             this.ocrManager.CapturedScreenshot += (size) => Dispatcher.Invoke(() =>
@@ -140,9 +146,6 @@ namespace GuildWars2.PvPOcr
                 this.BlueSectionConfig.MaxHeight = size.Height;
             });
 
-            this.RedSectionConfig.PropertyChanged += (s, e) => this.ocrManager.RedSection = this.RedSectionConfig.SectionRect;
-            this.BlueSectionConfig.PropertyChanged += (s, e) => this.ocrManager.BlueSection = this.BlueSectionConfig.SectionRect;
-
             this.ocrManager.ProcessedScreenshot += OcrManager_ProcessedScreenshot;
 
             this.ocrManager.StartThread();
@@ -152,8 +155,8 @@ namespace GuildWars2.PvPOcr
         {
             this.ocrManager.StopThread();
 
-            this.redScoreBarWindow?.Close();
-            this.blueScoreBarWindow?.Close();
+            this.redScoreBarWindow.Close();
+            this.blueScoreBarWindow.Close();
 
             base.OnClosed(e);
         }
@@ -167,23 +170,54 @@ namespace GuildWars2.PvPOcr
             });
         }
 
-        private static (ScoreBarWindow redScoreBarWindow, ScoreBarWindow blueScoreBarWindow) CreateScoreBars(bool overlayMode)
+        public void SaveConfig_Clicked(object sender, EventArgs args)
         {
-            var redBarWindow = new ScoreBarWindow(RedBarBackgroundImageUri, RedBarBoostImageUri, RedBarScoreImageUri, true)
+            var dlg = new SaveFileDialog
             {
-                Title = RedBarTitle,
-                AllowsTransparency = overlayMode
-            };
-            var blueBarWindow = new ScoreBarWindow(BlueBarBackgroundImageUri, BlueBarBoostImageUri, BlueBarScoreImageUri)
-            {
-                Title = BlueBarTitle,
-                AllowsTransparency = overlayMode
+                AddExtension = true,
+                DefaultExt = ".json",
+                Filter = "JSON Files (*.json)|*.json",
+                Title = "Save configuration"
             };
 
-            redBarWindow.GreenScreen.Visibility =
-            blueBarWindow.GreenScreen.Visibility = overlayMode ? Visibility.Hidden : Visibility.Visible;
+            bool? result = dlg.ShowDialog();
 
-            return (redBarWindow, blueBarWindow);
+            if (result == true)
+            {
+                try
+                {
+                    File.WriteAllText(dlg.FileName, JsonConvert.SerializeObject(this.config));
+                }
+                catch (Exception e)
+                {
+                    ConsoleLogger.LogError(e, string.Empty);
+                }
+            }
+        }
+
+        public void LoadConfig_Clicked(object sender, EventArgs args)
+        {
+            var dlg = new OpenFileDialog
+            {
+                DefaultExt = ".json",
+                Filter = "JSON Files (*.json)|*.json",
+                Multiselect = false,
+                Title = "Load configuration"
+            };
+
+            bool? result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                try
+                {
+                    this.config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(dlg.FileName));
+                }
+                catch (Exception e)
+                {
+                    ConsoleLogger.LogError(e, string.Empty);
+                }
+            }
         }
 
         private void OcrManager_ProcessedScreenshot(OcrManager.ProcessedScreenshotEventArgs args)
