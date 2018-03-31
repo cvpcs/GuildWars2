@@ -16,6 +16,16 @@ namespace GuildWars2.Overlay.Controls
         private const int HTCAPTION = 2;
         private const int HTBOTTOMRIGHT = 17;
 
+        public static readonly DependencyProperty CloseButtonVisibilityProperty = DependencyProperty.Register(nameof(CloseButtonVisibility),
+                                                                                                              typeof(Visibility),
+                                                                                                              typeof(WindowUI));
+
+        public Visibility CloseButtonVisibility
+        {
+            get => (Visibility)GetValue(CloseButtonVisibilityProperty);
+            set => SetValue(CloseButtonVisibilityProperty, value);
+        }
+
         public WindowUI()
         {
             InitializeComponent();

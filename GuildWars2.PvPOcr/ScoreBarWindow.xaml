@@ -44,6 +44,7 @@
             </Image>
         </Grid>
         <Overlay:WindowUI x:Name="WindowUI"
+            CloseButtonVisibility="Hidden"
 			Width="{Binding ActualWidth, ElementName=Canvas}"
 			Height="{Binding ActualHeight, ElementName=Canvas}" />
     </Canvas>
