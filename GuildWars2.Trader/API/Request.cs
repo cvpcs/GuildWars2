@@ -13,7 +13,7 @@ namespace GuildWars2.Trader.API
     {
         public static int Timeout = 10000;
 
-        private static string URL = "http://www.guildwarstrade.com/";
+        private static Uri URL = new Uri("http://www.guildwarstrade.com/");
 
         protected abstract string GetAPIPath();
         protected virtual Dictionary<string, string> GetAPIParameters()

@@ -10,7 +10,7 @@ namespace GuildWars2.GoMGoDS.API
     {
         public static int Timeout = 10000;
 
-        public static readonly string URL = "http://gomgods.com";
+        public static readonly Uri URL = new Uri("http://gomgods.com");
 
         protected abstract string APIPath { get; }
 

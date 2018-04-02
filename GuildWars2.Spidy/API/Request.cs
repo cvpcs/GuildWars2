@@ -13,7 +13,7 @@ namespace GuildWars2.Spidy.API
     {
         public static int Timeout = 10000;
 
-        private static string URL = "http://www.gw2spidy.com/";
+        private static Uri URL = new Uri("http://www.gw2spidy.com/");
         protected static string VERSION = "v0.9";
         protected static string FORMAT = "json";
 
