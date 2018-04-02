@@ -26,7 +26,8 @@ namespace GuildWars2.PvPOcr
         private IMagickImage scoreBarImage;
         private ImageModulationParameters modulationParameters = new ImageModulationParameters(0, 0, 0);
 
-        public ScoreBarWindow(Uri backgroundBarImageUri, Uri boostBarImageUri, Uri scoreBarImageUri, bool isFlipped = false, bool overlayMode = true, RectangleF? position = null)
+        public ScoreBarWindow(string backgroundBarImagePath, string boostBarImagePath, string scoreBarImagePath,
+                              bool isFlipped = false, bool overlayMode = true, RectangleF? position = null)
         {
             InitializeComponent();
 
@@ -35,10 +36,10 @@ namespace GuildWars2.PvPOcr
             this.BoostBar_GradientOpacityMask.EndPoint =
             this.ScoreBar_GradientOpacityMask.EndPoint = isFlipped ? GradientOpacityLeftPoint : GradientOpacityRightPoint;
 
-            this.BackgroundBar.Source = new BitmapImage(backgroundBarImageUri);
-            this.BoostBar.Source = new BitmapImage(boostBarImageUri);
+            this.BackgroundBar.Source = new BitmapImage(new Uri(Path.GetFullPath(backgroundBarImagePath)));
+            this.BoostBar.Source = new BitmapImage(new Uri(Path.GetFullPath(boostBarImagePath)));
 
-            this.scoreBarImage = new MagickImage(scoreBarImageUri.AbsolutePath);
+            this.scoreBarImage = new MagickImage(Path.GetFullPath(scoreBarImagePath));
             this.scoreBarBitmap = new WriteableBitmap(this.scoreBarImage.Width, this.scoreBarImage.Height,
                                                       this.scoreBarImage.Density.X, this.scoreBarImage.Density.Y,
                                                       PixelFormats.Bgra32, null);
