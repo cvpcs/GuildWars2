@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GuildWars2.Overlay.Controls\GuildWars2.Overlay.Controls.csproj" />
+    <ProjectReference Include="..\LibHotKeys\LibHotKeys.csproj" />
   </ItemGroup>
 
   <ItemGroup>

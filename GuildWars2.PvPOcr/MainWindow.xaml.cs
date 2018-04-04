@@ -2,13 +2,17 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using LibHotKeys;
 using Microsoft.Extensions.Logging;
-using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace GuildWars2.PvPOcr
@@ -28,6 +32,7 @@ namespace GuildWars2.PvPOcr
         private ObservableCollectionLogger ConsoleLogger = new ObservableCollectionLogger();
         public ObservableCollection<string> ConsoleOutput => ConsoleLogger.Collection;
 
+        // TODO: maybe move this into a config manager of some kind?
         private AppConfig config
         {
             get => new AppConfig
@@ -60,6 +65,7 @@ namespace GuildWars2.PvPOcr
             get => this.isLiveSetupEnabled;
             set
             {
+                // TODO: consider moving this logic elsewhere
                 if (this.isLiveSetupEnabled != value)
                 {
                     this.isLiveSetupEnabled = value;
@@ -80,6 +86,7 @@ namespace GuildWars2.PvPOcr
             get => this.isOverlayMode;
             set
             {
+                // TODO: can this logic be moved into the scorebar window definition? maybe a static method?
                 if (this.isOverlayMode != value)
                 {
                     this.isOverlayMode = value;
@@ -97,11 +104,12 @@ namespace GuildWars2.PvPOcr
                 }
             }
         }
-        
+
+        // TODO: this constructor is overloaded with too many event handler definitions
+        //       need to move this somewhere else
         public MainWindow()
         {
             InitializeComponent();
-
 
             this.ocrManager = new OcrManager
             {
@@ -166,6 +174,23 @@ namespace GuildWars2.PvPOcr
             this.ocrManager.ProcessedScreenshot += OcrManager_ProcessedScreenshot;
 
             this.ocrManager.StartThread();
+
+            HotKeyManager.HotKeyPressed += (_) => Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    using (Bitmap bmp = new Gw2Process().GetBitmap())
+                    {
+                        bmp.Save("./screenshot.png", ImageFormat.Png);
+                    }
+
+                    ConsoleLogger.LogInformation("Saved screenshot to screenshot.png");
+                }
+                catch (Exception e)
+                {
+                    ConsoleLogger.LogError(e, string.Empty);
+                }
+            });
         }
 
         protected override void OnClosed(EventArgs e)
@@ -196,9 +221,10 @@ namespace GuildWars2.PvPOcr
             });
         }
 
+        // TODO: consider moving this elsewhere to live with the rest of the config logic
         public void SaveConfig_Clicked(object sender, EventArgs args)
         {
-            var dlg = new SaveFileDialog
+            var dlg = new Microsoft.Win32.SaveFileDialog
             {
                 AddExtension = true,
                 DefaultExt = ".json",
@@ -221,9 +247,10 @@ namespace GuildWars2.PvPOcr
             }
         }
 
+        // TODO: consider moving this elsewhere to live with the rest of the config logic
         public void LoadConfig_Clicked(object sender, EventArgs args)
         {
-            var dlg = new OpenFileDialog
+            var dlg = new Microsoft.Win32.OpenFileDialog
             {
                 DefaultExt = ".json",
                 Filter = "JSON Files (*.json)|*.json",
@@ -244,6 +271,91 @@ namespace GuildWars2.PvPOcr
                     ConsoleLogger.LogError(e, string.Empty);
                 }
             }
+        }
+
+        private int? registeredHotkey;
+        public void SetScreenshotHotkey_Clicked(object sender, EventArgs args)
+        {
+            var messageBox = new Window
+            {
+                Content = new TextBlock
+                {
+                    Text = "Press any key combination to bind it to the screenshot key"
+                },
+                Owner = this,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                WindowStyle = WindowStyle.None
+            };
+
+            bool ctrl = false;
+            bool shift = false;
+            bool alt = false;
+            bool win = false;
+
+            messageBox.KeyDown += (s, e) =>
+            {
+                e.Handled = true;
+                switch (e.Key == Key.System ? e.SystemKey : e.Key)
+                {
+                    case Key.LeftCtrl:
+                    case Key.RightCtrl:
+                        ctrl = true;
+                        break;
+
+                    case Key.LeftShift:
+                    case Key.RightShift:
+                        shift = true;
+                        break;
+
+                    case Key.LeftAlt:
+                    case Key.RightAlt:
+                        alt = true;
+                        break;
+
+                    case Key.LWin:
+                    case Key.RWin:
+                        win = true;
+                        break;
+
+                    default:
+                        KeyModifiers modifiers = KeyModifiers.NoRepeat;
+                        if (ctrl) modifiers |= KeyModifiers.Control;
+                        if (shift) modifiers |= KeyModifiers.Shift;
+                        if (alt) modifiers |= KeyModifiers.Alt;
+                        if (win) modifiers |= KeyModifiers.Windows;
+                        if (registeredHotkey.HasValue) HotKeyManager.UnregisterHotKey(registeredHotkey.Value);
+                        registeredHotkey = HotKeyManager.RegisterHotKey((Keys)KeyInterop.VirtualKeyFromKey(e.Key), modifiers);
+                        messageBox.Close();
+                        break;
+                }
+            };
+            messageBox.KeyUp += (s, e) =>
+            {
+                e.Handled = true;
+                switch (e.Key == Key.System ? e.SystemKey : e.Key)
+                {
+                    case Key.LeftCtrl:
+                    case Key.RightCtrl:
+                        ctrl = false;
+                        break;
+
+                    case Key.LeftShift:
+                    case Key.RightShift:
+                        shift = false;
+                        break;
+
+                    case Key.LeftAlt:
+                    case Key.RightAlt:
+                        alt = false;
+                        break;
+
+                    case Key.LWin:
+                    case Key.RWin:
+                        win = false;
+                        break;
+                }
+            };
+            messageBox.Show();
         }
 
         private void OcrManager_ProcessedScreenshot(OcrManager.ProcessedScreenshotEventArgs args)

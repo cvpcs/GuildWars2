@@ -79,6 +79,7 @@
             </Grid>
             <Button Content="Save Config" Click="SaveConfig_Clicked" Margin="5" />
             <Button Content="Load Config" Click="LoadConfig_Clicked" Margin="5" />
+            <Button Content="Set Screenshot Hotkey" Click="SetScreenshotHotkey_Clicked" Margin="5" />
         </StackPanel>
     </Grid>
 </Window>
