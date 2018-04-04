@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -13,7 +12,6 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using LibHotKeys;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace GuildWars2.PvPOcr
 {
@@ -24,40 +22,15 @@ namespace GuildWars2.PvPOcr
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private readonly ObservableCollectionLogger logger = new ObservableCollectionLogger();
+        private readonly AppConfigManager configManager;
         private readonly OcrManager ocrManager;
 
         private ScoreBarWindow redScoreBarWindow = new RedScoreBarWindow();
         private ScoreBarWindow blueScoreBarWindow = new BlueScoreBarWindow();
 
-        private ObservableCollectionLogger ConsoleLogger = new ObservableCollectionLogger();
-        public ObservableCollection<string> ConsoleOutput => ConsoleLogger.Collection;
-
-        // TODO: maybe move this into a config manager of some kind?
-        private AppConfig config
-        {
-            get => new AppConfig
-            {
-                UseLiveSetup = IsLiveSetupEnabled,
-                UseOverlayMode = IsOverlayMode,
-                RedSection = RedSectionConfig.SectionRect,
-                BlueSection = BlueSectionConfig.SectionRect,
-                RedScoreBarPosition = this.redScoreBarWindow.GetWindowRect(),
-                BlueScoreBarPosition = this.blueScoreBarWindow.GetWindowRect(),
-                RedScoreBarModulation = RedSectionConfig.ScoreBarModulationParameters,
-                BlueScoreBarModulation = BlueSectionConfig.ScoreBarModulationParameters
-            };
-            set
-            {
-                IsLiveSetupEnabled = value.UseLiveSetup;
-                IsOverlayMode = value.UseOverlayMode;
-                RedSectionConfig.SectionRect = value.RedSection;
-                BlueSectionConfig.SectionRect = value.BlueSection;
-                this.redScoreBarWindow.SetWindowRect(value.RedScoreBarPosition);
-                this.blueScoreBarWindow.SetWindowRect(value.BlueScoreBarPosition);
-                RedSectionConfig.ScoreBarModulationParameters = value.RedScoreBarModulation;
-                BlueSectionConfig.ScoreBarModulationParameters = value.BlueScoreBarModulation;
-            }
-        }
+        // TODO: can this be removed and just reference the logger directly?
+        public ObservableCollection<string> ConsoleOutput => this.logger.Collection;
 
         private bool isLiveSetupEnabled = true;
         public bool IsLiveSetupEnabled
@@ -110,6 +83,10 @@ namespace GuildWars2.PvPOcr
         public MainWindow()
         {
             InitializeComponent();
+            
+            this.logger.Collection.CollectionChanged += (s, e) => Dispatcher.Invoke(() => ConsoleScroller.ScrollToBottom());
+
+            this.configManager = new AppConfigManager(this.logger);
 
             this.ocrManager = new OcrManager
             {
@@ -123,6 +100,7 @@ namespace GuildWars2.PvPOcr
                                             (int)(0.03704 * SystemParameters.PrimaryScreenHeight))
             };
 
+
             this.ocrManager.ScoresRead += (scores) => Dispatcher.Invoke(() =>
             {
                 if (scores.IsValid)
@@ -131,11 +109,10 @@ namespace GuildWars2.PvPOcr
                     this.blueScoreBarWindow?.SetScoreBarFill(scores.BluePercentage);
                 }
 
-                ConsoleLogger.LogInformation($"Red: {scores.Red}, Blue: {scores.Blue}");
-                ConsoleScroller.ScrollToBottom();
+                this.logger.LogInformation($"Red: {scores.Red}, Blue: {scores.Blue}");
             });
 
-            this.ocrManager.ProcessingFailed += (e) => Dispatcher.Invoke(() => ConsoleLogger.LogError(e, string.Empty));
+            this.ocrManager.ProcessingFailed += (e) => Dispatcher.Invoke(() => this.logger.LogError(e, string.Empty));
 
             this.redScoreBarWindow.Show();
             this.blueScoreBarWindow.Show();
@@ -145,18 +122,12 @@ namespace GuildWars2.PvPOcr
 
             this.RedSectionConfig.PropertyChanged += (s, e) =>
             {
-                this.config.RedSection =
                 this.ocrManager.RedSection = this.RedSectionConfig.SectionRect;
-
-                this.config.RedScoreBarModulation = this.RedSectionConfig.ScoreBarModulationParameters;
                 this.redScoreBarWindow.SetScoreBarModulation(this.RedSectionConfig.ScoreBarModulationParameters);
             };
             this.BlueSectionConfig.PropertyChanged += (s, e) =>
             {
-                this.config.BlueSection =
                 this.ocrManager.BlueSection = this.BlueSectionConfig.SectionRect;
-
-                this.config.BlueScoreBarModulation = this.BlueSectionConfig.ScoreBarModulationParameters;
                 this.blueScoreBarWindow.SetScoreBarModulation(this.BlueSectionConfig.ScoreBarModulationParameters);
             };
 
@@ -184,11 +155,11 @@ namespace GuildWars2.PvPOcr
                         bmp.Save("./screenshot.png", ImageFormat.Png);
                     }
 
-                    ConsoleLogger.LogInformation("Saved screenshot to screenshot.png");
+                    this.logger.LogInformation("Saved screenshot to screenshot.png");
                 }
                 catch (Exception e)
                 {
-                    ConsoleLogger.LogError(e, string.Empty);
+                    this.logger.LogError(e, string.Empty);
                 }
             });
         }
@@ -221,55 +192,33 @@ namespace GuildWars2.PvPOcr
             });
         }
 
-        // TODO: consider moving this elsewhere to live with the rest of the config logic
         public void SaveConfig_Clicked(object sender, EventArgs args)
         {
-            var dlg = new Microsoft.Win32.SaveFileDialog
+            this.configManager.TrySave(new AppConfig
             {
-                AddExtension = true,
-                DefaultExt = ".json",
-                Filter = "JSON Files (*.json)|*.json",
-                Title = "Save configuration"
-            };
-
-            bool? result = dlg.ShowDialog();
-
-            if (result == true)
-            {
-                try
-                {
-                    File.WriteAllText(dlg.FileName, JsonConvert.SerializeObject(this.config));
-                }
-                catch (Exception e)
-                {
-                    ConsoleLogger.LogError(e, string.Empty);
-                }
-            }
+                UseLiveSetup = IsLiveSetupEnabled,
+                UseOverlayMode = IsOverlayMode,
+                RedSection = RedSectionConfig.SectionRect,
+                BlueSection = BlueSectionConfig.SectionRect,
+                RedScoreBarPosition = this.redScoreBarWindow.GetWindowRect(),
+                BlueScoreBarPosition = this.blueScoreBarWindow.GetWindowRect(),
+                RedScoreBarModulation = RedSectionConfig.ScoreBarModulationParameters,
+                BlueScoreBarModulation = BlueSectionConfig.ScoreBarModulationParameters
+            });
         }
 
-        // TODO: consider moving this elsewhere to live with the rest of the config logic
         public void LoadConfig_Clicked(object sender, EventArgs args)
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog
+            if (this.configManager.TryLoad(out AppConfig config))
             {
-                DefaultExt = ".json",
-                Filter = "JSON Files (*.json)|*.json",
-                Multiselect = false,
-                Title = "Load configuration"
-            };
-
-            bool? result = dlg.ShowDialog();
-
-            if (result == true)
-            {
-                try
-                {
-                    this.config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(dlg.FileName));
-                }
-                catch (Exception e)
-                {
-                    ConsoleLogger.LogError(e, string.Empty);
-                }
+                IsLiveSetupEnabled = config.UseLiveSetup;
+                IsOverlayMode = config.UseOverlayMode;
+                RedSectionConfig.SectionRect = config.RedSection;
+                BlueSectionConfig.SectionRect = config.BlueSection;
+                this.redScoreBarWindow.SetWindowRect(config.RedScoreBarPosition);
+                this.blueScoreBarWindow.SetWindowRect(config.BlueScoreBarPosition);
+                RedSectionConfig.ScoreBarModulationParameters = config.RedScoreBarModulation;
+                BlueSectionConfig.ScoreBarModulationParameters = config.BlueScoreBarModulation;
             }
         }
 
