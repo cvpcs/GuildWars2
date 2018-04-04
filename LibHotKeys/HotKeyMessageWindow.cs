@@ -5,7 +5,7 @@ namespace LibHotKeys
 {
     internal class HotKeyMessageWindow : Form
     {
-        public event Action<HotKeyEventArgs> HotKeyPressed;
+        public event Action<HotKey> HotKeyPressed;
 
         private const int WM_HOTKEY = 0x312;
 
@@ -13,7 +13,7 @@ namespace LibHotKeys
         {
             if (m.Msg == WM_HOTKEY)
             {
-                HotKeyPressed?.Invoke(new HotKeyEventArgs(m.LParam));
+                HotKeyPressed?.Invoke(new HotKey(m.LParam));
             }
 
             base.WndProc(ref m);

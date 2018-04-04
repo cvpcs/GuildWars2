@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Input;
 using LibHotKeys;
 
 namespace GuildWars2.Spidy.Prospects
 {
     public class HotKeyHandler
     {
-        private IList<Keys> m_KeyHook_KEYS = new List<Keys> { Keys.F5 };
-        private IList<Keys> m_KeyHook_KEYS_SKIP = new List<Keys> { Keys.F6 };
+        private IList<HotKey> m_KeyHook_KEYS = new List<HotKey> { new HotKey(Key.F5) };
+        private IList<HotKey> m_KeyHook_KEYS_SKIP = new List<HotKey> { new HotKey(Key.F6) };
         private IList<int> m_KeyHook_IDS = new List<int>();
         private HandlerState m_CurrentState = HandlerState.SEARCH;
         private SpinLock m_SpinLock = new SpinLock();
@@ -50,11 +51,11 @@ namespace GuildWars2.Spidy.Prospects
             {
                 HotKeyManager.HotKeyPressed += HotKeyPressed;
 
-                foreach (Keys key in m_KeyHook_KEYS)
-                    m_KeyHook_IDS.Add(HotKeyManager.RegisterHotKey(key, KeyModifiers.NoRepeat));
+                foreach (HotKey key in m_KeyHook_KEYS)
+                    m_KeyHook_IDS.Add(HotKeyManager.RegisterHotKey(key));
 
-                foreach (Keys key in m_KeyHook_KEYS_SKIP)
-                    m_KeyHook_IDS.Add(HotKeyManager.RegisterHotKey(key, KeyModifiers.NoRepeat));
+                foreach (HotKey key in m_KeyHook_KEYS_SKIP)
+                    m_KeyHook_IDS.Add(HotKeyManager.RegisterHotKey(key));
             }
         }
 
@@ -70,18 +71,18 @@ namespace GuildWars2.Spidy.Prospects
             }
         }
 
-        private void HotKeyPressed(HotKeyEventArgs e)
+        private void HotKeyPressed(HotKey hotKey)
         {
             bool lockTaken = false;
             try
             {
                 m_SpinLock.Enter(ref lockTaken);
 
-                if (e.Modifiers == 0 && m_CurrentItem != null)
+                if (hotKey.Modifiers == 0 && m_CurrentItem != null)
                 {
-                    SpinWait.SpinUntil(() => !HotKeyManager.IsKeyPressed(e.Key));
+                    SpinWait.SpinUntil(() => !HotKeyManager.IsKeyPressed(hotKey.Key));
 
-                    if (m_KeyHook_KEYS.Contains(e.Key))
+                    if (m_KeyHook_KEYS.Contains(hotKey))
                     {
                         long buyPrice = m_CurrentItem.BuyPrice + 1;
 
@@ -121,7 +122,7 @@ namespace GuildWars2.Spidy.Prospects
                                 break;
                         }
                     }
-                    else if (m_KeyHook_KEYS_SKIP.Contains(e.Key))
+                    else if (m_KeyHook_KEYS_SKIP.Contains(hotKey))
                     {
                         m_CurrentItem = null;
                         m_CurrentState = HandlerState.SEARCH;

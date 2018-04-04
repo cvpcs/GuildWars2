@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -203,7 +202,8 @@ namespace GuildWars2.PvPOcr
                 RedScoreBarPosition = this.redScoreBarWindow.GetWindowRect(),
                 BlueScoreBarPosition = this.blueScoreBarWindow.GetWindowRect(),
                 RedScoreBarModulation = RedSectionConfig.ScoreBarModulationParameters,
-                BlueScoreBarModulation = BlueSectionConfig.ScoreBarModulationParameters
+                BlueScoreBarModulation = BlueSectionConfig.ScoreBarModulationParameters,
+                ScreenshotHotKey = ScreenshotHotKey
             });
         }
 
@@ -219,27 +219,41 @@ namespace GuildWars2.PvPOcr
                 this.blueScoreBarWindow.SetWindowRect(config.BlueScoreBarPosition);
                 RedSectionConfig.ScoreBarModulationParameters = config.RedScoreBarModulation;
                 BlueSectionConfig.ScoreBarModulationParameters = config.BlueScoreBarModulation;
+                ScreenshotHotKey = config.ScreenshotHotKey;
             }
         }
 
-        private int? registeredHotkey;
-        public void SetScreenshotHotkey_Clicked(object sender, EventArgs args)
+        private (int id, HotKey hotKey)? screenshotHotKeyRegistration = null;
+        private HotKey ScreenshotHotKey
+        {
+            get => this.screenshotHotKeyRegistration?.hotKey;
+            set
+            {
+                if (this.screenshotHotKeyRegistration?.hotKey != value)
+                {
+                    if (this.screenshotHotKeyRegistration.HasValue) HotKeyManager.UnregisterHotKey(this.screenshotHotKeyRegistration.Value.id);
+                    this.screenshotHotKeyRegistration = (HotKeyManager.RegisterHotKey(value), value);
+                }
+            }
+        }
+
+        public void SetScreenshotHotKey_Clicked(object sender, EventArgs args)
         {
             var messageBox = new Window
             {
                 Content = new TextBlock
                 {
-                    Text = "Press any key combination to bind it to the screenshot key"
+                    Text = "Press any key combination to bind it to the screenshot hotkey.\n\n"
+                         + $"The current hotkey is: {screenshotHotKeyRegistration?.hotKey.ToString()}",
+                    TextAlignment = TextAlignment.Center,
+                    TextWrapping = TextWrapping.Wrap
                 },
                 Owner = this,
+                Width = 300,
+                Height = 100,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 WindowStyle = WindowStyle.None
             };
-
-            bool ctrl = false;
-            bool shift = false;
-            bool alt = false;
-            bool win = false;
 
             messageBox.KeyDown += (s, e) =>
             {
@@ -248,62 +262,25 @@ namespace GuildWars2.PvPOcr
                 {
                     case Key.LeftCtrl:
                     case Key.RightCtrl:
-                        ctrl = true;
-                        break;
-
                     case Key.LeftShift:
                     case Key.RightShift:
-                        shift = true;
-                        break;
-
                     case Key.LeftAlt:
                     case Key.RightAlt:
-                        alt = true;
-                        break;
-
                     case Key.LWin:
                     case Key.RWin:
-                        win = true;
+                        return;
+
+                    case Key.Escape:
+                        messageBox.Close();
                         break;
 
                     default:
-                        KeyModifiers modifiers = KeyModifiers.NoRepeat;
-                        if (ctrl) modifiers |= KeyModifiers.Control;
-                        if (shift) modifiers |= KeyModifiers.Shift;
-                        if (alt) modifiers |= KeyModifiers.Alt;
-                        if (win) modifiers |= KeyModifiers.Windows;
-                        if (registeredHotkey.HasValue) HotKeyManager.UnregisterHotKey(registeredHotkey.Value);
-                        registeredHotkey = HotKeyManager.RegisterHotKey((Keys)KeyInterop.VirtualKeyFromKey(e.Key), modifiers);
+                        ScreenshotHotKey = new HotKey(e.Key, e.KeyboardDevice.Modifiers);
                         messageBox.Close();
                         break;
                 }
             };
-            messageBox.KeyUp += (s, e) =>
-            {
-                e.Handled = true;
-                switch (e.Key == Key.System ? e.SystemKey : e.Key)
-                {
-                    case Key.LeftCtrl:
-                    case Key.RightCtrl:
-                        ctrl = false;
-                        break;
 
-                    case Key.LeftShift:
-                    case Key.RightShift:
-                        shift = false;
-                        break;
-
-                    case Key.LeftAlt:
-                    case Key.RightAlt:
-                        alt = false;
-                        break;
-
-                    case Key.LWin:
-                    case Key.RWin:
-                        win = false;
-                        break;
-                }
-            };
             messageBox.Show();
         }
 

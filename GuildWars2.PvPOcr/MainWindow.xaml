@@ -11,8 +11,8 @@
             <ColumnDefinition Width="0.7*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.7*" />
-            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Column="0" Grid.Row="0" Margin="0" Background="Black" x:Name="ConsoleScroller">
             <StackPanel>
@@ -32,8 +32,8 @@
                 <ColumnDefinition Width="0.5*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.6*" />
-                <RowDefinition Height="0.4*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Image Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Stretch="Uniform" x:Name="OcrProcessedScreenshotViewImage" />
             <a:SectionConfigControl Grid.Column="0" Grid.Row="1" x:Name="RedSectionConfig" />
@@ -79,7 +79,7 @@
             </Grid>
             <Button Content="Save Config" Click="SaveConfig_Clicked" Margin="5" />
             <Button Content="Load Config" Click="LoadConfig_Clicked" Margin="5" />
-            <Button Content="Set Screenshot Hotkey" Click="SetScreenshotHotkey_Clicked" Margin="5" />
+            <Button Content="Set Screenshot Hotkey" Click="SetScreenshotHotKey_Clicked" Margin="5" />
         </StackPanel>
     </Grid>
 </Window>

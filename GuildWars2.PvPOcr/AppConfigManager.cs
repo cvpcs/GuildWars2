@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Windows.Input;
+using LibHotKeys;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 namespace GuildWars2.PvPOcr
 {
@@ -10,6 +15,12 @@ namespace GuildWars2.PvPOcr
     {
         private const string DefaultExt = ".json";
         private const string Filter = "JSON Files (*.json)|*.json";
+
+        private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
+        {
+            Formatting = Formatting.Indented,
+            Converters = new List<JsonConverter> { new HotKeyConverter(), new StringEnumConverter() }
+        };
 
         private ILogger logger;
 
@@ -41,7 +52,7 @@ namespace GuildWars2.PvPOcr
         {
             try
             {
-                config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(filename));
+                config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(filename), JsonSerializerSettings);
                 this.logger.LogInformation($"Loaded configuration from {filename}");
                 return true;
             }
@@ -78,7 +89,7 @@ namespace GuildWars2.PvPOcr
         {
             try
             {
-                File.WriteAllText(filename, JsonConvert.SerializeObject(config));
+                File.WriteAllText(filename, JsonConvert.SerializeObject(config, JsonSerializerSettings));
                 this.logger.LogInformation($"Saved configuration to {filename}");
                 return true;
             }
@@ -88,6 +99,21 @@ namespace GuildWars2.PvPOcr
             }
 
             return false;
+        }
+
+        private class HotKeyConverter : JsonConverter<HotKey>
+        {
+            public override bool CanWrite => false;
+
+            public override HotKey ReadJson(JsonReader reader, Type objectType, HotKey existingValue, bool hasExistingValue, JsonSerializer serializer)
+            {
+                JObject jo = JObject.Load(reader);
+                return new HotKey(jo[nameof(HotKey.Key)].ToObject<Key>(),
+                                  jo[nameof(HotKey.Modifiers)].ToObject<ModifierKeys>());
+            }
+
+            public override void WriteJson(JsonWriter writer, HotKey value, JsonSerializer serializer)
+                => throw new NotImplementedException();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using LibHotKeys;
 
 namespace GuildWars2.PvPOcr
 {
@@ -12,5 +13,6 @@ namespace GuildWars2.PvPOcr
         public RectangleF BlueScoreBarPosition;
         public ImageModulationParameters RedScoreBarModulation;
         public ImageModulationParameters BlueScoreBarModulation;
+        public HotKey ScreenshotHotKey;
     }
 }
