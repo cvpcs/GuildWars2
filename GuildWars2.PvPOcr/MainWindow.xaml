@@ -36,8 +36,8 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Image Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Stretch="Uniform" x:Name="OcrProcessedScreenshotViewImage" />
-            <a:SectionConfigControl Grid.Column="0" Grid.Row="1" x:Name="RedSectionConfig" />
-            <a:SectionConfigControl Grid.Column="1" Grid.Row="1" x:Name="BlueSectionConfig" />
+            <a:SectionConfigControl Grid.Column="0" Grid.Row="1" Title="Red score section position" x:Name="RedSectionConfig" />
+            <a:SectionConfigControl Grid.Column="1" Grid.Row="1" Title="Blue score section position" x:Name="BlueSectionConfig" />
         </Grid>
 
         <StackPanel DataContext="{Binding ElementName=Root}" Grid.Column="0" Grid.Row="1" Margin="5">

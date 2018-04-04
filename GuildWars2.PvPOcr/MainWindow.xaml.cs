@@ -25,8 +25,8 @@ namespace GuildWars2.PvPOcr
         private readonly AppConfigManager configManager;
         private readonly OcrManager ocrManager;
 
-        private ScoreBarWindow redScoreBarWindow = new RedScoreBarWindow();
-        private ScoreBarWindow blueScoreBarWindow = new BlueScoreBarWindow();
+        private ScoreBar redScoreBar = new ScoreBar("Red score bar", "./resources/redbar_background.png", "./resources/redbar_boost.png", "./resources/redbar_score.png", true);
+        private ScoreBar blueScoreBar = new ScoreBar("Blue score bar", "./resources/bluebar_background.png", "./resources/bluebar_boost.png", "./resources/bluebar_score.png");
 
         // TODO: can this be removed and just reference the logger directly?
         public ObservableCollection<string> ConsoleOutput => this.logger.Collection;
@@ -52,25 +52,15 @@ namespace GuildWars2.PvPOcr
             }
         }
 
-        private bool isOverlayMode = true;
         public bool IsOverlayMode
         {
-            get => this.isOverlayMode;
+            get => this.redScoreBar.IsOverlayMode && this.blueScoreBar.IsOverlayMode;
             set
             {
-                // TODO: can this logic be moved into the scorebar window definition? maybe a static method?
-                if (this.isOverlayMode != value)
+                if (IsOverlayMode != value)
                 {
-                    this.isOverlayMode = value;
-
-                    this.redScoreBarWindow.Close();
-                    this.blueScoreBarWindow.Close();
-
-                    this.redScoreBarWindow = new RedScoreBarWindow(value, this.redScoreBarWindow.GetWindowRect());
-                    this.blueScoreBarWindow = new BlueScoreBarWindow(value, this.blueScoreBarWindow.GetWindowRect());
-
-                    this.redScoreBarWindow.Show();
-                    this.blueScoreBarWindow.Show();
+                    this.redScoreBar.IsOverlayMode =
+                    this.blueScoreBar.IsOverlayMode = value;
 
                     this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsOverlayMode)));
                 }
@@ -104,8 +94,7 @@ namespace GuildWars2.PvPOcr
             {
                 if (scores.IsValid)
                 {
-                    this.redScoreBarWindow?.SetScoreBarFill(scores.RedPercentage);
-                    this.blueScoreBarWindow?.SetScoreBarFill(scores.BluePercentage);
+                    this.SetScoreBarFillPercentage(scores.RedPercentage, scores.BluePercentage);
                 }
 
                 this.logger.LogInformation($"Red: {scores.Red}, Blue: {scores.Blue}");
@@ -113,21 +102,18 @@ namespace GuildWars2.PvPOcr
 
             this.ocrManager.ProcessingFailed += (e) => Dispatcher.Invoke(() => this.logger.LogError(e, string.Empty));
 
-            this.redScoreBarWindow.Show();
-            this.blueScoreBarWindow.Show();
-
-            this.RedSectionConfig.Title = "Red score section position";
-            this.BlueSectionConfig.Title = "Blue score section position";
+            this.redScoreBar.Window.Show();
+            this.blueScoreBar.Window.Show();
 
             this.RedSectionConfig.PropertyChanged += (s, e) =>
             {
                 this.ocrManager.RedSection = this.RedSectionConfig.SectionRect;
-                this.redScoreBarWindow.SetScoreBarModulation(this.RedSectionConfig.ScoreBarModulationParameters);
+                this.redScoreBar.Window.SetScoreBarModulation(this.RedSectionConfig.ScoreBarModulationParameters);
             };
             this.BlueSectionConfig.PropertyChanged += (s, e) =>
             {
                 this.ocrManager.BlueSection = this.BlueSectionConfig.SectionRect;
-                this.blueScoreBarWindow.SetScoreBarModulation(this.BlueSectionConfig.ScoreBarModulationParameters);
+                this.blueScoreBar.Window.SetScoreBarModulation(this.BlueSectionConfig.ScoreBarModulationParameters);
             };
 
             this.RedSectionConfig.SectionRect = this.ocrManager.RedSection;
@@ -167,29 +153,17 @@ namespace GuildWars2.PvPOcr
         {
             this.ocrManager.StopThread();
 
-            this.redScoreBarWindow.Close();
-            this.blueScoreBarWindow.Close();
+            this.redScoreBar.Window.Close();
+            this.blueScoreBar.Window.Close();
 
             base.OnClosed(e);
         }
 
         public void FillScores_Clicked(object sender, EventArgs args)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                this.redScoreBarWindow.SetScoreBarFill(1);
-                this.blueScoreBarWindow.SetScoreBarFill(1);
-            });
-        }
+            => Dispatcher.Invoke(() => this.SetScoreBarFillPercentage(1, 1));
 
         public void ClearScores_Clicked(object sender, EventArgs args)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                this.redScoreBarWindow.SetScoreBarFill(0);
-                this.blueScoreBarWindow.SetScoreBarFill(0);
-            });
-        }
+            => Dispatcher.Invoke(() => this.SetScoreBarFillPercentage(0, 0));
 
         public void SaveConfig_Clicked(object sender, EventArgs args)
         {
@@ -199,8 +173,8 @@ namespace GuildWars2.PvPOcr
                 UseOverlayMode = IsOverlayMode,
                 RedSection = RedSectionConfig.SectionRect,
                 BlueSection = BlueSectionConfig.SectionRect,
-                RedScoreBarPosition = this.redScoreBarWindow.GetWindowRect(),
-                BlueScoreBarPosition = this.blueScoreBarWindow.GetWindowRect(),
+                RedScoreBarPosition = this.redScoreBar.Window.GetWindowRect(),
+                BlueScoreBarPosition = this.blueScoreBar.Window.GetWindowRect(),
                 RedScoreBarModulation = RedSectionConfig.ScoreBarModulationParameters,
                 BlueScoreBarModulation = BlueSectionConfig.ScoreBarModulationParameters,
                 ScreenshotHotKey = ScreenshotHotKey
@@ -215,8 +189,8 @@ namespace GuildWars2.PvPOcr
                 IsOverlayMode = config.UseOverlayMode;
                 RedSectionConfig.SectionRect = config.RedSection;
                 BlueSectionConfig.SectionRect = config.BlueSection;
-                this.redScoreBarWindow.SetWindowRect(config.RedScoreBarPosition);
-                this.blueScoreBarWindow.SetWindowRect(config.BlueScoreBarPosition);
+                this.redScoreBar.Window.SetWindowRect(config.RedScoreBarPosition);
+                this.blueScoreBar.Window.SetWindowRect(config.BlueScoreBarPosition);
                 RedSectionConfig.ScoreBarModulationParameters = config.RedScoreBarModulation;
                 BlueSectionConfig.ScoreBarModulationParameters = config.BlueScoreBarModulation;
                 ScreenshotHotKey = config.ScreenshotHotKey;
@@ -251,6 +225,7 @@ namespace GuildWars2.PvPOcr
                 Owner = this,
                 Width = 300,
                 Height = 100,
+                Topmost = true,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 WindowStyle = WindowStyle.None
             };
@@ -304,6 +279,12 @@ namespace GuildWars2.PvPOcr
 
                 this.OcrProcessedScreenshotViewImage.Source = bitmapDisplay;
             });
+        }
+
+        private void SetScoreBarFillPercentage(double red, double blue)
+        {
+            this.redScoreBar.Window.SetScoreBarFill(red);
+            this.blueScoreBar.Window.SetScoreBarFill(blue);
         }
     }
 }

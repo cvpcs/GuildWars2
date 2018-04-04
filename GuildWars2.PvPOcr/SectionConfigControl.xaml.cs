@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace GuildWars2.PvPOcr
@@ -11,11 +12,14 @@ namespace GuildWars2.PvPOcr
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private string title;
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title),
+                                                                                              typeof(string),
+                                                                                              typeof(SectionConfigControl));
+
         public string Title
         {
-            get => this.title;
-            set { if (this.title != value) { this.title = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Title))); } }
+            get => (string)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
         }
 
         private int maxSectionWidth = 1920;
