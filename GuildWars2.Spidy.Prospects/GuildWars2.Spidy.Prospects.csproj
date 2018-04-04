@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GuildWars2.Overlay.Contract\GuildWars2.Overlay.Contract.csproj" />
     <ProjectReference Include="..\GuildWars2.Spidy\GuildWars2.Spidy.csproj" />
+    <ProjectReference Include="..\LibHotKeys\LibHotKeys.csproj" />
   </ItemGroup>
 
 </Project>

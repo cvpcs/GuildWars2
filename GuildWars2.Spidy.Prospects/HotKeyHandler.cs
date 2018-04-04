@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
+using LibHotKeys;
 
 namespace GuildWars2.Spidy.Prospects
 {
@@ -50,10 +51,10 @@ namespace GuildWars2.Spidy.Prospects
                 HotKeyManager.HotKeyPressed += HotKeyPressed;
 
                 foreach (Keys key in m_KeyHook_KEYS)
-                    m_KeyHook_IDS.Add(HotKeyManager.RegisterHotKey(key, HotKeyManager.KeyModifiers.NoRepeat));
+                    m_KeyHook_IDS.Add(HotKeyManager.RegisterHotKey(key, KeyModifiers.NoRepeat));
 
                 foreach (Keys key in m_KeyHook_KEYS_SKIP)
-                    m_KeyHook_IDS.Add(HotKeyManager.RegisterHotKey(key, HotKeyManager.KeyModifiers.NoRepeat));
+                    m_KeyHook_IDS.Add(HotKeyManager.RegisterHotKey(key, KeyModifiers.NoRepeat));
             }
         }
 
@@ -69,7 +70,7 @@ namespace GuildWars2.Spidy.Prospects
             }
         }
 
-        private void HotKeyPressed(object sender, HotKeyManager.HotKeyEventArgs e)
+        private void HotKeyPressed(HotKeyEventArgs e)
         {
             bool lockTaken = false;
             try
