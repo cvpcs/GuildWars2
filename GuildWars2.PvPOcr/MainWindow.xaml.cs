@@ -137,10 +137,16 @@ namespace GuildWars2.PvPOcr
                 {
                     using (Bitmap bmp = new Gw2Process().GetBitmap())
                     {
-                        bmp.Save("./screenshot.png", ImageFormat.Png);
+                        // TODO: this was added to allow for multiple screenshots for OBS to update to reduce lag.
+                        //       consider a better way to support this
+                        const int numScreenshotCopies = 4;
+                        for (var i = 0; i < numScreenshotCopies; i++)
+                        {
+                            var screenshotFile = $"screenshot{i:00}.png";
+                            bmp.Save($"./{screenshotFile}", ImageFormat.Png);
+                            this.logger.LogInformation($"Saved screenshots to {screenshotFile}");
+                        }
                     }
-
-                    this.logger.LogInformation("Saved screenshot to screenshot.png");
                 }
                 catch (Exception e)
                 {
