@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- Ensures that if this file changes, projects will be rebuilt -->
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Product>Guild Wars 2 Tools</Product>
+    <Copyright>© Copyright 2018 cvpcs</Copyright>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Authors>cvpcs</Authors>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)\GitVersion.props" Condition=" '$(MSBuildProjectExtension)' == '.csproj' " />
+</Project>

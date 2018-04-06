@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <!-- Ensures that if this file changes, projects will be rebuilt -->
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <!-- Populate version variables based on GitVersion if available. This will usually be run in the build definition. -->
+  <PropertyGroup Condition=" '$(GitVersion_FullSemVer)' != '' ">
+    <Version Condition=" '$(Version)' == '' ">$(GitVersion_FullSemVer)</Version>
+    <VersionPrefix Condition=" '$(VersionPrefix)' == '' ">$(GitVersion_MajorMinorPatch)</VersionPrefix>
+    <VersionSuffix Condition=" '$(VersionSuffix)' == '' ">$(GitVersion_NuGetPreReleaseTag)</VersionSuffix>
+    <PackageVersion Condition=" '$(PackageVersion)' == '' ">$(GitVersion_NuGetVersion)</PackageVersion>
+    <InformationalVersion Condition=" '$(InformationalVersion)' == '' ">$(GitVersion_InformationalVersion)</InformationalVersion>
+    <AssemblyVersion Condition=" '$(AssemblyVersion)' == '' ">$(GitVersion_AssemblySemVer)</AssemblyVersion>
+    <FileVersion Condition=" '$(FileVersion)' == '' ">$(GitVersion_MajorMinorPatch).$(GitVersion_CommitsSinceVersionSource)</FileVersion>
+  </PropertyGroup>
+
+</Project>
