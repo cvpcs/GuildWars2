@@ -51,7 +51,9 @@ namespace GuildWars2.PvPOcr
                                                          nameof(this.ScoreBar_GradientOpacityMask_TransparentStop),
                                                          nameof(this.ScoreBar_GradientOpacityMask_BlackStop));
 
-            this.AllowsTransparency = overlayMode;
+            this.AllowsTransparency = 
+            this.Topmost = overlayMode;
+
             this.GreenScreen.Visibility = overlayMode ? Visibility.Hidden : Visibility.Visible;
 
             if (position != null)
