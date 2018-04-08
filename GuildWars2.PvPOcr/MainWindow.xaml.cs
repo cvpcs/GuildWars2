@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -88,16 +89,22 @@ namespace GuildWars2.PvPOcr
                                             (int)(0.04167 * SystemParameters.PrimaryScreenWidth),
                                             (int)(0.03704 * SystemParameters.PrimaryScreenHeight))
             };
-
-
-            this.ocrManager.ScoresRead += (scores) => Dispatcher.Invoke(() =>
+            
+            this.ocrManager.ScoresRead += (valid, gameState) => Dispatcher.Invoke(() =>
             {
-                if (scores.IsValid)
+                if (valid)
                 {
-                    this.SetScoreBarFillPercentage(scores.RedPercentage, scores.BluePercentage);
-                }
+                    this.SetScoreBarFillPercentage(gameState.Red.ScorePercentage, gameState.Blue.ScorePercentage);
 
-                this.logger.LogInformation($"Red: {scores.Red}, Blue: {scores.Blue}");
+                    File.WriteAllText("./redkills.txt", gameState.Red.Kills.ToString());
+                    File.WriteAllText("./bluekills.txt", gameState.Blue.Kills.ToString());
+
+                    this.logger.LogInformation($"Red: (score={gameState.Red.Score};kills={gameState.Red.Kills}), Blue: ({gameState.Blue.Score};kills={gameState.Blue.Kills})");
+                }
+                else
+                {
+                    this.logger.LogWarning($"Unable to read scores");
+                }
             });
 
             this.ocrManager.ProcessingFailed += (e) => Dispatcher.Invoke(() => this.logger.LogError(e, string.Empty));

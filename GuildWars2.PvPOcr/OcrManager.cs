@@ -16,7 +16,7 @@ namespace GuildWars2.PvPOcr
             ["load_freq_dawg"] = false
         };
 
-        public event Action<Scores> ScoresRead;
+        public event Action<bool, IGameState> ScoresRead;
         public event Action<Size> CapturedScreenshot;
         public event Action<ProcessedScreenshotEventArgs> ProcessedScreenshot;
 
@@ -40,6 +40,7 @@ namespace GuildWars2.PvPOcr
             this.runningTask = Task.Factory.StartNew(async () =>
             {
                 var gw2Process = new Gw2Process();
+                var gameState = new GameState();
 
                 using (var ocrEngine = new TesseractEngine("./tessdata", "eng", EngineMode.Default, null, TesseractOptions, false))
                 {
@@ -73,13 +74,9 @@ namespace GuildWars2.PvPOcr
                                         blueText = section.GetText();
                                     }
 
-                                    var scores = new Scores
-                                    {
-                                        Red = ProcessScore(redText),
-                                        Blue = ProcessScore(blueText)
-                                    };
+                                    var result = gameState.TryProcessScores(redText, blueText);
 
-                                    this.ScoresRead?.Invoke(scores);
+                                    this.ScoresRead?.Invoke(result, gameState);
 
                                     if (this.ProcessedScreenshot != null)
                                     {
@@ -101,7 +98,7 @@ namespace GuildWars2.PvPOcr
                                                 BlueSectionPreProcessedScreenshot = modifiedScreenshotBlueSection,
                                                 BlueTextResult = blueText,
 
-                                                Result = scores
+                                                Result = gameState
                                             };
 
                                             this.ProcessedScreenshot(processedScreenshotEventArgs);
@@ -147,17 +144,6 @@ namespace GuildWars2.PvPOcr
             return -1;
         }
 
-        public class Scores
-        {
-            public int Red = -1;
-            public int Blue = -1;
-
-            public double RedPercentage => Red / 500.0;
-            public double BluePercentage => Blue / 500.0;
-
-            public bool IsValid => Red >= 0 && Red <= 600 && Blue >= 0 && Blue <= 600;
-        }
-
         public struct ProcessedScreenshotEventArgs
         {
             public Bitmap Screenshot;
@@ -170,7 +156,7 @@ namespace GuildWars2.PvPOcr
             public Rectangle BlueSection;
             public string BlueTextResult;
 
-            public Scores Result;
+            public IGameState Result;
         }
     }
 }
