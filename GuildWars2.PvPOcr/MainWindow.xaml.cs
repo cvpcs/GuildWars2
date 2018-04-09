@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -73,7 +74,7 @@ namespace GuildWars2.PvPOcr
         public MainWindow()
         {
             InitializeComponent();
-            
+
             this.logger.Collection.CollectionChanged += (s, e) => Dispatcher.Invoke(() => ConsoleScroller.ScrollToBottom());
 
             this.configManager = new AppConfigManager(this.logger);
@@ -89,15 +90,30 @@ namespace GuildWars2.PvPOcr
                                             (int)(0.04167 * SystemParameters.PrimaryScreenWidth),
                                             (int)(0.03704 * SystemParameters.PrimaryScreenHeight))
             };
-            
+
             this.ocrManager.ScoresRead += (valid, gameState) => Dispatcher.Invoke(() =>
             {
                 if (valid)
                 {
                     this.SetScoreBarFillPercentage(gameState.Red.ScorePercentage, gameState.Blue.ScorePercentage);
-
+                    
+                    // TODO: this should be done better
                     File.WriteAllText("./redkills.txt", gameState.Red.Kills.ToString());
                     File.WriteAllText("./bluekills.txt", gameState.Blue.Kills.ToString());
+
+                    // TODO: this is just a hack for testing, need to build this into a better system
+                    Action<string> playAudio = (file) => Task.Factory.StartNew(() =>
+                    {
+                        if (File.Exists(file))
+                        {
+                            var mp = new MediaPlayer();
+                            mp.Open(new Uri(Path.GetFullPath(file)));
+                            mp.Play();
+                        }
+                    });
+
+                    if (gameState.Red.KillsDelta > 0) playAudio("./redkills.mp3");
+                    if (gameState.Blue.KillsDelta > 0) playAudio("./bluekills.mp3");
 
                     this.logger.LogInformation($"Red: (score={gameState.Red.Score};kills={gameState.Red.Kills}), Blue: ({gameState.Blue.Score};kills={gameState.Blue.Kills})");
                 }

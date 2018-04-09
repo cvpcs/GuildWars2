@@ -6,5 +6,8 @@
         double ScorePercentage { get; }
 
         int Kills { get; }
+
+        int ScoreDelta { get; }
+        int KillsDelta { get; }
     }
 }

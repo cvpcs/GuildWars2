@@ -28,6 +28,11 @@
 
             public int Kills { get; private set; } = 0;
 
+            public int ScoreDelta { get; private set; } = 0;
+            public int KillsDelta { get; private set; } = 0;
+
+            private int consecutiveInvalidDeltaFailures = 0;
+
             public bool TryProcessScore(string newScoreText)
             {
                 if (int.TryParse(newScoreText.Trim()
@@ -35,30 +40,29 @@
                                           .Replace('o', '0'),
                                  out int newScore))
                 {
-                    int scoreDelta = newScore - Score;
+                    // if the score is < 0, we haven't read a score yet so assume delta of 0 and just accept the new score
+                    int scoreDelta = Score >= 0 ? newScore - Score : 0;
 
-                    if (Score < 10 && scoreDelta > 50)
+                    // ignore faulty read where +5 for kill could be read as part of the score:
+                    //   - delta > 50 when last score < 10 (e.g. +5 9 -> 59)
+                    //   - delta > 178 since maximum tick score should be 178 (+150 lord, +25 5x kill, +3 3x node)
+                    // this is overridden and the score is considered valid if we fail here 10 times in a row in order
+                    // to catch cases where we have swapped games and the deltas are unreliable
+                    if (((Score < 10 && scoreDelta > 50) ||
+                         scoreDelta > 178) &&
+                        this.consecutiveInvalidDeltaFailures++ < 10)
                     {
-                        // ignore faulty read where +5 for kill probably triggered a delta > 50 (e.g. +5 7 -> 57)
                         return false;
                     }
 
-                    if (scoreDelta > 178)
-                    {
-                        // ignore faulty read where +5 for kill triggered a score that is greater than the highest
-                        // maximum tick value (e.g. 78 +5 -> 785). maximum tick is:
-                        //   150 for lord kill
-                        //    25 for 5 player kills
-                        //     3 for 3 node ticks
-                        return false;
-                    }
+                    this.consecutiveInvalidDeltaFailures = 0;
 
+                    ScoreDelta = scoreDelta;
                     Score = newScore;
 
-                    if (scoreDelta > 0 && scoreDelta < 15)
-                    {
-                        Kills += scoreDelta / 5;
-                    }
+                    // if our score delta is between 0 and 15, calculate possible kill-related increases
+                    KillsDelta = (scoreDelta > 0 && scoreDelta < 15) ? scoreDelta / 5 : 0;
+                    Kills += KillsDelta;
 
                     return true;
                 }
@@ -68,7 +72,10 @@
 
             public void Reset()
             {
+                ScoreDelta = 0;
                 Score = 0;
+
+                KillsDelta = 0;
                 Kills = 0;
             }
         }
