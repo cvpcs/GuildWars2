@@ -1,0 +1,9 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="GuildWars2.PvPCasterToolbox.MainWindow"
+        Title="PvP Caster Toolbox" x:Name="Root"
+        Height="600" Width="800" MinWidth="20" MinHeight="40">
+    <TabControl x:Name="Pages" TabStripPlacement="Left">
+    </TabControl>
+</Window>
