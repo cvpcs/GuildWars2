@@ -67,7 +67,7 @@ namespace GuildWars2.PvPCasterToolbox
                 using (var graphics = Graphics.FromImage(bitmap))
                 {
                     IntPtr gfxHdc = graphics.GetHdc();
-                    PrintWindow(this.process.MainWindowHandle, gfxHdc, 0);
+                    PrintWindow(this.process.MainWindowHandle, gfxHdc, PrintWindowFlags.ClientOnly);
                     graphics.ReleaseHdc(gfxHdc);
                 }
 
@@ -101,6 +101,13 @@ namespace GuildWars2.PvPCasterToolbox
         private static extern bool GetWindowRect(IntPtr hWnd, out Rect rect);
 
         [DllImport("user32.dll")]
-        private static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, int flags);
+        private static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, PrintWindowFlags flags);
+
+        [Flags]
+        private enum PrintWindowFlags
+        {
+            None = 0,
+            ClientOnly = 0x1
+        }
     }
 }

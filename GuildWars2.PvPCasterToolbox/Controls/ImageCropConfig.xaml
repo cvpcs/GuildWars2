@@ -19,19 +19,19 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0" Content="X Position" />
-        <Slider Grid.Column="1" Grid.Row="0" Minimum="0" Maximum="{Binding Path=MaxSectionWidth}" Value="{Binding Path=SectionX}" />
-        <TextBlock Grid.Column="2" Grid.Row="0" Text="{Binding Path=SectionX}" />
+        <Slider Grid.Column="1" Grid.Row="0" Minimum="{Binding Path=CropXMinimum}" Maximum="{Binding Path=CropXMaximum}" Value="{Binding Path=CropX}" />
+        <TextBlock Grid.Column="2" Grid.Row="0" Text="{Binding Path=CropX}" />
 
         <Label Grid.Column="0" Grid.Row="1" Content="Y Position" />
-        <Slider Grid.Column="1" Grid.Row="1" Minimum="0" Maximum="{Binding Path=MaxSectionHeight}" Value="{Binding Path=SectionY}" />
-        <TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding Path=SectionY}" />
+        <Slider Grid.Column="1" Grid.Row="1" Minimum="{Binding Path=CropYMinimum}" Maximum="{Binding Path=CropYMaximum}" Value="{Binding Path=CropY}" />
+        <TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding Path=CropY}" />
 
         <Label Grid.Column="0" Grid.Row="2" Content="Width" />
-        <Slider Grid.Column="1" Grid.Row="2" Minimum="1" Maximum="{Binding Path=MaxSectionWidth}" Value="{Binding Path=SectionWidth}" />
-        <TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding Path=SectionWidth}" />
+        <Slider Grid.Column="1" Grid.Row="2" Minimum="{Binding Path=CropWidthMinimum}" Maximum="{Binding Path=CropWidthMaximum}" Value="{Binding Path=CropWidth}" />
+        <TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding Path=CropWidth}" />
 
         <Label Grid.Column="0" Grid.Row="3" Content="Height" />
-        <Slider Grid.Column="1" Grid.Row="3" Minimum="1" Maximum="{Binding Path=MaxSectionHeight}" Value="{Binding Path=SectionHeight}" />
-        <TextBlock Grid.Column="2" Grid.Row="3" Text="{Binding Path=SectionHeight}" />
+        <Slider Grid.Column="1" Grid.Row="3" Minimum="{Binding Path=CropHeightMinimum}" Maximum="{Binding Path=CropHeightMaximum}" Value="{Binding Path=CropHeight}" />
+        <TextBlock Grid.Column="2" Grid.Row="3" Text="{Binding Path=CropHeight}" />
     </Grid>
 </UserControl>

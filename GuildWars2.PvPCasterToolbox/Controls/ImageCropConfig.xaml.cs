@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,64 +13,134 @@ namespace GuildWars2.PvPCasterToolbox.Controls
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private int maxSectionWidth = (int)SystemParameters.PrimaryScreenWidth;
-        public int MaxSectionWidth
+        private uint imageWidth = 1;
+        public uint ImageWidth
         {
-            get => this.maxSectionWidth;
-            set { if (this.maxSectionWidth != value) { this.maxSectionWidth = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MaxSectionWidth))); } }
-        }
-
-        private int maxSectionHeight = (int)SystemParameters.PrimaryScreenHeight;
-        public int MaxSectionHeight
-        {
-            get => this.maxSectionHeight;
-            set { if (this.maxSectionHeight != value) { this.maxSectionHeight = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MaxSectionHeight))); } }
-        }
-
-        private int sectionX = 0;
-        public int SectionX
-        {
-            get => this.sectionX;
-            set { if (this.sectionX != value) { this.sectionX = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SectionX))); } }
-        }
-
-        private int sectionY = 0;
-        public int SectionY
-        {
-            get => this.sectionY;
-            set { if (this.sectionY != value) { this.sectionY = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SectionY))); } }
-        }
-
-        private int sectionWidth = 1;
-        public int SectionWidth
-        {
-            get => this.sectionWidth;
-            set { if (this.sectionWidth != value) { this.sectionWidth = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SectionWidth))); } }
-        }
-
-        private int sectionHeight = 1;
-        public int SectionHeight
-        {
-            get => this.sectionHeight;
-            set { if (this.sectionHeight != value) { this.sectionHeight = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SectionHeight))); } }
-        }
-
-        public Rectangle SectionRect
-        {
-            get => new Rectangle(SectionX, SectionY, SectionWidth, SectionHeight);
+            get => this.imageWidth;
             set
             {
-                SectionX = value.X;
-                SectionY = value.Y;
-                SectionWidth = value.Width;
-                SectionHeight = value.Height;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SectionRect)));
+                if (this.imageWidth != value && value > 0)
+                {
+                    this.imageWidth = value;
+
+                    CropX = Math.Min(CropX, this.imageWidth - 1);
+                    CropWidth = Math.Min(CropWidth, this.imageWidth - CropX);
+
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageWidth)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CropXMaximum)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CropWidthMaximum)));
+                }
+            }
+        }
+
+        private uint imageHeight = 1;
+        public uint ImageHeight
+        {
+            get => this.imageHeight;
+            set
+            {
+                if (this.imageHeight != value && value > 0)
+                {
+                    this.imageHeight = value;
+
+                    CropY = Math.Min(CropY, this.imageHeight - 1);
+                    CropHeight = Math.Min(CropHeight, this.imageHeight - CropY);
+
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageHeight)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CropYMaximum)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CropHeightMaximum)));
+                }
+            }
+        }
+
+        public uint CropXMinimum => 0;
+        public uint CropYMinimum => 0;
+        public uint CropWidthMinimum => 1;
+        public uint CropHeightMinimum => 1;
+
+        public uint CropXMaximum => ImageWidth - CropWidthMinimum;
+        public uint CropYMaximum => ImageHeight - CropHeightMinimum;
+        public uint CropWidthMaximum => ImageWidth;
+        public uint CropHeightMaximum => ImageHeight;
+
+        private uint cropX = 0;
+        public uint CropX
+        {
+            get => this.cropX;
+            set
+            {
+                if (this.cropX != value)
+                {
+                    this.cropX = value;
+                    CropWidth = Math.Min(CropWidth, ImageWidth - value);
+
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CropX)));
+                }
+            }
+        }
+
+        private uint cropY = 0;
+        public uint CropY
+        {
+            get => this.cropY;
+            set
+            {
+                if (this.cropY != value)
+                {
+                    this.cropY = value;
+                    CropHeight = Math.Min(CropHeight, ImageHeight - value);
+
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CropY)));
+                }
+            }
+        }
+
+        private uint cropWidth = 1;
+        public uint CropWidth
+        {
+            get => this.cropWidth;
+            set
+            {
+                if (this.cropWidth != value)
+                {
+                    this.cropWidth = value;
+                    CropX = Math.Min(CropX, ImageWidth - value);
+
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CropWidth)));
+                }
+            }
+        }
+
+        private uint cropHeight = 1;
+        public uint CropHeight
+        {
+            get => this.cropHeight;
+            set
+            {
+                if (this.cropHeight != value)
+                {
+                    this.cropHeight = value;
+                    CropY = Math.Min(CropY, ImageHeight - value);
+
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CropHeight)));
+                }
+            }
+        }
+
+        public Rectangle CropRect
+        {
+            get => new Rectangle((int)CropX, (int)CropY, (int)CropWidth, (int)CropHeight);
+            set
+            {
+                CropX = (uint)value.X;
+                CropY = (uint)value.Y;
+                CropWidth = (uint)value.Width;
+                CropHeight = (uint)value.Height;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CropRect)));
             }
         }
 
         public ImageCropConfig()
-        {
-            InitializeComponent();
-        }
+            => InitializeComponent();
     }
 }

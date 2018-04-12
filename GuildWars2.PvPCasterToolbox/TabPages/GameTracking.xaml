@@ -22,9 +22,9 @@
         <Image Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Stretch="Uniform" x:Name="OcrProcessedScreenshotViewImage" />
 
         <Label Grid.Column="0" Grid.Row="1" Content="Red score" HorizontalAlignment="Center" />
-        <local:ImageCropConfig Grid.Column="0" Grid.Row="2" x:Name="RedCrop" />
+        <local:ImageCropConfig Grid.Column="0" Grid.Row="2" x:Name="RedScoreCropConfig" />
 
         <Label Grid.Column="1" Grid.Row="1" Content="Blue score" HorizontalAlignment="Center" />
-        <local:ImageCropConfig Grid.Column="1" Grid.Row="2" x:Name="BlueSectionConfig" />
+        <local:ImageCropConfig Grid.Column="1" Grid.Row="2" x:Name="BlueScoreCropConfig" />
     </Grid>
 </TabItem>
