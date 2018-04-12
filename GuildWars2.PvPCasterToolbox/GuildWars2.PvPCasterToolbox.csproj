@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net461</TargetFramework>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Magick.NET-Q16-x64" Version="7.4.3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" RequiredTargetFramework="4.0" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GuildWars2.Overlay.Controls\GuildWars2.Overlay.Controls.csproj" />
+    <ProjectReference Include="..\LibHotKeys\LibHotKeys.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <LanguageTargets Condition="Exists('$(MSBuildProjectDirectory)\$(AssemblyName).csproj')">$(MSBuildToolsPath)\Microsoft.CSharp.targets</LanguageTargets>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" Generator="MSBuild:XamlIntelliSenseFileGenerator" SubType="Designer" />
+    <Page Include="**\*.xaml" Generator="MSBuild:Compile" SubType="Designer" Exclude="App.xaml" />
+    <Compile Update="**\*.xaml.cs" SubType="Designer" DependentUpon="%(FileName)" />
+    <Compile Update="$(IntermediateOutputPath)**\*.g.cs" Visible="false" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,30 @@
+﻿<TabItem x:Class="GuildWars2.PvPCasterToolbox.TabPages.GameTracking"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:GuildWars2.PvPCasterToolbox.Controls"
+        mc:Ignorable="d" 
+        d:DesignHeight="250" d:DesignWidth="300"
+        Header="Game Tracking"
+        x:Name="Root">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*" />
+            <ColumnDefinition Width="0.5*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Image Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Stretch="Uniform" x:Name="OcrProcessedScreenshotViewImage" />
+
+        <Label Grid.Column="0" Grid.Row="1" Content="Red score" HorizontalAlignment="Center" />
+        <local:ImageCropConfig Grid.Column="0" Grid.Row="2" x:Name="RedCrop" />
+
+        <Label Grid.Column="1" Grid.Row="1" Content="Blue score" HorizontalAlignment="Center" />
+        <local:ImageCropConfig Grid.Column="1" Grid.Row="2" x:Name="BlueSectionConfig" />
+    </Grid>
+</TabItem>
