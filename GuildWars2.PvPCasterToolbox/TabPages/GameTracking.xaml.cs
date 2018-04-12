@@ -25,6 +25,9 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
                 bitmapDisplay.WriteBitmap(screenshot);
 
                 this.OcrProcessedScreenshotViewImage.Source = bitmapDisplay;
+
+                this.RedScoreCropConfig.ImageWidth = this.BlueScoreCropConfig.ImageWidth = (uint)bitmapDisplay.PixelWidth;
+                this.RedScoreCropConfig.ImageHeight = this.BlueScoreCropConfig.ImageHeight = (uint)bitmapDisplay.PixelHeight;
             });
         }
     }
