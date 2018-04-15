@@ -7,6 +7,7 @@ using System.Windows;
 using GuildWars2.PvPCasterToolbox.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Tesseract;
 
 namespace GuildWars2.PvPCasterToolbox
 {
@@ -61,6 +62,13 @@ namespace GuildWars2.PvPCasterToolbox
                 serviceProvider.GetRequiredService<FileLoggerProvider>()
             }));
             services.AddLogging();
+
+            // OCR
+            services.AddSingleton(new TesseractEngine("./tessdata", "eng", EngineMode.Default, null, new Dictionary<string, object>
+            {
+                ["load_system_dawg"] = false,
+                ["load_freq_dawg"] = false
+            }, false));
 
             // processors
             services.AddSingleton<Gw2ScreenshotProcessor>();

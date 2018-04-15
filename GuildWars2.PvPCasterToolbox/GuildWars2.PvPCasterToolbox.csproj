@@ -10,6 +10,7 @@
     <PackageReference Include="Magick.NET-Q16-x64" Version="7.4.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.1" />
+    <PackageReference Include="Tesseract" Version="3.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +24,11 @@
   <ItemGroup>
     <ProjectReference Include="..\GuildWars2.Overlay.Controls\GuildWars2.Overlay.Controls.csproj" />
     <ProjectReference Include="..\LibHotKeys\LibHotKeys.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="x64\**" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="tessdata\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <PropertyGroup>
