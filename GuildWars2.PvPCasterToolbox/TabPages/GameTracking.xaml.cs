@@ -7,7 +7,7 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
 {
     public partial class GameTracking : TabItem
     {
-        public GameTracking(Gw2ScreenshotProcessor gw2ScreenshotProcessor,
+        public GameTracking(GameStateManager gameStateManager,
                             AppConfig appConfig)
         { 
             InitializeComponent();
@@ -15,7 +15,7 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
             this.RedScoreCropConfig.CropRect = appConfig.RedSection;
             this.BlueScoreCropConfig.CropRect = appConfig.BlueSection;
 
-            gw2ScreenshotProcessor.ScreenshotCaptured += screenshot => Dispatcher.Invoke(() =>
+            gameStateManager.ProcessedScreenshotSections += (screenshot, sections) => Dispatcher.Invoke(() =>
             {
                 WriteableBitmap bitmapDisplay = this.OcrProcessedScreenshotViewImage.Source as WriteableBitmap;
                 if (bitmapDisplay == null ||
@@ -28,6 +28,11 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
                 }
 
                 bitmapDisplay.WriteBitmap(screenshot);
+
+                foreach (var section in sections)
+                {
+                    bitmapDisplay.WriteBitmap(section.Item2, section.Item1);
+                }
 
                 this.OcrProcessedScreenshotViewImage.Source = bitmapDisplay;
 
