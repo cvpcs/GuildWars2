@@ -12,10 +12,10 @@ namespace GuildWars2.PvPCasterToolbox
     // TODO: change this to not inherit game state but instead just pass it as part of the scores read action
     public class GameStateManager : IGameState
     {
-        // TODO: remove tuples
         // TODO: do i like these events? is there a better way to handle the screenshot processing?
+        // TODO: use actual event handlers and event args
         public event Action<bool, IGameState> ScoresRead;
-        public event Action<Bitmap, IEnumerable<Tuple<Rectangle, Bitmap>>> ProcessedScreenshotSections;
+        public event Action<Bitmap, IEnumerable<(Rectangle rect, Bitmap bitmap)>> ProcessedScreenshotSections;
 
         private TesseractEngine tesseractEngine;
         private AppConfig appConfig;
@@ -98,10 +98,10 @@ namespace GuildWars2.PvPCasterToolbox
                             using (Bitmap modifiedScreenshotRedSection = modifiedScreenshotRedSectionImage.ToBitmap())
                             using (Bitmap modifiedScreenshotBlueSection = modifiedScreenshotBlueSectionImage.ToBitmap())
                             {
-                                this.ProcessedScreenshotSections(screenshot, new List<Tuple<Rectangle, Bitmap>>
+                                this.ProcessedScreenshotSections(screenshot, new List<(Rectangle, Bitmap)>
                                 {
-                                    (this.appConfig.RedSection, modifiedScreenshotRedSection).ToTuple(),
-                                    (this.appConfig.BlueSection, modifiedScreenshotBlueSection).ToTuple()
+                                    (this.appConfig.RedSection, modifiedScreenshotRedSection),
+                                    (this.appConfig.BlueSection, modifiedScreenshotBlueSection)
                                 });
                             }
                         }

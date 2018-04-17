@@ -31,7 +31,7 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
 
                 foreach (var section in sections)
                 {
-                    bitmapDisplay.WriteBitmap(section.Item2, section.Item1);
+                    bitmapDisplay.WriteBitmap(section.bitmap, section.rect);
                 }
 
                 this.OcrProcessedScreenshotViewImage.Source = bitmapDisplay;
