@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using GuildWars2.PvPCasterToolbox.Configuration;
 using GuildWars2.PvPCasterToolbox.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -52,6 +53,9 @@ namespace GuildWars2.PvPCasterToolbox
         private IServiceProvider BuildServiceProvider()
         {
             var services = new ServiceCollection();
+
+            // configuration
+            services.AddSingleton<AppConfig>();
 
             // logging services
             services.AddSingleton<ObservableCollectionLoggerProvider>();

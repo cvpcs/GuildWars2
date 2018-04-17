@@ -4,6 +4,15 @@
         x:Class="GuildWars2.PvPCasterToolbox.MainWindow"
         Title="PvP Caster Toolbox" x:Name="Root"
         Height="600" Width="800" MinWidth="20" MinHeight="40">
-    <TabControl x:Name="Pages" TabStripPlacement="Left">
-    </TabControl>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Load configuration" Click="LoadConfiguration_Clicked" />
+                <MenuItem Header="Save configuration" Click="SaveConfiguration_Clicked" />
+                <Separator />
+                <MenuItem Header="Exit" Click="Exit_Clicked" />
+            </MenuItem>
+        </Menu>
+        <TabControl x:Name="Pages" TabStripPlacement="Left" />
+    </DockPanel>
 </Window>
