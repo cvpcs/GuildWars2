@@ -77,6 +77,9 @@ namespace GuildWars2.PvPCasterToolbox
             // processors
             services.AddSingleton<Gw2ScreenshotProcessor>();
 
+            // game state manager
+            services.AddSingleton<GameStateManager>();
+
             return services.BuildServiceProvider();
         }
     }
