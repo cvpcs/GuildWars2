@@ -28,8 +28,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="x64\**" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="resources\**" CopyToOutputDirectory="PreserveNewest" />
     <None Update="tessdata\**" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="x64\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <PropertyGroup>
