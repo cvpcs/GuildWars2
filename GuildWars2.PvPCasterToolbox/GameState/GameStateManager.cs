@@ -14,7 +14,7 @@ namespace GuildWars2.PvPCasterToolbox.GameState
     {
         // TODO: do i like these events? is there a better way to handle the screenshot processing?
         // TODO: use actual event handlers and event args
-        public event Action<bool, IGameState> ScoresRead;
+        public event Action<IGameState> ScoresRead;
         public event Action<Bitmap, IEnumerable<(Rectangle rect, Bitmap bitmap)>> ProcessedScreenshotSections;
 
         private TesseractEngine tesseractEngine;
@@ -82,13 +82,13 @@ namespace GuildWars2.PvPCasterToolbox.GameState
                                 this.red.Reset();
                                 this.blue.Reset();
                             }
+
+                            this.ScoresRead?.Invoke(this);
                         }
                         else
                         {
                             this.logger.LogWarning("Unable to read game state");
                         }
-
-                        this.ScoresRead?.Invoke(success, this);
 
                         if (this.ProcessedScreenshotSections != null)
                         {
