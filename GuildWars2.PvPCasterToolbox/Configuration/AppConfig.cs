@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -110,7 +111,20 @@ namespace GuildWars2.PvPCasterToolbox.Configuration
         #endregion
 
         public void Load(string path)
-            => JsonConvert.PopulateObject(File.ReadAllText(path), this, JsonSerializerSettings);
+        {
+            JsonConvert.PopulateObject(File.ReadAllText(path), this, JsonSerializerSettings);
+
+            // TODO: the populateobject section only performs sets on leaf members, so the base objects don't have their setters
+            //       hit. as such we need to trigger the property change notifications on all of them manually on load. investigate
+            //       a better way to handle this
+            var jsonProperties = this.GetType()
+                                     .GetProperties()
+                                     .Where(propertyInfo => Attribute.IsDefined(propertyInfo, typeof(JsonPropertyAttribute)));
+            foreach (var jsonProperty in jsonProperties)
+            {
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(jsonProperty.Name));
+            }
+        }
 
         public void Save(string path)
             => File.WriteAllText(path, JsonConvert.SerializeObject(this, JsonSerializerSettings));
