@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GuildWars2.PvPCasterToolbox
+namespace GuildWars2.PvPCasterToolbox.Controls
 {
     public class ImageModulationParameters : IEquatable<ImageModulationParameters>
     {
@@ -34,7 +34,7 @@ namespace GuildWars2.PvPCasterToolbox
                Brightness == other?.Brightness;
 
         public override bool Equals(object obj)
-            => !ReferenceEquals(null, obj) &&
+            => !(obj is null) &&
                (ReferenceEquals(this, obj) || Equals(obj as ImageModulationParameters));
 
         public override int GetHashCode()
