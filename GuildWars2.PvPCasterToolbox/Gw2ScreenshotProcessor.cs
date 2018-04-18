@@ -10,44 +10,64 @@ using Microsoft.Extensions.Logging;
 
 namespace GuildWars2.PvPCasterToolbox
 {
-    public class Gw2ScreenshotProcessor : AsyncProcessorBase
+    public class Gw2ScreenshotProcessor
     {
         private static readonly TimeSpan LoopShortDelay = TimeSpan.FromMilliseconds(100);
         private static readonly TimeSpan LoopLongDelay = TimeSpan.FromSeconds(5);
 
         public event Action<Bitmap> ScreenshotCaptured;
 
+        private ILogger logger;
+        private Task task;
         private Process process;
 
         public Gw2ScreenshotProcessor(ILogger<Gw2ScreenshotProcessor> logger)
-            : base(logger)
-        { }
+            => this.logger = logger;
 
-        protected override async Task ProcessIterationAsync(CancellationToken token)
+        public Task RunAsync(CancellationToken token)
         {
-            if (ScreenshotCaptured != null)
+            if (task != null && !task.IsCompleted)
             {
-                try
-                {
-                    using (Bitmap screenshot = this.GetBitmap())
-                    {
-                        this.ScreenshotCaptured.Invoke(screenshot);
-                    }
+                throw new InvalidOperationException("Attempted to re-run processor that is already running");
+            }
 
-                    await Task.Delay(LoopShortDelay, token);
-                }
-                catch (Exception e)
-                {
-                    this.logger.LogError(e, string.Empty);
-                    await Task.Delay(LoopLongDelay, token);
-                }
-            }
-            else
+            this.task = Task.Factory.StartNew(async () =>
             {
-                this.logger.LogTrace("No capture handlers configured, ignoring");
-                await Task.Delay(LoopLongDelay, token);
-            }
+                this.logger.LogInformation("Starting process loop");
+                while (true)
+                {
+                    token.ThrowIfCancellationRequested();
+
+                    if (ScreenshotCaptured != null)
+                    {
+                        try
+                        {
+                            using (Bitmap screenshot = this.GetBitmap())
+                            {
+                                this.ScreenshotCaptured.Invoke(screenshot);
+                            }
+
+                            await Task.Delay(LoopShortDelay, token);
+                        }
+                        catch (Exception e)
+                        {
+                            this.logger.LogError(e, string.Empty);
+                            await Task.Delay(LoopLongDelay, token);
+                        }
+                    }
+                    else
+                    {
+                        this.logger.LogTrace("No capture handlers configured, ignoring");
+                        await Task.Delay(LoopLongDelay, token);
+                    }
+                }
+            }, token);
+
+            return this.task;
         }
+
+        public static implicit operator Task(Gw2ScreenshotProcessor processor)
+            => processor.task;
 
         private bool IsAvailable
             => this.process?.HasExited == false;
