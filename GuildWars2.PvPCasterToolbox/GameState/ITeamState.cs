@@ -1,4 +1,4 @@
-﻿namespace GuildWars2.PvPCasterToolbox
+﻿namespace GuildWars2.PvPCasterToolbox.GameState
 {
     public interface ITeamState
     {

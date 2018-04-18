@@ -6,6 +6,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using GuildWars2.PvPCasterToolbox.Controls;
 using LibHotKeys;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;

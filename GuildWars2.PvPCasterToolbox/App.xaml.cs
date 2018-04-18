@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using GuildWars2.PvPCasterToolbox.Configuration;
+using GuildWars2.PvPCasterToolbox.GameState;
 using GuildWars2.PvPCasterToolbox.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

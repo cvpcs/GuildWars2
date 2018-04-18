@@ -6,7 +6,7 @@ using ImageMagick;
 using Microsoft.Extensions.Logging;
 using Tesseract;
 
-namespace GuildWars2.PvPCasterToolbox
+namespace GuildWars2.PvPCasterToolbox.GameState
 {
     // TODO: move to its own subnamespace with its interfaces and split into more subclasses?
     // TODO: change this to not inherit game state but instead just pass it as part of the scores read action

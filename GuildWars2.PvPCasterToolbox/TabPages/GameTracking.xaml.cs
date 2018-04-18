@@ -2,6 +2,7 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using GuildWars2.PvPCasterToolbox.Configuration;
+using GuildWars2.PvPCasterToolbox.GameState;
 
 namespace GuildWars2.PvPCasterToolbox.TabPages
 {
@@ -29,9 +30,9 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
 
                 bitmapDisplay.WriteBitmap(screenshot);
 
-                foreach (var section in sections)
+                foreach (var (rect, bitmap) in sections)
                 {
-                    bitmapDisplay.WriteBitmap(section.bitmap, section.rect);
+                    bitmapDisplay.WriteBitmap(bitmap, rect);
                 }
 
                 this.OcrProcessedScreenshotViewImage.Source = bitmapDisplay;
