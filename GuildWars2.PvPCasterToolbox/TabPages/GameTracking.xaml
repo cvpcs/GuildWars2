@@ -26,5 +26,24 @@
 
         <Label Grid.Column="1" Grid.Row="1" Content="Blue score" HorizontalAlignment="Center" />
         <local:ImageCropConfig Grid.Column="1" Grid.Row="2" x:Name="BlueScoreCropConfig" />
+
+        <StackPanel Grid.ColumnSpan="2" Grid.Row="3"
+                    Orientation="Horizontal" Margin="5"
+                    DataContext="{Binding ElementName=Root}">
+            <ToggleButton IsChecked="{Binding Path=IsLiveSetupEnabled}" Margin="5">
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsLiveSetupEnabled}" Value="True">
+                                <Setter Property="Content" Value="Disable Live Setup Display" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=IsLiveSetupEnabled}" Value="False">
+                                <Setter Property="Content" Value="Enable Live Setup Display" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
+        </StackPanel>
     </Grid>
 </TabItem>
