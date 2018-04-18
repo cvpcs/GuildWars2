@@ -118,6 +118,14 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
             };
         }
 
+        // TODO: ICommand?
+        public void FillScores_Clicked(object sender, EventArgs args)
+            => Dispatcher.Invoke(() => this.SetScoreBarFillPercentage(1, 1));
+
+        // TODO: ICommand?
+        public void ClearScores_Clicked(object sender, EventArgs args)
+            => Dispatcher.Invoke(() => this.SetScoreBarFillPercentage(0, 0));
+
         private void SetScoreBarFillPercentage(double red, double blue)
         {
             this.redScoreBar.Window.SetScoreBarFill(red);

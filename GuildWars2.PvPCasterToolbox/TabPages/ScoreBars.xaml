@@ -41,6 +41,8 @@
                     </Style>
                 </ToggleButton.Style>
             </ToggleButton>
+            <Button Content="Fill Scores" Click="FillScores_Clicked" Margin="5" />
+            <Button Content="Clear Scores" Click="ClearScores_Clicked" Margin="5" />
         </StackPanel>
     </Grid>
 </TabItem>
