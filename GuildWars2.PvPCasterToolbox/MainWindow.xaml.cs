@@ -29,6 +29,7 @@ namespace GuildWars2.PvPCasterToolbox
             Pages.Items.Add(ActivatorUtilities.GetServiceOrCreateInstance<GameTracking>(serviceProvider));
             Pages.Items.Add(ActivatorUtilities.GetServiceOrCreateInstance<ScoreBars>(serviceProvider));
             Pages.Items.Add(ActivatorUtilities.GetServiceOrCreateInstance<SoundEffects>(serviceProvider));
+            Pages.Items.Add(ActivatorUtilities.GetServiceOrCreateInstance<HotKeys>(serviceProvider));
             Pages.Items.Add(ActivatorUtilities.GetServiceOrCreateInstance<ConsoleLog>(serviceProvider));
         }
 
