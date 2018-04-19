@@ -43,6 +43,8 @@ namespace GuildWars2.PvPCasterToolbox.Configuration
         private ImageModulationParameters redScoreBarModulation;
         private ImageModulationParameters blueScoreBarModulation;
         private HotKey screenshotHotKey;
+        private string redKillSoundEffect = Path.GetFullPath("./redkills.mp3");
+        private string blueKillSoundEffect = Path.GetFullPath("./bluekills.mp3");
         #endregion
 
         #region Serialized properties
@@ -107,6 +109,20 @@ namespace GuildWars2.PvPCasterToolbox.Configuration
         {
             get => this.screenshotHotKey;
             set => this.SetValue(ref this.screenshotHotKey, value);
+        }
+
+        [JsonProperty]
+        public string RedKillSoundEffect
+        {
+            get => this.redKillSoundEffect;
+            set => this.SetValue(ref this.redKillSoundEffect, value);
+        }
+
+        [JsonProperty]
+        public string BlueKillSoundEffect
+        {
+            get => this.blueKillSoundEffect;
+            set => this.SetValue(ref this.blueKillSoundEffect, value);
         }
         #endregion
 
