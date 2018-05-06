@@ -36,9 +36,9 @@ namespace GuildWars2.PvPCasterToolbox.Controls
             get => new ImageModulationParameters(ScoreBarHue, ScoreBarSaturation, ScoreBarBrightness);
             set
             {
-                ScoreBarHue = value.Hue;
-                ScoreBarSaturation = value.Saturation;
-                ScoreBarBrightness = value.Brightness;
+                ScoreBarHue = value?.Hue ?? default(int);
+                ScoreBarSaturation = value?.Saturation ?? default(int);
+                ScoreBarBrightness = value?.Brightness ?? default(int);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ScoreBarModulationParameters)));
             }
         }
