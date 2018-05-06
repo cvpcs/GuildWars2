@@ -7,35 +7,42 @@
         d:DesignHeight="250" d:DesignWidth="300"
         Header="Hot Keys"
         x:Name="Root">
-    <Grid DataContext="{Binding ElementName=Root}">
-        <Grid.Resources>
-            <Style TargetType="TextBlock">
-                <Setter Property="Padding" Value="5" />
-            </Style>
-            <Style TargetType="Button">
-                <Setter Property="Margin" Value="5" />
-            </Style>
-            <Style TargetType="Label">
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="HorizontalAlignment" Value="Left" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-            </Style>
-            <Style TargetType="TextBox">
-                <Setter Property="IsReadOnly" Value="True" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-            </Style>
-        </Grid.Resources>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Label Grid.Column="0" Grid.Row="0" Content="Screenshot Hot Key" />
-        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Path=ScreenshotHotKey, Mode=OneWay}" />
-        <Button Grid.Column="2" Grid.Row="0" Content="Change" Click="ChangeScreenshotHotKey_Clicked" />
-    </Grid>
+    <TabItem.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5" />
+        </Style>
+    </TabItem.Resources>
+    <StackPanel DataContext="{Binding ElementName=Root}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <!-- Screenshots -->
+            <Label Grid.Row="0" Grid.ColumnSpan="3" Content="Screenshots" />
+
+            <Label Grid.Row="1" Grid.Column="0" Content="Hot Key" />
+            <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True" Text="{Binding Path=ScreenshotHotKey, Mode=OneWay}" />
+            <Button Grid.Row="1" Grid.Column="2" Content="Change" Click="ChangeScreenshotHotKey_Clicked" />
+
+            <Label Grid.Row="2" Grid.Column="0" Content="Copies" />
+            <Slider Grid.Row="2" Grid.Column="1" DataContext="{Binding Path=AppConfig}" Value="{Binding Path=ScreenshotCount}" Minimum="1" Maximum="10" />
+            <Label Grid.Row="2" Grid.Column="2" DataContext="{Binding Path=AppConfig}" Content="{Binding Path=ScreenshotCount}"  />
+        </Grid>
+    </StackPanel>
 </TabItem>

@@ -15,42 +15,42 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string ScreenshotHotKey => this.appConfig.ScreenshotHotKey?.ToString();
+        public AppConfig AppConfig { get; private set; }
+        public string ScreenshotHotKey => AppConfig.ScreenshotHotKey?.ToString();
 
         private object screenshotHotKeyLock = new object();
         private int? screenshotHotKeyId = null;
 
         private int screenshotCaptureState = (int)CaptureState.Idle;
 
-        private AppConfig appConfig;
         private ILogger logger;
 
         public HotKeys(Gw2ScreenshotProcessor gw2ScreenshotProcessor,
                        AppConfig appConfig,
                        ILogger<HotKeys> logger)
         {
-            this.appConfig = appConfig;
+            AppConfig = appConfig;
             this.logger = logger;
 
-            if (this.appConfig.ScreenshotHotKey != null)
+            if (AppConfig.ScreenshotHotKey != null)
             {
-                this.SetScreenshotHotKey(this.appConfig.ScreenshotHotKey);
+                this.SetScreenshotHotKey(AppConfig.ScreenshotHotKey);
             }
 
             InitializeComponent();
 
-            this.appConfig.PropertyChanged += (s, e) =>
+            AppConfig.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(AppConfig.ScreenshotHotKey))
                 {
-                    this.SetScreenshotHotKey(this.appConfig.ScreenshotHotKey);
+                    this.SetScreenshotHotKey(AppConfig.ScreenshotHotKey);
                     this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ScreenshotHotKey)));
                 }
             };
 
             HotKeyManager.HotKeyPressed += hotKey =>
             {
-                if (hotKey.Equals(this.appConfig.ScreenshotHotKey))
+                if (hotKey.Equals(AppConfig.ScreenshotHotKey))
                 {
                     // set
                     Interlocked.CompareExchange(ref screenshotCaptureState, (int)CaptureState.Pending, (int)CaptureState.Idle);
@@ -63,8 +63,7 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
                 {
                     // TODO: this was added to allow for multiple screenshots for OBS to update to reduce lag.
                     //       consider a better way to support this
-                    const int numScreenshotCopies = 4;
-                    for (var i = 0; i < numScreenshotCopies; i++)
+                    for (var i = 0; i < AppConfig.ScreenshotCount; i++)
                     {
                         var screenshotFile = $"screenshot{i:00}.png";
                         screenshot.Save($"./{screenshotFile}", ImageFormat.Png);
@@ -140,7 +139,7 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
                 }
 
                 this.screenshotHotKeyId = hotKey != null ? (int?)HotKeyManager.RegisterHotKey(hotKey) : null;
-                this.appConfig.ScreenshotHotKey = hotKey;
+                AppConfig.ScreenshotHotKey = hotKey;
             }
         }
 
