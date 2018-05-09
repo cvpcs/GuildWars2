@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using GuildWars2.PvPCasterToolbox.Configuration;
+using GW2NET.MumbleLink;
 using ImageMagick;
 using Microsoft.Extensions.Logging;
 using Tesseract;
@@ -12,6 +13,8 @@ namespace GuildWars2.PvPCasterToolbox.GameState
     // TODO: change this to not inherit game state but instead just pass it as part of the scores read action
     public class GameStateManager : IGameState
     {
+        private const int HOTM_MAP_ID = 350;
+
         // TODO: do i like these events? is there a better way to handle the screenshot processing?
         // TODO: use actual event handlers and event args
         public event Action<IGameState> ScoresRead;
@@ -27,13 +30,20 @@ namespace GuildWars2.PvPCasterToolbox.GameState
         private TeamState blue = new TeamState();
         public ITeamState Blue => blue;
 
-        public GameStateManager(Gw2ScreenshotProcessor gw2ScreenshotProcessor, TesseractEngine tesseractEngine, AppConfig appConfig, ILogger<GameStateManager> logger)
+        private int? currentMapId = -1;
+
+        public GameStateManager(Gw2MumbleLinkPublisher gw2MumbleLinkPublisher,
+                                Gw2ScreenshotPublisher gw2ScreenshotPublisher,
+                                TesseractEngine tesseractEngine,
+                                AppConfig appConfig,
+                                ILogger<GameStateManager> logger)
         {
             this.tesseractEngine = tesseractEngine;
             this.appConfig = appConfig;
             this.logger = logger;
 
-            gw2ScreenshotProcessor.ScreenshotCaptured += ProcessScreenshot;
+            gw2MumbleLinkPublisher.DataAvailable += ProcessMumbleLinkData;
+            gw2ScreenshotPublisher.DataAvailable += ProcessScreenshot;
         }
 
         private void ProcessScreenshot(Bitmap screenshot)
@@ -78,9 +88,7 @@ namespace GuildWars2.PvPCasterToolbox.GameState
 
                             if (this.red.Score == 0 && this.blue.Score == 0)
                             {
-                                this.logger.LogDebug("Resetting scores");
-                                this.red.Reset();
-                                this.blue.Reset();
+                                this.Reset();
                             }
 
                             this.ScoresRead?.Invoke(this);
@@ -112,6 +120,26 @@ namespace GuildWars2.PvPCasterToolbox.GameState
             {
                 this.logger.LogError(e, string.Empty);
             }
+        }
+
+        private void ProcessMumbleLinkData(Avatar avatar)
+        {
+            if (this.currentMapId != avatar.Context.MapId)
+            {
+                this.currentMapId = avatar.Context.MapId;
+                if (this.currentMapId != HOTM_MAP_ID)
+                {
+                    this.Reset();
+                    this.ScoresRead?.Invoke(this);
+                }
+            }
+        }
+
+        private void Reset()
+        {
+            this.logger.LogDebug("Resetting scores");
+            this.red.Reset();
+            this.blue.Reset();
         }
 
         private static Tesseract.Rect GetTesseractRect(Rectangle rect)

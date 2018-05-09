@@ -18,8 +18,8 @@ namespace GuildWars2.PvPCasterToolbox
     /// </summary>
     public partial class App : Application
     {
-        private CancellationTokenSource processorCancellationTokenSource = new CancellationTokenSource();
-        private IList<Task> processorTasks = new List<Task>();
+        private CancellationTokenSource asyncPublisherCancellationTokenSource = new CancellationTokenSource();
+        private IList<Task> asyncPublisherTasks = new List<Task>();
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -31,9 +31,11 @@ namespace GuildWars2.PvPCasterToolbox
 
             base.OnStartup(e);
 
-            // start processor for Gw2 screenshots
-            this.processorTasks.Add(serviceProvider.GetRequiredService<Gw2ScreenshotProcessor>()
-                                                   .RunAsync(processorCancellationTokenSource.Token));
+            // start async publishers
+            this.asyncPublisherTasks.Add(serviceProvider.GetRequiredService<Gw2MumbleLinkPublisher>()
+                                                        .RunAsync(asyncPublisherCancellationTokenSource.Token));
+            this.asyncPublisherTasks.Add(serviceProvider.GetRequiredService<Gw2ScreenshotPublisher>()
+                                                        .RunAsync(asyncPublisherCancellationTokenSource.Token));
 
             var mainWindow = ActivatorUtilities.GetServiceOrCreateInstance<MainWindow>(serviceProvider);
             mainWindow.Show();
@@ -41,12 +43,12 @@ namespace GuildWars2.PvPCasterToolbox
 
         protected override void OnExit(ExitEventArgs e)
         {
-            // kill all processors
-            this.processorCancellationTokenSource.Cancel();
-            try { Task.WaitAll(this.processorTasks.ToArray(), TimeSpan.FromSeconds(5)); }
+            // kill all async publishers
+            this.asyncPublisherCancellationTokenSource.Cancel();
+            try { Task.WaitAll(this.asyncPublisherTasks.ToArray(), TimeSpan.FromSeconds(5)); }
             catch (AggregateException aex) { aex.Handle(ex => ex is TaskCanceledException); }
             catch (TaskCanceledException) { }
-            this.processorTasks.Clear();
+            this.asyncPublisherTasks.Clear();
 
             base.OnExit(e);
         }
@@ -75,8 +77,9 @@ namespace GuildWars2.PvPCasterToolbox
                 ["load_freq_dawg"] = false
             }, false));
 
-            // processors
-            services.AddSingleton<Gw2ScreenshotProcessor>();
+            // async publishers
+            services.AddSingleton<Gw2MumbleLinkPublisher>();
+            services.AddSingleton<Gw2ScreenshotPublisher>();
 
             // game state manager
             services.AddSingleton<GameStateManager>();
