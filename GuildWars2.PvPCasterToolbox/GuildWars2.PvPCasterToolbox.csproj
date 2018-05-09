@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GW2NET.MumbleLink" Version="1.4.0" />
     <PackageReference Include="Magick.NET-Q16-x64" Version="7.4.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.1" />

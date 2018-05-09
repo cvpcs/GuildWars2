@@ -25,7 +25,7 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
 
         private ILogger logger;
 
-        public HotKeys(Gw2ScreenshotProcessor gw2ScreenshotProcessor,
+        public HotKeys(Gw2ScreenshotPublisher gw2ScreenshotPublisher,
                        AppConfig appConfig,
                        ILogger<HotKeys> logger)
         {
@@ -57,7 +57,7 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
                 }
             };
 
-            gw2ScreenshotProcessor.ScreenshotCaptured += screenshot =>
+            gw2ScreenshotPublisher.DataAvailable += screenshot =>
             {
                 if (Interlocked.CompareExchange(ref screenshotCaptureState, (int)CaptureState.Active, (int)CaptureState.Pending) == (int)CaptureState.Pending)
                 {
