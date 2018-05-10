@@ -55,13 +55,13 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
 
             this.RedScoreBarModulationConfig.PropertyChanged += (s, e) => Dispatcher.Invoke(() =>
             {
-                this.redScoreBar.Window.SetScoreBarModulation(this.RedScoreBarModulationConfig.ScoreBarModulationParameters);
+                this.redScoreBar.Window.ScoreBarModulation =
                 this.appConfig.RedScoreBarModulation = this.RedScoreBarModulationConfig.ScoreBarModulationParameters;
             });
 
             this.BlueScoreBarModulationConfig.PropertyChanged += (s, e) => Dispatcher.Invoke(() =>
             {
-                this.blueScoreBar.Window.SetScoreBarModulation(this.BlueScoreBarModulationConfig.ScoreBarModulationParameters);
+                this.blueScoreBar.Window.ScoreBarModulation =
                 this.appConfig.BlueScoreBarModulation = this.BlueScoreBarModulationConfig.ScoreBarModulationParameters;
             });
 
@@ -128,8 +128,8 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
 
         private void SetScoreBarFillPercentage(double red, double blue)
         {
-            this.redScoreBar.Window.SetScoreBarFill(red);
-            this.blueScoreBar.Window.SetScoreBarFill(blue);
+            this.redScoreBar.Window.ScoreBarFill = red;
+            this.blueScoreBar.Window.ScoreBarFill = blue;
         }
     }
 }

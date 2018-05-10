@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using GuildWars2.PvPCasterToolbox.Controls;
 
 namespace GuildWars2.PvPCasterToolbox
 {
@@ -24,8 +25,15 @@ namespace GuildWars2.PvPCasterToolbox
                 if (this.isOverlayMode != value)
                 {
                     this.isOverlayMode = value;
+
+                    double scoreBarFill = Window.ScoreBarFill;
+                    ImageModulationParameters scoreBarModulation = Window.ScoreBarModulation;
                     Window.Close();
+
                     Window = this.CreateWindow(value, Window.GetWindowRect());
+
+                    Window.ScoreBarFill = scoreBarFill;
+                    Window.ScoreBarModulation = scoreBarModulation;
                     Window.Show();
                 }
             }
