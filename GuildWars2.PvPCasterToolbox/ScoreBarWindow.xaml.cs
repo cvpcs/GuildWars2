@@ -27,6 +27,32 @@ namespace GuildWars2.PvPCasterToolbox
         private IMagickImage scoreBarImage;
         private ImageModulationParameters modulationParameters = new ImageModulationParameters(0, 0, 0);
 
+        public double ScoreBarFill
+        {
+            get => this.scoreBarAnimator.CurrentValue;
+            set => this.scoreBarAnimator.BeginAnimateScore(value, this);
+        }
+
+        public ImageModulationParameters ScoreBarModulation
+        {
+            get => this.modulationParameters;
+            set
+            {
+                if (this.modulationParameters != value)
+                {
+                    this.modulationParameters = value;
+
+                    using (IMagickImage clone = this.scoreBarImage.Clone())
+                    {
+                        clone.Modulate(new Percentage(modulationParameters.BrightnessPercentage),
+                                       new Percentage(modulationParameters.SaturationPercentage),
+                                       new Percentage(modulationParameters.HuePercentage));
+                        this.scoreBarBitmap.WriteMagickImage(clone);
+                    }
+                }
+            }
+        }
+
         public ScoreBarWindow(string backgroundBarImagePath, string boostBarImagePath, string scoreBarImagePath,
                               bool isFlipped = false, bool overlayMode = true, RectangleF? position = null)
         {
@@ -60,25 +86,6 @@ namespace GuildWars2.PvPCasterToolbox
             if (position != null)
             {
                 this.SetWindowRect(position.Value);
-            }
-        }
-
-        public void SetScoreBarFill(double percentage)
-            => this.scoreBarAnimator.BeginAnimateScore(percentage, this);
-        
-        public void SetScoreBarModulation(ImageModulationParameters modulationParameters)
-        {
-            if (this.modulationParameters != modulationParameters)
-            {
-                this.modulationParameters = modulationParameters;
-
-                using (IMagickImage clone = this.scoreBarImage.Clone())
-                {
-                    clone.Modulate(new Percentage(modulationParameters.BrightnessPercentage),
-                                   new Percentage(modulationParameters.SaturationPercentage),
-                                   new Percentage(modulationParameters.HuePercentage));
-                    this.scoreBarBitmap.WriteMagickImage(clone);
-                }
             }
         }
 

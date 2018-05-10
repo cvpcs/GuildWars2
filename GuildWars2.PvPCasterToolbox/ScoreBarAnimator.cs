@@ -19,7 +19,7 @@ namespace GuildWars2.PvPCasterToolbox
         private string scoreBarTransparentStopName;
         private string scoreBarBlackStopName;
 
-        private double currentValue = 0;
+        public double CurrentValue { get; private set; } = 0;
 
         public ScoreBarAnimator(string boostBarTransparentStopName,
                                 string boostBarBlackStopName,
@@ -34,11 +34,11 @@ namespace GuildWars2.PvPCasterToolbox
 
         public void BeginAnimateScore(double newValue, FrameworkElement parent)
         {
-            if (newValue != this.currentValue)
+            if (newValue != this.CurrentValue)
             {
                 lock (this)
                 {
-                    if (newValue != this.currentValue)
+                    if (newValue != this.CurrentValue)
                     {
                         var boostTransparentAnimation = new DoubleAnimation(newValue, BoostDuration) { EasingFunction = EasingFunction };
                         Storyboard.SetTargetName(boostTransparentAnimation, this.boostBarTransparentStopName);
@@ -56,7 +56,7 @@ namespace GuildWars2.PvPCasterToolbox
                         Storyboard.SetTargetName(scoreStopAnimation, this.scoreBarBlackStopName);
                         Storyboard.SetTargetProperty(scoreStopAnimation, new PropertyPath(GradientStop.OffsetProperty));
 
-                        if (newValue > this.currentValue)
+                        if (newValue > this.CurrentValue)
                         {
                             boostStopAnimation.BeginTime = BoostStopDelayDuration;
                             scoreTransparentAnimation.BeginTime = ScoreStartDelayDuration;
@@ -76,7 +76,7 @@ namespace GuildWars2.PvPCasterToolbox
                         storyboard.Children.Add(scoreStopAnimation);
                         storyboard.Begin(parent);
 
-                        this.currentValue = newValue;
+                        this.CurrentValue = newValue;
                     }
                 }
             }
