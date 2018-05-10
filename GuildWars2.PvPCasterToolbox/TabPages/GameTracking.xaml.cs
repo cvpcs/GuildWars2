@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Controls;
@@ -75,6 +76,10 @@ namespace GuildWars2.PvPCasterToolbox.TabPages
                 }
             });
         }
+
+        // TODO: ICommand?
+        public void ResetGameState_Clicked(object sender, EventArgs args)
+            => this.gameStateManager.Reset();
 
         private void GameStateManager_ProcessedScreenshotSections(Bitmap screenshot, IEnumerable<(Rectangle rect, Bitmap bitmap)> sections)
         {

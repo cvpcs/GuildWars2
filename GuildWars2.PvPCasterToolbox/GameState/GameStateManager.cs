@@ -90,8 +90,10 @@ namespace GuildWars2.PvPCasterToolbox.GameState
                             {
                                 this.Reset();
                             }
-
-                            this.ScoresRead?.Invoke(this);
+                            else
+                            {
+                                this.ScoresRead?.Invoke(this);
+                            }
                         }
                         else
                         {
@@ -130,16 +132,16 @@ namespace GuildWars2.PvPCasterToolbox.GameState
                 if (this.currentMapId != HOTM_MAP_ID)
                 {
                     this.Reset();
-                    this.ScoresRead?.Invoke(this);
                 }
             }
         }
 
-        private void Reset()
+        public void Reset()
         {
-            this.logger.LogDebug("Resetting scores");
+            this.logger.LogInformation("Resetting scores");
             this.red.Reset();
             this.blue.Reset();
+            this.ScoresRead?.Invoke(this);
         }
 
         private static Tesseract.Rect GetTesseractRect(Rectangle rect)

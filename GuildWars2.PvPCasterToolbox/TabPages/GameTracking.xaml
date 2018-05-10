@@ -44,6 +44,8 @@
                     </Style>
                 </ToggleButton.Style>
             </ToggleButton>
+
+            <Button Content="Reset Game State" Click="ResetGameState_Clicked" Margin="5" />
         </StackPanel>
     </Grid>
 </TabItem>
